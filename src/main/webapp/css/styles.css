@@ -1,0 +1,121 @@
+
+.navbar-static-top {
+  margin-bottom:20px;
+}
+
+.tab-pane {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+   /* border-bottom: 1px solid #ddd;*/
+    border-radius: 0px 0px 5px 5px;
+    padding: 10px;
+}
+
+.nav-tabs>li>a:focus {
+	 outline: none;
+}
+
+.nav-tabs {
+    margin-bottom: -26px;
+}
+.nav-pills>li>a:hover {
+	background-color: #222
+}
+
+.nav-pills>li>a:active {
+	background-color: #fff
+}
+
+.nav-pills>li>a:focus {
+	 outline: none;
+}
+
+i {
+  font-size:18px;
+}
+
+
+footer {
+  margin-top:10px;
+  padding-top:0px;
+  padding-bottom:20px;
+  background-color:#333;
+}
+
+.nav>li .count {
+  position: absolute;
+  top: 10%;
+  right: 25%;
+  font-size: 10px;
+  font-weight: normal;
+  background: rgba(41,200,41,0.75);
+  color: rgb(255,255,255);
+  line-height: 1em;
+  padding: 2px 4px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  border-radius: 10px;
+}
+
+
+table.tablesorter {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #38678f;
+  margin: 50px auto;
+  background: white;
+}
+table.tablesorter th  {
+  background: steelblue;
+  height: 54px;
+  width: 25%;
+  font-weight: lighter;
+  color: white;
+  text-shadow: 0 1px 0 #38678f;
+  border: 1px solid #38678f;
+  box-shadow: inset 0px 1px 2px #568ebd;
+  transition: all 0.2s;
+  padding: 10px;
+}
+table.tablesorter tr  {
+  border-bottom: 1px solid #cccccc;
+}
+table.tablesorter tr:last-child {
+  border-bottom: 0px;
+}
+table.tablesorter td {
+  border-right: 1px solid #cccccc;
+  padding: 10px;
+  transition: all 0.2s;
+}
+table.tablesorter td:last-child {
+  border-right: 0px;
+}
+table.tablesorter td.selected {
+  background: #d7e4ef;
+  z-index: ;
+}
+table.tablesorter td input {
+  font-size: 14px;
+  background: none;
+  outline: none;
+  border: 0;
+  display: table-cell;
+  height: 100%;
+  width: 100%;
+}
+table.tablesorter td input:focus {
+  box-shadow: 0 1px 0 steelblue;
+  color: steelblue;
+}
+
+table {
+	font-family:sans-serif;
+	background-color: whitesmoke;
+	margin:5px 0pt 10px;
+	font-size: 10pt;
+	width: 100%;
+	text-align: left;
+}

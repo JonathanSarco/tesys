@@ -1,0 +1,25 @@
+ 
+{"key":"PYT-71",
+"fields":{ 
+    "progress":{
+        "progress":0,
+        "total":172800,
+        "percent":0},
+    "resolutiondate":"2013-11-06T01:46:15.000-0300",
+    "aggregatetimeoriginalestimate":345600,
+    "updated":"2013-11-06T01:46:15.000-0300",
+    "created":"2013-09-27T01:41:58.000-0300",
+    "workratio":0,
+    "aggregatetimeestimate":334800,
+    "issuetype":{"id":"8"},
+    "reporter":{"name":"jmayorano"},
+    "priority":{"id":"2"},
+    "status":{"id":"5"},
+    "project":{"key":"PYT"},
+    "assignee":{"name":"mcabrera"},
+    "subtasks":[
+        { "key":"PYT-101"}
+     ],
+     "labels":["documentacion"]
+     }
+}
