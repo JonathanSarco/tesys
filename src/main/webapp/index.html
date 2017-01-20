@@ -96,6 +96,10 @@
 				<li><a class="navbar-brand" href="#secsonar" data-toggle="tab">
 						<span class="glyphicon glyphicon-pencil"></span> Software Metrics
 				</a></li>
+				<!-- Se agrega una nueva Pestaña para la recomendacion de desarrolladores -->
+				<li><a class="navbar-brand" href="" data-toggle="tab">
+						<span class="glyphicon glyphicon-pencil"></span> Developers Recommendations
+				</a></li>
 			</ul>
 		</div>
 		<!-- /container -->
@@ -504,6 +508,68 @@
 			<!--/panel -->
 		</div>
 		<!-- FIN SONAR-->
+		
+		<!-- RECOMENDACION DE DESARROLLADORES-->
+		<div class="tab-pane" id="secestimation">
+			<p>
+			<div class="container">
+				<div class="col-md-12" id="div-table">
+					<div class="well">
+						<h4>Developers Recommendations</h4>
+					</div>			
+					<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 400px;">
+						<input class="col-md-4 form-control"
+							placeholder="Filter metric" type="text" id="metricfilter" /> <br> <br>
+						<ul class="nav nav-stacked" id="estimationsSkillSelector">
+							<!--li><a> Metric 1 </a></li-->
+						</ul>
+					</div>
+					<div class="col-md-4 list-group panel panel-default">
+				    <div class="input-group">
+				    	<a href="#" class="btn btn-primary" role="button" id="estimationBtn">Estimate</a>
+				    	<input type="hidden" placeholder="Minimal Correlation"  id="estimationCorrelation" value="0.95">
+				    </div>
+				    <div class="input-group">
+				      <input type="text" class="form-control" placeholder="Metric Value"  id="estimationMetricInput">
+				      <span class="input-group-btn">
+				        <button class="btn btn-default" type="button" id="estimationInsertBtn">Insert</button>
+				      </span>
+				    </div><!-- /input-group -->
+						<div>
+							<select class="form-control" id="recomendationMetricSelect"></select>
+						</div>
+						<ul class="list-group" id="metricList" style="overflow-y: auto; height: 300px;"></ul>
+					</div>
+					<div id="MainMenu2" class="col-md-3">
+						<div class="list-group panel panel-default">
+							<div class="panel-heading">
+								<h4>
+									<i class="glyphicon glyphicon-user"></i> Developers
+								</h4>
+							</div>
+							<div class="panel-body" style="overflow-y: auto; height: 400px;"
+								id="developers-predictions"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12" id="div-table">
+				<div class="tab-pane active panel-body" id="metricPane" style="border-bottom: 1px solid #ddd;">
+										<!--contenido de un panel-->
+										<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 400px;">
+											<input class="col-md-4 form-control"
+												placeholder="Filter metric" type="text" id="metricfilter" /> <br> <br>
+					<ul class="nav nav-stacked" id="metricsPred">
+						<!--li><a> Metric 1 </a></li-->
+					</ul>
+					</div>
+					<div id="predBar" class="panel panel-default" style="height: 400px;"></div>
+				</div>
+
+			</div>
+
+		</div>
+		<!-- FIN ESTIMACION-->
 	</div>
 
 
