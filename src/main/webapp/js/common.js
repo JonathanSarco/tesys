@@ -21,7 +21,7 @@ requirejs.config({
     'view': 'apps/views/view',
     'recomendationview': 'apps/views/recomendationview'
   },
-
+//HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
   shim: {
     'underscore': {
       exports: '_'

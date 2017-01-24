@@ -166,6 +166,7 @@ define(
       devNameContainer.textContent = this.model.get('displayName');
       devNameContainer.setAttribute('class', 'list-group-item list-group-item-success');
       devNameContainer.setAttribute('data-parent', '#MainMenu');
+      devNameContainer.setAttribute('data-parent', '#MainMenu3');
       devNameContainer.setAttribute('data-toggle', 'collapse');
       devNameContainer.setAttribute('href','#'+this.model.get('name'));
 

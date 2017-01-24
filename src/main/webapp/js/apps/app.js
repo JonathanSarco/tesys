@@ -31,6 +31,7 @@ define(
 
     // Definicion de Modelos.
     var developers = new model.DeveloperCollection();
+    var developersRecommendation = new model.DeveloperCollection();
     var metrics = new model.MetricCollection() ;
     var skills = new model.MetricCollection() ;
 
@@ -42,6 +43,13 @@ define(
           attrToPlot: ['metrics', 'skills']
         }
     );
+    
+    var devListReco = new view.DeveloperCollectionView(
+            { el: $('#developers-reco'),
+              collection: developersRecommendation, 
+            }
+    );
+        
    
     var metricsView = new view.MetricCollectionView(
           { collection: metrics, 
@@ -270,6 +278,7 @@ define(
     // Extraccion de los datos desde Tesys al modelo de la UI
     tesys.getAnalysis(function(data){
       developers.reset(data);
+      developersRecommendation.reset(data);
     });
 
     tesys.getMetrics(function(data){
