@@ -629,8 +629,38 @@ public class Controller {
 
 		return response.build();
 	}
-	
+	/**
+	 * Funcion que devuelve todos los issues
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/issues")
+	public Response getAllIssues()	{
+        
+        AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
+        List<Long> versiones = avq.execute();
+        ElasticsearchDao<Developer> dao;
+        ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 
+        try {
+            dao = new ElasticsearchDao<Developer>(
+                    Developer.class, 
+                    ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS ); //devuelve la version mas actualizada de los analisis.
+        } catch (Exception e) {
+            return response.build();
+        }
+        
+        List<Developer> developers = dao.readAll();
+        List<Issue> issues = new ArrayList<Issue>();
+        for (Developer d: developers) {
+        	issues.addAll(d.getIssues());
+        }
+        GenericEntity<List<Issue>> entity = new GenericEntity<List<Issue>>(issues) {};
+        response = Response.ok();
+        response.entity(entity);
+        return response.build();
+	}
+	
 
 
 }
