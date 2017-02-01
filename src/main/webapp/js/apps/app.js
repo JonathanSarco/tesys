@@ -31,7 +31,7 @@ define(
 
     // Definicion de Modelos.
     var developers = new model.DeveloperCollection();
-    var developersRecommendation = new model.DeveloperCollection();
+    var issues = new model.RecommendationCollection();
     var metrics = new model.MetricCollection() ;
     var skills = new model.MetricCollection() ;
 
@@ -44,9 +44,9 @@ define(
         }
     );
     
-    var devListReco = new view.DeveloperCollectionView(
-            { el: $('#developers-reco'),
-              collection: developersRecommendation, 
+    var recommendation = new view.IssueRecommendationView(
+            { collection: issues,
+              el: $('#developers-reco')
             }
     );
         
@@ -278,7 +278,6 @@ define(
     // Extraccion de los datos desde Tesys al modelo de la UI
     tesys.getAnalysis(function(data){
       developers.reset(data);
-      developersRecommendation.reset(data);
     });
 
     tesys.getMetrics(function(data){
@@ -295,6 +294,12 @@ define(
       });
       skills.reset(adaptedData);
     });
+
+    tesys.getIssues(function(data){
+      alert("Data peola:  "+ data);
+      alert("Issue peola:  "+issues.models);
+      issues.reset(data);
+    })
     
     //$('#myTab a[href="#metricPane"]').on('shown.bs.tab', function (e) {
     //  predPlotter.build(metricsPredToPlot.array);

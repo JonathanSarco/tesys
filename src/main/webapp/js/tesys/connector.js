@@ -12,6 +12,7 @@ define(["jquery"], function($) {
         console.log(jqXHR, textStatus, errorThrown);
       },
       success: function(data) {
+        //alert(location.origin);
         callback(data) ;
       }
     });
@@ -46,6 +47,24 @@ define(["jquery"], function($) {
       }
     });
   }
+  /**
+  * Agrego funcion de retornar tareas
+  **/
+  function getIssues(callback) {
+    $.ajax({
+      type: 'GET',
+      url: location.origin+apiPath+'issues',
+      dataType: "json", 
+      error: function(jqXHR, textStatus, errorThrown) {
+        alert("Error en el response de "+apiPath+"skills");
+        console.log(jqXHR, textStatus, errorThrown);
+      },
+      success: function (data) {
+        callback(data);
+      }
+    });
+  }
+  
 
 
   /**
@@ -188,6 +207,8 @@ define(["jquery"], function($) {
     getAnalysis: getAnalysis,
     getMetrics: getMetrics,
     getSkills: getSkills,
+    //All the issues
+    getIssues: getIssues,
     score: score,
     joinMetrics: joinMetrics,
     storeAnalysis: storeAnalysis,

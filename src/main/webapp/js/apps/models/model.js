@@ -102,6 +102,14 @@ define(
     model: DeveloperPrediction
   });
 
+  var IssueRecommendation = Backbone.RelationalModel.extend({
+    idAttribute: 'issueId'
+  });
+
+  var RecommendationCollection = Backbone.Collection.extend({
+    model: IssueRecommendation
+  });
+
   return {
     Issue: Issue,
     IssueCollection: IssueCollection,
@@ -117,7 +125,10 @@ define(
     IssuePredictionCollection: IssuePredictionCollection,
     IssuePrediction: IssuePrediction,
     MetricPredictionsCollection: MetricPredictionsCollection,
-    MetricPrediction:MetricPrediction
+    MetricPrediction:MetricPrediction,
+
+    IssueRecommendation: IssueRecommendation,
+    RecommendationCollection: RecommendationCollection
 
   };
 

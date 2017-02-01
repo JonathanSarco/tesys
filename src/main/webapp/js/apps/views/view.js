@@ -159,7 +159,8 @@ define(
       this.options = options || {};
       _.bindAll(this, 'render', 'listIssues', 'select'); 
     },
-    render: function(){ 
+    render: function(){
+
       var self = this ;
       // Creating Developer name container
       var devNameContainer = document.createElement("a");
@@ -375,6 +376,7 @@ define(
     },
     render: function(){
       var self = this;
+      //alert("ESTOY EN DEVELOPER POR LAU: "+this.collection.models);
       _(this.collection.models).each(function(dev){ // in case collection is not empty
         self.$el.append(new Option(dev.get('displayName'), dev.get('name')));
       });
@@ -395,6 +397,40 @@ define(
     }
   });
 
+  /**
+  * Agrego la vista
+  *
+  **/
+
+  var IssueRecommendationView = Backbone.View.extend({
+    
+    initialize: function(options){
+      this.options = options || {};
+      _.bindAll(this, 'render');
+      this.collection.on({'reset': this.render});
+      //alert("modelo "+this.model);
+      //alert("Coleccion"+this.collection);
+      this.render();
+    },
+
+    render: function(){ 
+        //var self = this;
+        alert("collection recommenta "+this.collection.models);
+         
+      //alert("ESTOY EN DEVELOPER POR LAU: "+this.collection.models);
+      _(this.collection.models).each(function(item){ // in case collection is not empty
+          //alert("issue "+item.get('issueId'));
+          var devNameContainer = document.createElement("a");
+          devNameContainer.textContent = item.get('issueId');
+          devNameContainer.setAttribute('class', 'ul');
+          devNameContainer.setAttribute('data-parent', '#MainMenu3');
+          if(item.get('issueId')) { 
+            alert("hola doc"+document);
+            document.getElementById("developers-reco").appendChild(devNameContainer);}
+        });
+       return this;
+    }
+    });
 
   return {
     IssueView: IssueView,
@@ -405,5 +441,6 @@ define(
     MetricSelectView: MetricSelectView,
     DeveloperSelectView: DeveloperSelectView,
     issuesViewsToPlot: issuesViewsToPlot,
+    IssueRecommendationView: IssueRecommendationView
   };
 });
