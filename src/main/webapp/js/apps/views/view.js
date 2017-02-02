@@ -408,25 +408,20 @@ define(
       this.options = options || {};
       _.bindAll(this, 'render');
       this.collection.on({'reset': this.render});
-      //alert("modelo "+this.model);
-      //alert("Coleccion"+this.collection);
       this.render();
     },
 
     render: function(){ 
-        //var self = this;
-        alert("collection recommenta "+this.collection.models);
-         
-      //alert("ESTOY EN DEVELOPER POR LAU: "+this.collection.models);
       _(this.collection.models).each(function(item){ // in case collection is not empty
-          //alert("issue "+item.get('issueId'));
-          var devNameContainer = document.createElement("a");
-          devNameContainer.textContent = item.get('issueId');
-          devNameContainer.setAttribute('class', 'ul');
-          devNameContainer.setAttribute('data-parent', '#MainMenu3');
-          if(item.get('issueId')) { 
-            alert("hola doc"+document);
-            document.getElementById("developers-reco").appendChild(devNameContainer);}
+        var devIssuesContainer = document.createElement("div");
+        devIssuesContainer.setAttribute('class', 'list-group-item list-group-item-success');
+        devIssuesContainer.id = item.get('issueId');        
+        var issueView = new IssueView(
+          { model: item
+          }
+        );
+        devIssuesContainer.appendChild(issueView.render().el);
+        document.getElementById("developers-reco").appendChild(devIssuesContainer);
         });
        return this;
     }
