@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.tesys.core.analysis.Analyzer;
+import org.tesys.core.analysis.skilltraceability.Skill;
 import org.tesys.core.analysis.skilltraceability.SkillIndicator;
 import org.tesys.core.analysis.sonar.SonarAnalizer;
 import org.tesys.core.analysis.sonar.SonarAnalysisRequest;
@@ -40,6 +41,7 @@ import org.tesys.core.project.scm.ScmPostCommitDataPOJO;
 import org.tesys.core.project.scm.ScmPreCommitDataPOJO;
 import org.tesys.core.project.tracking.IssueTypePOJO;
 import org.tesys.correlations.Predictions;
+import org.tesys.developersRecomendations.Case;
 import org.tesys.recomendations.DevelopersCriteriaIssues;
 import org.tesys.recomendations.DevelopersShortedByMetric;
 import org.tesys.recomendations.DevelopersShortedBySkills;
@@ -660,7 +662,33 @@ public class Controller {
         response.entity(entity);
         return response.build();
 	}
-	
 
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/cbr/case")
+	public Response getDevRecommendationbyIssue()	{
+        
+		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
+        List<Long> versiones = avq.execute();
+        ElasticsearchDao<Case> dao;
+        ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 
+        try {
+            dao = new ElasticsearchDao<Case>(
+                    Case.class, 
+                    ElasticsearchDao.DEFAULT_RESOURCE_CASE ); //devuelve la version mas actualizada de los analisis.
+        } catch (Exception e) {
+            return response.build();
+        }
+        
+        List<Case> cases = dao.readAll();
+        if(cases.isEmpty()){
+        	Case cdp = new Case("idIssuPrueba");
+        	dao.create("caso de prueba", cdp);
+        }
+
+        response = Response.ok();
+
+        return response.build();
+	}
 }

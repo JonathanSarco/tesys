@@ -375,8 +375,14 @@ define(
         $('#submitAnalysisKey').val()
       ); 
     });
+    
+    /*Funcion para ver si anda el boton*/
+    $('#RecommendDeveloperbyIssue').click(function(event) {
+    	tesys.getDevRecommendationbyIssue();
+    	alert("se hace click en el boton");
+      });    
   };
-
+  
   return { 
     'start': start 
   };

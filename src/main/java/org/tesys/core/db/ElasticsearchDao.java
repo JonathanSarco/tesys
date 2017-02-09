@@ -54,6 +54,9 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
     
     public static final String DEFAULT_RESOURCE_SPRINT1 = "/analyzer/sprint1";
     public static final String DEFAULT_RESOURCE_SPRINT2 = "/analyzer/sprint2";
+    
+    /*** Se crea un nuevo index para los casos del CBR***/
+    public static final String DEFAULT_RESOURCE_CASE = "/cbr/case";
 
 
     public static final String ES_URL = "http://localhost:9200/";
