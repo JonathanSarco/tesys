@@ -4,20 +4,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.tesys.core.analysis.sonar.AnalisisPOJO;
 import org.tesys.core.db.AnalysisVersionsQuery;
 import org.tesys.core.db.ElasticsearchDao;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
 import org.tesys.core.estructures.Metric;
-import org.tesys.core.estructures.SimilarDeveloper;
 import org.tesys.core.estructures.SimilarIssue;
 import org.tesys.recomendations.DevelopersShortedBySimilarLabelsAndSkills;
 
