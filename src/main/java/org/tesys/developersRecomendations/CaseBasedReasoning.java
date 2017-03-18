@@ -1,5 +1,7 @@
 package org.tesys.developersRecomendations;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -12,10 +14,20 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.tesys.core.analysis.sonar.AnalisisPOJO;
 import org.tesys.core.db.AnalysisVersionsQuery;
 import org.tesys.core.db.ElasticsearchDao;
+import org.tesys.core.estructures.Developer;
+import org.tesys.core.estructures.Issue;
+import org.tesys.core.estructures.Metric;
+import org.tesys.core.estructures.SimilarDeveloper;
+import org.tesys.core.estructures.SimilarIssue;
+import org.tesys.recomendations.DevelopersShortedBySimilarLabelsAndSkills;
 
 public class CaseBasedReasoning {
 	
-	CaseBasedReasoning(){
+	DevelopersShortedBySimilarLabelsAndSkills developers;
+	List<Case> cases= new ArrayList<Case>();
+	public CaseBasedReasoning(){
+		
+		
 		
 	}
 	
@@ -43,6 +55,41 @@ public class CaseBasedReasoning {
         response = Response.ok();
 
         return (List<Case>) response.build();
+        
+        
+        
+	}
+	
+	List<Case> getRecommendation(double factorLabel, double factorSkill, List<Metric>metrics){
+		
+		//aca los factores no deberian ser cero para que no influya despues durante la recomendacion??
+		ElasticsearchDao<Developer> daoi = new ElasticsearchDao<Developer>(Developer.class,
+		ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS);
+		List<SimilarIssue> similarIssues= new LinkedList<SimilarIssue>();
+		List<Developer> ld  = daoi.readAll();
+		
+		for (Developer d : ld) {			
+			List<Issue> li = d.getIssues();
+			for (Issue i : li) {
+					similarIssues.addAll(developers.getDevelopersShortedBySimilarLabelsAndSkills(i,factorLabel,factorSkill,ld));
+				}			
+		}
+		List<Developer> similarDeveloper = getAllSimilarDevelopers(similarIssues);
+		
+		
+			
+		return cases;
+		
 	}
 
+	private List<Developer> getAllSimilarDevelopers(List<SimilarIssue> similarIssues) {
+		List<Developer> developers = new LinkedList<Developer>();
+		for(SimilarIssue si : similarIssues){
+			if(!developers.contains(si.getDeveloper())){
+				developers.add(si.getDeveloper());
+			}
+		}
+		return developers;
+	}
+	
 }

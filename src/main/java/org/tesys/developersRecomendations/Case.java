@@ -20,12 +20,12 @@ public class Case {
 	// *** Problema ***
 	String idIssue;
 	String[] labels;
-	Metric[] estimatedMetrics;
 	Skill[] neededSkills;
 	// *** Fin Problema ***
 	
 	// *** Solucion ***
 	Developer[] recommendedDevelopers;
+	Metric[] estimatedMetrics;
 	// *** Fin Solucion ***
 	
 	// *** Resultado ***
