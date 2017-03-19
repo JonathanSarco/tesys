@@ -22,6 +22,8 @@ public class CaseBasedReasoning {
 	
 	DevelopersShortedBySimilarLabelsAndSkills developers;
 	List<Case> cases= new ArrayList<Case>();
+
+	
 	public CaseBasedReasoning(){
 		
 		
@@ -65,17 +67,22 @@ public class CaseBasedReasoning {
 		List<SimilarIssue> similarIssues= new LinkedList<SimilarIssue>();
 		List<Developer> ld  = daoi.readAll();
 		Predictions predictions = new Predictions();
-		
+		List<Developer> similarDevelopers= new LinkedList<Developer>();
 		for (Developer d : ld) {			
 			List<Issue> li = d.getIssues();
 			for (Issue i : li) {
 					similarIssues.addAll(developers.getDevelopersShortedBySimilarLabelsAndSkills(i,factorLabel,factorSkill,ld));
 					//ver si nos quedamos con los que tengan mejor coeficiente
-					List<Developer> similarDevelopers = getAllSimilarDevelopers(similarIssues);	
+					similarDevelopers = getAllSimilarDevelopers(similarIssues);	
 					
 			}			
 		}
 
+		for(Metric m: metrics)
+		for(Developer d: similarDevelopers ){
+			//predictions.getPredictionsDeveloper(metricKey, value, correlationVariation, sprint, d);	
+
+		}
 		/*
 		for (Developer d : similarDeveloper){
 			if(metrics.size()>0){

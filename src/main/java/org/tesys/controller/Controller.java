@@ -625,7 +625,7 @@ public class Controller {
 		ResponseBuilder response;
 
 		response = Response.ok(
-				Predictions.getPredictions(metricKey, value, correlation, sprint, skills)
+			Predictions.getPredictions(metricKey, value, correlation, sprint, skills)
 		);
 		
 
