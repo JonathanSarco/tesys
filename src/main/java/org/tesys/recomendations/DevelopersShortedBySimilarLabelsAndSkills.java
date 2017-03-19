@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
-import org.tesys.core.estructures.SimilarDeveloper;
 import org.tesys.core.estructures.SimilarIssue;
 
 public class DevelopersShortedBySimilarLabelsAndSkills {

@@ -6,12 +6,16 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.tesys.core.analysis.skilltraceability.Skill;
 import org.tesys.core.db.AnalysisVersionsQuery;
 import org.tesys.core.db.ElasticsearchDao;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
 import org.tesys.core.estructures.Metric;
 import org.tesys.core.estructures.SimilarIssue;
+import org.tesys.correlations.DeveloperPrediction;
+import org.tesys.correlations.Predictions;
 import org.tesys.recomendations.DevelopersShortedBySimilarLabelsAndSkills;
 
 public class CaseBasedReasoning {
@@ -60,19 +64,42 @@ public class CaseBasedReasoning {
 		ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS);
 		List<SimilarIssue> similarIssues= new LinkedList<SimilarIssue>();
 		List<Developer> ld  = daoi.readAll();
+		Predictions predictions = new Predictions();
 		
 		for (Developer d : ld) {			
 			List<Issue> li = d.getIssues();
 			for (Issue i : li) {
 					similarIssues.addAll(developers.getDevelopersShortedBySimilarLabelsAndSkills(i,factorLabel,factorSkill,ld));
-				}			
+					//ver si nos quedamos con los que tengan mejor coeficiente
+					List<Developer> similarDevelopers = getAllSimilarDevelopers(similarIssues);	
+					
+			}			
 		}
-		List<Developer> similarDeveloper = getAllSimilarDevelopers(similarIssues);
+
+		/*
+		for (Developer d : similarDeveloper){
+			if(metrics.size()>0){
+				for(Metric m : metrics){
+					List<String> devSkillsForIssue = getDevSkillsForIssue(d);
+					List<DeveloperPrediction> developerPredictions = predictions.getPredictions(m.getKey(), m.getValue().evaluate(null), 0.95, 1, s);
+				}
 		
-		
+			}
 			
-		return cases;
-		
+		}*/		
+		return cases;	
+	}
+
+	private List<String> getDevSkillsForIssue(Developer d) {
+		List<String>skills=new LinkedList<String>();
+		List<Issue> issues = d.getIssues();
+		for (Issue i : issues){
+			List<Skill> skillsIssue = i.getSkills();
+			for(Skill s : skillsIssue){
+				skills.add(s.getName());
+			}
+		}
+		return skills;
 	}
 
 	private List<Developer> getAllSimilarDevelopers(List<SimilarIssue> similarIssues) {
