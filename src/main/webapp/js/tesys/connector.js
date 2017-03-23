@@ -159,7 +159,7 @@ define(["jquery"], function($) {
       dataType: 'json',
       contentType: "application/json; charset=utf-8",
       data: toSend,
-      error: function(jqXHR, textStatus, errorThrown) {
+      error: function(jqXHR, textStatus, errohrThrown) {
         alert("Error en el response de "+apiPath+"sonar");
         console.log(jqXHR, textStatus, errorThrown);
       },
@@ -225,6 +225,33 @@ define(["jquery"], function($) {
 	      }
 	    });
 	  }
+  
+  //Funcion que devuelve los desarrolladores recomendados
+    function getRecomendation(valueSkills, valueMetrics, metricsValuesRecomendation, callback) {
+    var skillQuery = "" ;
+    var sprint=2 ; 
+    pearsonFactor = 0.95;
+    /*$.each(skills, function(i, skill){
+      if (i===0) {
+        skillQuery+='?s='+skill;
+      } else {
+        skillQuery+='&s='+skill;
+      }
+    });*/
+    $.ajax({
+      type: 'GET',
+      url: location.origin+apiPath+'getpredic/'+metricName+'/'+metricValue+'/'+pearsonFactor+'/'+sprint+skillQuery,
+      dataType: 'json', // data type of response
+      error: function(jqXHR, textStatus, errorThrown) {
+        alert("Error en el response de "+apiPath+"getpredic");
+        console.log(jqXHR, textStatus, errorThrown);
+      },
+      success: function(data) {
+        callback(data) ;
+      }
+
+    });
+  }
 
   return {    
     getAnalysis: getAnalysis,

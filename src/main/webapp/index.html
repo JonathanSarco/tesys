@@ -518,24 +518,50 @@
 					<div id="MainMenu3" class="col-md-3">
 						<div class="list-group panel panel-default">
 							<div class="panel-heading">
-								<h4>
-									<i class="glyphicon glyphicon-user"></i> Developers
-								</h4>
+								<h4><i class="glyphicon glyphicon-user"></i> Issues</h4>
 							</div>
 							<div class="panel-body" style="overflow-y: auto; height: 400px;"
 								id="developers-reco"></div>
 						</div>
-					</div>
 					<div class="control-group">
 						<label class=""></label>
-							<div class="controls">
-								<button class="btn btn-primary" type="submit"
-								id="RecommendDeveloperbyIssue">Recommend Developer</button>
+						<div class="controls">
+							<a href="#" class="btn btn-primary" role="button" id="RecommendDeveloperbyIssue">Recommend Developer</a>
+							<input type="hidden" placeholder="Minimal Correlation"  id="recommendationCorrelation" value="0.95">
+						</div>
+					</div>
+					</div>
+				
+					<!-- Agrego-->
+					<div class="container">
+						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
+						<input class="col-md-4 form-control"
+							placeholder="Filter metric" type="text" id="metricfilter" /> <br> <br>
+						<ul class="nav nav-stacked" id="recomendationsSkillSelector">
+						</ul>
+						</div>
+					<div id="MainMenu3" class="col-md-4">
+						<div class="list-group panel panel-default">
+							<div class="panel-heading">
+								<h4><i class="glyphicon glyphicon-user"></i> Developers</h4>
 							</div>
+							<div class="panel-body" style="overflow-y: auto; height: 400px;" id="developers-predictions-recommendation"></div>
+						</div>
+					</div>
+						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
+							<input type="text" class="form-control" placeholder="Metric Value"  id="recomendationMetricInput">
+					      	<span class="input-group-btn">
+					        	<button class="btn btn-default" type="button" id="recomendationInsertBtn">Insert</button>
+					      	</span>
+							<div>
+								<select class="form-control" id="recomendationMetricSelect2"></select>
+							</div>
+							<ul class="list-group" id="metricListRecommendation" style="overflow-y: auto; height: 300px;"></ul>
+						</div>
 					</div>
 				</div>
 			</div>
-		<!-- FIN ESTIMACION-->
+		<!-- FIN RECOMENDACION-->
 	</div>
 
 
