@@ -42,6 +42,7 @@ import org.tesys.core.project.scm.ScmPreCommitDataPOJO;
 import org.tesys.core.project.tracking.IssueTypePOJO;
 import org.tesys.correlations.Predictions;
 import org.tesys.developersRecomendations.Case;
+import org.tesys.developersRecomendations.CaseBasedReasoning;
 import org.tesys.recomendations.DevelopersCriteriaIssues;
 import org.tesys.recomendations.DevelopersShortedByMetric;
 import org.tesys.recomendations.DevelopersShortedBySkills;
@@ -690,5 +691,23 @@ public class Controller {
         response = Response.ok();
 
         return response.build();
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getRecommendation/{label}/{skill}/{sprint}")
+	public Response getRecommendation(	@PathParam("label") Double label,
+										@PathParam("skill") Double skill,
+										@PathParam("sprint") Integer sprint, 
+										@QueryParam("m") List<String> metric) {
+		
+		ResponseBuilder response;
+		List<String>metric2=new LinkedList<String>();
+		metric2.add("1");
+		metric2.add("2");
+		response = Response.ok(
+			CaseBasedReasoning.getRecommendation(label,skill,metric2)
+		);
+		return response.build();
 	}
 }

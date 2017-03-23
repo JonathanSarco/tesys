@@ -263,7 +263,7 @@ define(
       if (minCorrelation <= 1.0) { 
           //alert("dentro del if de recomendacion");
           //alert("Adentro del for en recomendacion");
-          tesys.getRecomendation(0.5, 0.5, metricsValuesRecomendation, addPredictionsRecommendations); 
+          tesys.getRecommendation(0.5, 0.5, metricsValuesRecomendation, addPredictionsRecommendations); 
           console.log("Pestaña de recomendacion"+metricsValuesRecomendation);
         }
       });

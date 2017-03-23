@@ -20,10 +20,8 @@ import org.tesys.recomendations.DevelopersShortedBySimilarLabelsAndSkills;
 
 public class CaseBasedReasoning {
 	
-	DevelopersShortedBySimilarLabelsAndSkills developers;
+	static DevelopersShortedBySimilarLabelsAndSkills developers;
 	List<Case> cases= new ArrayList<Case>();
-
-	
 	public CaseBasedReasoning(){
 		
 		
@@ -59,42 +57,26 @@ public class CaseBasedReasoning {
         
 	}
 	
-	List<Case> getRecommendation(double factorLabel, double factorSkill, List<Metric>metrics){
+	public static List<Developer> getRecommendation(double factorLabel, double factorSkill, List<String>metrics){
 		
 		//aca los factores no deberian ser cero para que no influya despues durante la recomendacion??
 		ElasticsearchDao<Developer> daoi = new ElasticsearchDao<Developer>(Developer.class,
 		ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS);
 		List<SimilarIssue> similarIssues= new LinkedList<SimilarIssue>();
 		List<Developer> ld  = daoi.readAll();
+		List<Developer> similarDevelopers = new LinkedList<>();
 		Predictions predictions = new Predictions();
-		List<Developer> similarDevelopers= new LinkedList<Developer>();
+		
 		for (Developer d : ld) {			
 			List<Issue> li = d.getIssues();
 			for (Issue i : li) {
 					similarIssues.addAll(developers.getDevelopersShortedBySimilarLabelsAndSkills(i,factorLabel,factorSkill,ld));
 					//ver si nos quedamos con los que tengan mejor coeficiente
-					similarDevelopers = getAllSimilarDevelopers(similarIssues);	
-					
+					similarDevelopers = getAllSimilarDevelopers(similarIssues);		
 			}			
 		}
-
-		for(Metric m: metrics)
-		for(Developer d: similarDevelopers ){
-			//predictions.getPredictionsDeveloper(metricKey, value, correlationVariation, sprint, d);	
-
-		}
-		/*
-		for (Developer d : similarDeveloper){
-			if(metrics.size()>0){
-				for(Metric m : metrics){
-					List<String> devSkillsForIssue = getDevSkillsForIssue(d);
-					List<DeveloperPrediction> developerPredictions = predictions.getPredictions(m.getKey(), m.getValue().evaluate(null), 0.95, 1, s);
-				}
-		
-			}
-			
-		}*/		
-		return cases;	
+	
+		return similarDevelopers;	
 	}
 
 	private List<String> getDevSkillsForIssue(Developer d) {
@@ -109,7 +91,7 @@ public class CaseBasedReasoning {
 		return skills;
 	}
 
-	private List<Developer> getAllSimilarDevelopers(List<SimilarIssue> similarIssues) {
+	private static List<Developer> getAllSimilarDevelopers(List<SimilarIssue> similarIssues) {
 		List<Developer> developers = new LinkedList<Developer>();
 		for(SimilarIssue si : similarIssues){
 			if(!developers.contains(si.getDeveloper())){

@@ -227,23 +227,23 @@ define(["jquery"], function($) {
 	  }
   
   //Funcion que devuelve los desarrolladores recomendados
-    function getRecomendation(valueSkills, valueMetrics, metricsValuesRecomendation, callback) {
-    var skillQuery = "" ;
+    function getRecommendation(valueSkills, valueMetrics, metricsValuesRecomendation, callback) {
+    var metricQuery = "" ;
     var sprint=2 ; 
     pearsonFactor = 0.95;
-    /*$.each(skills, function(i, skill){
+    $.each(metricsValuesRecomendation, function(i, metric){
       if (i===0) {
-        skillQuery+='?s='+skill;
+    	  metricQuery+='?s='+metric;
       } else {
-        skillQuery+='&s='+skill;
+    	  metricQuery+='&s='+metric;
       }
-    });*/
+    });
     $.ajax({
       type: 'GET',
-      url: location.origin+apiPath+'getpredic/'+metricName+'/'+metricValue+'/'+pearsonFactor+'/'+sprint+skillQuery,
+      url: location.origin+apiPath+'getRecommendation/'+valueSkills+'/'+valueMetrics+'/'+sprint+metricQuery,
       dataType: 'json', // data type of response
       error: function(jqXHR, textStatus, errorThrown) {
-        alert("Error en el response de "+apiPath+"getpredic");
+        alert("Error en el response de "+apiPath+"getRecommendation");
         console.log(jqXHR, textStatus, errorThrown);
       },
       success: function(data) {
@@ -251,6 +251,7 @@ define(["jquery"], function($) {
       }
 
     });
+    	alert("LLego a la recomendacion");
   }
 
   return {    
@@ -264,6 +265,7 @@ define(["jquery"], function($) {
     storeAnalysis: storeAnalysis,
     storeMetric: storeMetric,
     getPredictions: getPredictions,
-    getDevRecommendationbyIssue: getDevRecommendationbyIssue
+    getDevRecommendationbyIssue: getDevRecommendationbyIssue,
+    getRecommendation: getRecommendation
   };
 });
