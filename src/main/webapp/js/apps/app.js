@@ -260,11 +260,15 @@ define(
       //alert("hice click en recomendar");
       predictionsRecommendation = [] ;
       var minCorrelation = parseFloat($('#recommendationCorrelation').val());
-      if (minCorrelation <= 1.0) { 
-          //alert("dentro del if de recomendacion");
-          //alert("Adentro del for en recomendacion");
-          tesys.getRecommendation(0.5, 0.5, metricsValuesRecomendation, addPredictionsRecommendations); 
-          console.log("Pestaña de recomendacion"+metricsValuesRecomendation);
+      if (minCorrelation <= 1.0) {  
+    	  alert("antes del for");
+    	  for (var m in metricsValuesRecomendation) {
+    		  //Cambiar el 0.5 , 0.5 por una variable
+    		  alert("metrica "+m);
+    		  alert("valor "+metricsValuesRecomendation[m]);
+    		  tesys.getRecommendation(0.5, 0.5, m, metricsValuesRecomendation[m], addPredictionsRecommendations);
+    		  console.log("Pestaña de recomendacion"+metricsValuesRecomendation);
+    	  }      	  
         }
       });
     

@@ -57,7 +57,7 @@ public class CaseBasedReasoning {
         
 	}
 	
-	public static List<Developer> getRecommendation(double factorLabel, double factorSkill, List<String>metrics){
+	public static List<Developer> getRecommendation(double factorLabel, double factorSkill, String metricKey, double value, int sprint){
 		
 		//aca los factores no deberian ser cero para que no influya despues durante la recomendacion??
 		ElasticsearchDao<Developer> daoi = new ElasticsearchDao<Developer>(Developer.class,

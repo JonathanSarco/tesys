@@ -695,18 +695,17 @@ public class Controller {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/getRecommendation/{label}/{skill}/{sprint}")
+	@Path("/getRecommendation/{label}/{skill}/{metricName}/{metricValue}/{sprint}")
 	public Response getRecommendation(	@PathParam("label") Double label,
 										@PathParam("skill") Double skill,
-										@PathParam("sprint") Integer sprint, 
-										@QueryParam("m") List<String> metric) {
+										@PathParam("metricName") String metricKey,
+										@PathParam("metricValue") Double value,
+										@PathParam("sprint") Integer sprint/*, 
+										@QueryParam("m") List<String> metric*/) {
 		
 		ResponseBuilder response;
-		List<String>metric2=new LinkedList<String>();
-		metric2.add("1");
-		metric2.add("2");
 		response = Response.ok(
-			CaseBasedReasoning.getRecommendation(label,skill,metric2)
+			CaseBasedReasoning.getRecommendation(label,skill,metricKey, value, sprint)
 		);
 		return response.build();
 	}

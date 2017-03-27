@@ -227,26 +227,28 @@ define(["jquery"], function($) {
 	  }
   
   //Funcion que devuelve los desarrolladores recomendados
-    function getRecommendation(valueSkills, valueMetrics, metricsValuesRecomendation, callback) {
+    function getRecommendation(valueSkills, valueMetrics,metricName, metricValue, metricsValuesRecomendation, callback) {
     var metricQuery = "" ;
     var sprint=2 ; 
     pearsonFactor = 0.95;
-    $.each(metricsValuesRecomendation, function(i, metric){
+    //Hacer Esto para las Skills
+  /*  $.each(metricsValuesRecomendation, function(i, metric){
       if (i===0) {
     	  metricQuery+='?s='+metric;
       } else {
     	  metricQuery+='&s='+metric;
       }
-    });
+    });*/
     $.ajax({
       type: 'GET',
-      url: location.origin+apiPath+'getRecommendation/'+valueSkills+'/'+valueMetrics+'/'+sprint+metricQuery,
+      url: location.origin+apiPath+'getRecommendation/'+valueSkills+'/'+valueMetrics+'/'+metricName+'/'+metricValue+'/'+sprint/*+metricQuery*/,
       dataType: 'json', // data type of response
       error: function(jqXHR, textStatus, errorThrown) {
         alert("Error en el response de "+apiPath+"getRecommendation");
         console.log(jqXHR, textStatus, errorThrown);
       },
       success: function(data) {
+    	  alert("success "+data);
         callback(data) ;
       }
 
