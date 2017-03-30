@@ -13,24 +13,26 @@ public class SkillsSimilarity {
 		List<SimilarIssue> similarIssues = new LinkedList<SimilarIssue>();
 		
 		//Calcular
-		for (Skill s : skills){
-			for (Developer d : devs) {
-				SimilarIssue similarIssue = new SimilarIssue();
-				for (Issue i : d.getIssues()) {
-					if(i.getSkills() != null) {					
-						for (Skill skill : i.getSkills()) {
-							if( s == skill ) {
-								//contar +1
-								similarIssue.setSimilarSkills(similarIssue.getSimilarSkills()+1);	
-								similarIssue.setDeveloper(d);
-							}
-						}			
+		if(skills != null){
+			for (Skill s : skills){
+				for (Developer d : devs) {
+					SimilarIssue similarIssue = new SimilarIssue();
+					for (Issue i : d.getIssues()) {
+						if(i.getSkills() != null) {					
+							for (Skill skill : i.getSkills()) {
+								if( s == skill ) {
+									//contar +1
+									similarIssue.setSimilarSkills(similarIssue.getSimilarSkills()+1);	
+									similarIssue.setDeveloper(d);
+								}
+							}			
+						}	
+						similarIssue.setIssue(i);
+					}
+					if(similarIssue.getSimilarSkills()>0){
+						similarIssues.add(similarIssue);
 					}	
-					similarIssue.setIssue(i);
 				}
-				if(similarIssue.getSimilarSkills()>0){
-					similarIssues.add(similarIssue);
-				}	
 			}
 		}
 		return similarIssues;

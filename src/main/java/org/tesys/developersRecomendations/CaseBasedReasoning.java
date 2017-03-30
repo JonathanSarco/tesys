@@ -19,8 +19,7 @@ import org.tesys.correlations.Predictions;
 import org.tesys.recomendations.DevelopersShortedBySimilarLabelsAndSkills;
 
 public class CaseBasedReasoning {
-	
-	static DevelopersShortedBySimilarLabelsAndSkills developers;
+
 	List<Case> cases= new ArrayList<Case>();
 	public CaseBasedReasoning(){
 		
@@ -65,12 +64,12 @@ public class CaseBasedReasoning {
 		List<SimilarIssue> similarIssues= new LinkedList<SimilarIssue>();
 		List<Developer> ld  = daoi.readAll();
 		List<Developer> similarDevelopers = new LinkedList<>();
-		Predictions predictions = new Predictions();
+	//	Predictions predictions = new Predictions();
 		
 		for (Developer d : ld) {			
 			List<Issue> li = d.getIssues();
 			for (Issue i : li) {
-					similarIssues.addAll(developers.getDevelopersShortedBySimilarLabelsAndSkills(i,factorLabel,factorSkill,ld));
+					similarIssues.addAll(DevelopersShortedBySimilarLabelsAndSkills.getDevelopersShortedBySimilarLabelsAndSkills(i,factorLabel,factorSkill,ld));
 					//ver si nos quedamos con los que tengan mejor coeficiente
 					similarDevelopers = getAllSimilarDevelopers(similarIssues);		
 			}			
