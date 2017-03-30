@@ -93,7 +93,7 @@ public class Predictions {
 
 	}
 
-	public static List<DeveloperPrediction> getPredictionsDeveloper(String metricKey,
+	public static MetricPrediction  getPredictionsDeveloper(String metricKey,
 			Double value, Double correlationVariation, int sprint, Developer developer ) {
 
 
@@ -160,7 +160,7 @@ public class Predictions {
 		if(!metricPrediction.getMetrics().isEmpty()) {
 			developerPrediction.add( new DeveloperPrediction(developer.getName(), dnq.execute(), metricPrediction) );
 		}
-		return developerPrediction;
+		return metricPrediction;
 
 	}
 
