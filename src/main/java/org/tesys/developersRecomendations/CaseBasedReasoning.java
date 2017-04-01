@@ -26,98 +26,111 @@ public class CaseBasedReasoning {
 
 	List<Case> cases= new ArrayList<Case>();
 	ManhattanFunction manhattan=new ManhattanFunction();
-	
+
 	public CaseBasedReasoning(){
-		
-		
-		
+
+
+
 	}
-	
+
 	public List<Case> getDevRecommendationbyIssue()	{
-        
+
 		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
-        List<Long> versiones = avq.execute();
-        ElasticsearchDao<Case> dao;
-        ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
+		List<Long> versiones = avq.execute();
+		ElasticsearchDao<Case> dao;
+		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 
-        try {
-            dao = new ElasticsearchDao<Case>(
-                    Case.class, 
-                    ElasticsearchDao.DEFAULT_RESOURCE_CASE ); //devuelve la version mas actualizada de los analisis.
-        } catch (Exception e) {
-            return (List<Case>) response.build();
-        }
-        
-        List<Case> cases = dao.readAll();
-        if(cases.isEmpty()){
-        	Case cdp = new Case("idIssuPrueba");
-        	dao.create("caso de prueba", cdp);
-        }
+		try {
+			dao = new ElasticsearchDao<Case>(
+					Case.class, 
+					ElasticsearchDao.DEFAULT_RESOURCE_CASE ); //devuelve la version mas actualizada de los analisis.
+		} catch (Exception e) {
+			return (List<Case>) response.build();
+		}
 
-        response = Response.ok();
+		List<Case> cases = dao.readAll();
+		if(cases.isEmpty()){
+			Case cdp = new Case("idIssuPrueba");
+			dao.create("caso de prueba", cdp);
+		}
 
-        return (List<Case>) response.build();
-        
-        
-        
+		response = Response.ok();
+
+		return (List<Case>) response.build();
+
+
+
 	}
-	
+
 	public static List<Developer> getRecommendation(double factorLabel, double factorSkill, String metricKey, double value, int sprint){
-		
+
 		//aca los factores no deberian ser cero para que no influya despues durante la recomendacion??
 		ElasticsearchDao<Developer> daoi = new ElasticsearchDao<Developer>(Developer.class,
-		ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS);
+				ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS);
 		List<SimilarIssue> similarIssues= new LinkedList<SimilarIssue>();
 		List<Developer> ld  = daoi.readAll();
 		List<Developer> similarDevelopers = new LinkedList<>();
 		Vector<Double>manhattanValues=new Vector<Double>(); 
 		Predictions predictions = new Predictions();
-		
+
 		for (Developer d : ld) {			
 			List<Issue> li = d.getIssues();
 			for (Issue i : li) {
-					similarIssues.addAll(DevelopersShortedBySimilarLabelsAndSkills.getDevelopersShortedBySimilarLabelsAndSkills(i,factorLabel,factorSkill,ld));
-					//ver si nos quedamos con los que tengan mejor coeficiente
-					similarDevelopers = getAllSimilarDevelopers(similarIssues);	
-					
-			}	
-			
-			//NUEVO
-			Vector<Double>values=new Vector<Double>();
-			Vector<MetricPrediction>metrics=new Vector<MetricPrediction>();
-			double correlationVariation=0.3;
-			
-			for(Developer developer: similarDevelopers){
-				MetricPrediction m=predictions.getPredictionsDeveloper(metricKey, value, correlationVariation, sprint, developer);
-				metrics.add(m);
-			}		
-			
-			//Construir matriz	
-			double[][] matValues = new double[metrics.size()][values.size()];
-			for(int k=0;k<metrics.size();k++){
-				Collection<Double>valores=metrics.get(k).getMetrics().values();
-				for(Double val:valores){
-					values.add(val);
+				similarIssues.addAll(DevelopersShortedBySimilarLabelsAndSkills.getDevelopersShortedBySimilarLabelsAndSkills(i,factorLabel,factorSkill,ld));
+				//ver si nos quedamos con los que tengan mejor coeficiente
+				similarDevelopers = getAllSimilarDevelopers(similarIssues);	
+				
+				//Man
+
+				//Recorro los desarrolladores similares para obtener la correlación entre las tareas del mismo
+				List<Double>values=new LinkedList<Double>();
+				List<MetricPrediction> metrics = new LinkedList<MetricPrediction>();
+				double correlationVariation=0.3;
+
+				for(Developer developer: similarDevelopers){
+					MetricPrediction m = predictions.getPredictionsDeveloper(metricKey, value, correlationVariation, sprint, developer);
+					metrics.add(m);
 				}
+
+				int cantFilas = metrics.size();
+				for (MetricPrediction m : metrics){
+					Collection<Double>valores=m.getMetrics().values();
+					for(Double val : valores){
+						values.add(val);
+					}
+				}
+				int cantColumnas = values.size();
+				//Inicializo Matriz	
+				double[][] matValues = new double[cantFilas][cantColumnas];
+				for(int l=0;l<metrics.size();l++){
+					for(int j=0;j<values.size();j++){
+						matValues[l][j]=0.0;
+					}
+				}
+				//Completo Matriz con los valores de las Métricas estimadas
+				for(int k=0;k<metrics.size();k++){
+					for(int j=0;j<values.size();j++){
+						matValues[k][j]=values.get(j);
+					}
+				}
+
+				//Recorrer matriz
+				Vector<Double>aux= new Vector<Double>();
 				for(int j=0;j<values.size();j++){
-					matValues[k][j]=values.get(j);
-				}
-			}
-						
-			//Recorrer matriz
-			Vector<Double>aux= new Vector<Double>();
-			for(int j=0;j<values.size();j++){
-				for(int i=0;i<metrics.size();i++){
-					aux.add(matValues[i][j]);								
-				}
-				//calculo manhattan para cada metrica y guardo los valores obtenidos
-				manhattanValues.add(ManhattanFunction.manhattan(aux));
-			}
+					for(int m=0;m<metrics.size();m++){
+						aux.add(matValues[m][j]);								
+					}
+					//calculo manhattan para cada metrica y guardo los valores obtenidos
+					//Esto se guarda en el caso
+					//if(cantFilas > 1){
+						manhattanValues.add(ManhattanFunction.manhattan(aux));
+					//}				
+				}				
+			}	
 		}
-	
+
 		return similarDevelopers;	
 	}
-
 	private List<String> getDevSkillsForIssue(Developer d) {
 		List<String>skills=new LinkedList<String>();
 		List<Issue> issues = d.getIssues();
@@ -139,5 +152,5 @@ public class CaseBasedReasoning {
 		}
 		return developers;
 	}
-	
+
 }

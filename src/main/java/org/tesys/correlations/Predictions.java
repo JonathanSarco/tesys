@@ -100,6 +100,7 @@ public class Predictions {
 		MetricPrediction metricPrediction;
 
 		IssuesWithMetrics is = new IssuesWithMetrics(sprint);
+		//Recorro las issues del developer!
 		List<Issue> l = is.execute();
 
 
@@ -116,6 +117,7 @@ public class Predictions {
 
 		metrics.addAll(l.get(0).getMetrics().keySet());
 		metrics.remove("quacode");
+		
 		metrics.remove("prec");
 		
 		metricPrediction = new MetricPrediction(developer.getName(), developer.getName());
@@ -130,10 +132,11 @@ public class Predictions {
 					for (Issue issue : l) {
 						if( issue.getUser().equals(developer.getName()) && metrics.get(i).equals(metricKey) ) { 
 							List<String> isk = new LinkedList<String>();
-							for (Skill sk : issue.getSkills()) {
-								isk.add(sk.skillName);
+							if(issue.getSkills() != null){
+								for (Skill sk : issue.getSkills()) {
+									isk.add(sk.skillName);
+								}
 							}
-
 							pearson1.add(issue.getMetrics().get(metrics.get(i)));
 							pearson2.add(issue.getMetrics().get(metrics.get(j)));
 
