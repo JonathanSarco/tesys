@@ -91,46 +91,49 @@ public class CaseBasedReasoning {
 					MetricPrediction m = predictions.getPredictionsDeveloper(metricKey, value, correlationVariation, sprint, developer);
 					metrics.add(m);
 				}
-
-				int cantFilas = metrics.size();
-				for (MetricPrediction m : metrics){
-					Collection<Double>valores=m.getMetrics().values();
-					for(Double val : valores){
-						values.add(val);
-					}
-				}
-				int cantColumnas = values.size();
-				//Inicializo Matriz	
-				double[][] matValues = new double[cantFilas][cantColumnas];
-				for(int l=0;l<metrics.size();l++){
-					for(int j=0;j<values.size();j++){
-						matValues[l][j]=0.0;
-					}
-				}
-				//Completo Matriz con los valores de las Métricas estimadas
-				for(int k=0;k<metrics.size();k++){
-					for(int j=0;j<values.size();j++){
-						matValues[k][j]=values.get(j);
-					}
-				}
-
-				//Recorrer matriz
-				Vector<Double>aux= new Vector<Double>();
-				for(int j=0;j<values.size();j++){
-					for(int m=0;m<metrics.size();m++){
-						aux.add(matValues[m][j]);								
-					}
-					//calculo manhattan para cada metrica y guardo los valores obtenidos
-					//Esto se guarda en el caso
-					//if(cantFilas > 1){
-						manhattanValues.add(ManhattanFunction.manhattan(aux));
-					//}				
-				}				
+				List<Double> manhattan = getManhattanEstimationForDevelopers(metrics);
 			}	
 		}
 
 		return similarDevelopers;	
 	}
+	
+	private static List<Double> getManhattanEstimationForDevelopers(List<MetricPrediction> metrics) {
+		List<Double> manhattanValues = new LinkedList<Double>();
+		List<Double>values=new LinkedList<Double>();
+		int cantFilas = metrics.size();
+		for (MetricPrediction m : metrics){
+			Collection<Double>valores=m.getMetrics().values();
+			for(Double val : valores){
+				values.add(val);
+			}
+		}
+		int cantColumnas = values.size();
+		//Inicializo Matriz	
+		double[][] matValues = new double[cantFilas][cantColumnas];
+		for(int l=0;l<metrics.size();l++){
+			for(int j=0;j<values.size();j++){
+				matValues[l][j]=0.0;
+			}
+		}
+		//Completo Matriz con los valores de las Métricas estimadas
+		for(int k=0;k<metrics.size();k++){
+			for(int j=0;j<values.size();j++){
+				matValues[k][j]=values.get(j);
+			}
+		}
+
+		//Recorrer matriz
+		Vector<Double>aux= new Vector<Double>();
+		for(int j=0;j<values.size();j++){
+			for(int m=0;m<metrics.size();m++){
+				aux.add(matValues[m][j]);								
+			}
+			manhattanValues.add(ManhattanFunction.manhattan(aux));
+		}			
+		return manhattanValues;
+	}
+	
 	private List<String> getDevSkillsForIssue(Developer d) {
 		List<String>skills=new LinkedList<String>();
 		List<Issue> issues = d.getIssues();
