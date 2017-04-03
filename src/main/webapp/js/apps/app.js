@@ -33,10 +33,14 @@ define(
     var developers = new model.DeveloperCollection();
     var issues = new model.RecommendationCollection();
     var metrics = new model.MetricCollection() ;
-    // Modelo pestaña de Recomendacion
-    var metricsRecommendation = new model.MetricCollection() ;
-    
     var skills = new model.MetricCollection() ;
+
+    /**
+    * Modelo de Recomendacion
+    *
+    **/
+
+    var metricsRecommendation = new model.MetricCollection();
 
     // Definicion de Vistas.
     var devListView = new view.DeveloperCollectionView(
@@ -75,14 +79,9 @@ define(
             plotter: skillPlotter,
             type: 'skills'
     });
-    
-    /** Creacion de los elementos de la vista del Panel de recomendaciones */
-    //Boton para asignar nuevas metricas
-    
+
     // array of {metricKey: floatValue}
     var metricsValues = {};
-    //Metricas de recomendacion
-    var metricsValuesRecomendation = {};
 
     //Selector de las metricas
     var metricRecomendationView = new view.MetricSelectView(
@@ -92,7 +91,6 @@ define(
     );
 
     var estimationSelectedSkills = { array: [] };
-
     
     // Select de Skill para las estimaciones
     var estimationSkillsSelectorView = new recomendationView.SkillCollectionView(
@@ -102,14 +100,12 @@ define(
         selectedSkills: estimationSelectedSkills
       }
     );
-
-    //Vistas de la recomendacion. Seleccion de las metricas.
-    var recomendationsMetricsView = new view.MetricSelectView(
-      {
-        collection: metricsRecommendation,
-        el: $('#recomendationMetricSelect2')
-      }
-    );
+    
+    // Selects para las recomendaciones
+    var recomendationMetricsView = new view.MetricSelectView(
+      { collection: metricsRecommendation,
+        el: $('#recomendationMetric') 
+      });
     
     $('#estimationInsertBtn').click(function(){
       var metricValue = parseFloat($('#estimationMetricInput').val());
@@ -136,22 +132,9 @@ define(
         alert("Invalid Input");
       }
     });
-
-    //Skills para la recomendacion
-    var recommendationSelectedSkills = { array: [] };
     
-    //Recomendacion de los contenedores.
-    var recomendationsSkillSelectorView = new recomendationView.SkillCollectionView(
-      {
-       collection: skills,
-       el: $('#recomendationsSkillSelector'), 
-       selectedSkills:recommendationSelectedSkills
-      });
-
     /* Predictions */
     var metricsPredicted = new model.MetricCollection() ;
-    // Modelo de la recomendacion de las metricas usadas en nuestra pestania
-    var metricsRecommendationPredicted = new model.MetricCollection();
 
     var metricsPredToPlot = { array:[] };
 
@@ -175,101 +158,25 @@ define(
         }
     );
 
-    // Selects para las recomendaciones
-    var recomendationMetricsView = new view.MetricSelectView(
-      { collection: metricsRecommendation,
-        el: $('#recomendationMetric') 
-      }
-      );
-    // Modelo para la recomendacion.
-    var devRecom = new model.DeveloperPredictionCollection();
-    var devRecomListView = new recomendationView.DeveloperPredictionCollectionView(
-      { 
-        el: $('#developers-predictions-recommendation'),
-        collection: devRecom,
-        plotter: [predPlotter, new radar("predRadar")],
-        attrToPlot: ['metrics', 'skills']
+    //Metricas de recomendacion
+    var metricsValuesRecomendation = {};
+    
+    //Vistas de la recomendacion. Seleccion de las metricas.
+    var recomendationsMetricsView = new view.MetricSelectView(
+      {
+        collection: metricsRecommendation,
+        el: $('#recomendationMetricSelect2')
       });
-
-
-    //Hacer lo mismo que el insert de estimacion pero para la pestaña de recomendacion
-    $('#recomendationInsertBtn').click(function(){
-      var metricValue = parseFloat($('#recomendationMetricInput').val());
-       if (!isNaN(metricValue) && isFinite(metricValue)) {
-          var metricId = $('#recomendationMetricSelect2').val();
-          //inserto o reemplazo la metrica en map metricsValues
-          metricsValuesRecomendation[metricId] = metricValue;
-          //inserto o reemplazo la metrica en la vista
-          var metricList = $('#metricListRecommendation');
-          var metricListElement = $('#'+metricId, metricList) ;
-          if (metricListElement) {
-            metricListElement.remove();
-        }
-        var li = $('<li class="list-group-item" id="'+metricId+'">').text(metricId+"= "+metricValue) ;
-        metricList.append(li);
-        //Event listener para eliminar metrica si le hago doble click
-        li.on('dblclick', function(){
-          delete metricsValuesRecomendation[this.id] ;
-          $(this).remove();
-        });
-        console.log(metricsValuesRecomendation);
-      } else {
-        alert("Invalid Input");
-      }
-    });
-
-    //Funcion para la prediccion de Recomendacion.
-    var predictionsRecommendation = []; //Developers a partir de las metricas seleccionadas.
-
-    function addPredictionsRecommendations (data) {
-      console.log("dentro de la funcion, dta "+data);
-      if (predictionsRecommendation === undefined || predictionsRecommendation.length === 0) {
-        predictionsRecommendation = data ;
-      } else {
-        for (i=0; i<data.length; i++) {
-          var j = 0;
-          //busco si el developer se encontraba en la prediccion
-          while (j<predictionsRecommendation.length && data[i].name!=predictionsRecommendation[j].name) {
-            j++;
-          }
-          if(j>=predictionsRecommendation.length) { 
-            // Si el developer no se encontro agrego nuevo developer a la predicicon
-            predictionsRecommendation.push(data[i]); 
-          } else { 
-            //En caso de haber repetidos, piso las metricas y desviaciones viejas por las nuevas.
-            for (var metric in data[i].issues[0].metrics) {
-              predictionsRecommendation[j].issues[0].metrics[metric] = data[i].issues[0].metrics[metric] ;
-              predictionsRecommendation[j].issues[0].deviations[metric] = data[i].issues[0].deviations[metric] ;
-            }
-          }
-        }
-      }
-      console.log("Recomendacion"+predictionsRecommendation);
-      devRecom.reset(predictionsRecommendation);
-      
-      metricsRecommendationPredicted.reset(
-        selectMetricsFromModel(
-          metricsRecommendation, 
-          metricSetFromPredictions(predictionsRecommendation)
-        ).models
-      );
-    }
-
-    //Boton de recomendar
-      $('#RecommendDeveloperbyIssue').click(function(){
-      //alert("hice click en recomendar");
-      predictionsRecommendation = [] ;
-      var minCorrelation = parseFloat($('#recommendationCorrelation').val());
-      if (minCorrelation <= 1.0) {  
-    	  alert("antes del for");
-    	  for (var m in metricsValuesRecomendation) {
-    		  //Cambiar el 0.5 , 0.5 por una variable
-    		  alert("metrica "+m);
-    		  alert("valor "+metricsValuesRecomendation[m]);
-    		  tesys.getRecommendation(0.5, 0.5, m, metricsValuesRecomendation[m], addPredictionsRecommendations);
-    		  console.log("Pestaña de recomendacion"+metricsValuesRecomendation);
-    	  }      	  
-        }
+    
+    //Skills para la recomendacion
+    var recommendationSelectedSkills = { array: [] };
+    
+    //Recomendacion de los contenedores.
+    var recomendationsSkillSelectorView = new recomendationView.SkillCollectionView(
+      {
+       collection: skills,
+       el: $('#recomendationsSkillSelector'), 
+       selectedSkills:recommendationSelectedSkills
       });
     
     /**
@@ -378,12 +285,111 @@ define(
       if (minCorrelation <= 1.0) { 
         for (var m in metricsValues) {
           tesys.getPredictions(m, metricsValues[m], minCorrelation, estimationSelectedSkills.array, addPredictions); 
-          console.log("Pase por get predictions de ESTIMACION")
         }
       }
     });
 
     /*** fin recomendaciones */
+
+    /**
+    * Pestaña de RECOMENDACION DE DESARROLLADORES
+    **/
+
+    // Modelo de las metricas
+    var metricsRecommendationPredicted = new model.MetricCollection();
+    // Modelo para la recomendacion.
+    var devRecom = new model.DeveloperPredictionCollection();
+    var devRecomListView = new recomendationView.DeveloperRecommendationCollectionView(
+      { 
+        el: $('#developers-predictions-recommendation'),
+        collection: devRecom
+        //plotter: [predPlotter, new radar("predRadar")],
+        //attrToPlot: ['metrics', 'skills']
+      });
+
+    //Hacer lo mismo que el insert de estimacion pero para la pestaña de recomendacion
+    $('#recomendationInsertBtn').click(function(){
+      var metricValue = parseFloat($('#recomendationMetricInput').val());
+       if (!isNaN(metricValue) && isFinite(metricValue)) {
+          var metricId = $('#recomendationMetricSelect2').val();
+          //inserto o reemplazo la metrica en map metricsValues
+          metricsValuesRecomendation[metricId] = metricValue;
+          //inserto o reemplazo la metrica en la vista
+          var metricList = $('#metricListRecommendation');
+          var metricListElement = $('#'+metricId, metricList) ;
+          if (metricListElement) {
+            metricListElement.remove();
+        }
+        var li = $('<li class="list-group-item" id="'+metricId+'">').text(metricId+"= "+metricValue) ;
+        metricList.append(li);
+        //Event listener para eliminar metrica si le hago doble click
+        li.on('dblclick', function(){
+          delete metricsValuesRecomendation[this.id] ;
+          $(this).remove();
+        });
+        console.log(metricsValuesRecomendation);
+      } else {
+        alert("Invalid Input");
+      }
+    });
+
+    //Funcion para la prediccion de Recomendacion.
+    var predictionsRecommendation = []; //Developers a partir de las metricas seleccionadas.
+
+    function addPredictionsRecommendations (data) {
+      //console.log("dentro de la funcion, dta "+data);
+      if (predictionsRecommendation === undefined || predictionsRecommendation.length === 0) {
+        predictionsRecommendation = data ;
+      } else {
+        for (i=0; i<data.length; i++) {
+          var j = 0;
+          //busco si el developer se encontraba en la prediccion
+          while (j<predictionsRecommendation.length && data[i].name!=predictionsRecommendation[j].name) {
+            j++;
+          }
+          if(j>=predictionsRecommendation.length) { 
+            // Si el developer no se encontro agrego nuevo developer a la predicicon
+            predictionsRecommendation.push(data[i]); 
+          } else { 
+            //En caso de haber repetidos, piso las metricas y desviaciones viejas por las nuevas.
+            for (var metric in data[i].issues[0].metrics) {
+              predictionsRecommendation[j].issues[0].metrics[metric] = data[i].issues[0].metrics[metric] ;
+              predictionsRecommendation[j].issues[0].deviations[metric] = data[i].issues[0].deviations[metric] ;
+            }
+          }
+        }
+      }
+      console.log("Recomendacion "+predictionsRecommendation);
+      devRecom.reset(predictionsRecommendation);
+      
+      metricsRecommendationPredicted.reset(
+        selectMetricsFromModel(
+          metricsRecommendation, 
+          metricSetFromPredictions(predictionsRecommendation)
+        ).models
+      );
+    }
+
+      //Boton de recomendar
+      $('#RecommendDeveloperbyIssue').click(function(){
+      //alert("hice click en recomendar");
+      predictionsRecommendation = [] ;
+      var minCorrelation = parseFloat($('#recommendationCorrelation').val());
+      if (minCorrelation <= 1.0) {  
+        alert("antes del for");
+       // for (var m in metricsValuesRecomendation) {
+          //Cambiar el 0.5 , 0.5 por una variable
+          //alert("metrica "+m);
+          //alert("valor "+metricsValuesRecomendation[m]);
+          tesys.getRecommendation(0.5, 0.5,"a",0,metricsValuesRecomendation, addPredictionsRecommendations);
+      //  }         
+        }
+      });
+
+      /**
+      * Fin de pestaña de RECOMENDACIONES
+      **/
+
 
     // Extraccion de los datos desde Tesys al modelo de la UI
     tesys.getAnalysis(function(data){
@@ -486,12 +492,6 @@ define(
         $('#submitAnalysisKey').val()
       ); 
     });
-    
-   /* /*Funcion para ver si anda el boton*/
-    /*$('#RecommendDeveloperbyIssue').click(function(event) {
-    	tesys.getDevRecommendationbyIssue();
-    	alert("se hace click en el boton");
-      }); */   
   };
   
   return { 

@@ -288,8 +288,6 @@ define(
           issueView.plotSingle(self.options.plotter, self.options.type);
         });
       } 
-
-
     }
   });
 
@@ -340,10 +338,10 @@ define(
       var self = this;
       _(this.collection.models).each(function(item){ // in case collection is not empty
         self.$el.append( new Option(
-                                  item.get('nombre')+": "+
-                                  item.get('descripcion'), 
-                                  item.get('key')));        
-      });
+                                    item.get('nombre')+": "+
+                                    item.get('descripcion'), 
+                                    item.get('key')));        
+        });
       return this;
     }
   });
@@ -413,15 +411,14 @@ define(
 
     render: function(){ 
       _(this.collection.models).each(function(item){ // in case collection is not empty
-        var devIssuesContainer = document.createElement("div");
-        devIssuesContainer.setAttribute('class', 'list-group-item list-group-item-success');
-        devIssuesContainer.id = item.get('issueId');        
-        var issueView = new IssueView(
-          { model: item
-          }
-        );
-        devIssuesContainer.appendChild(issueView.render().el);
-        document.getElementById("developers-reco").appendChild(devIssuesContainer);
+          var devIssuesContainer = document.createElement("a");
+          devIssuesContainer.setAttribute('class', 'list-group-item list-group-item-warning');
+          devIssuesContainer.setAttribute('data-parent','#MainMenu3');
+          devIssuesContainer.id = item.get('issueId');
+          devIssuesContainer.textContent = item.get('issueId');
+          //Referencia
+          devIssuesContainer.setAttribute('href','#pred'+item.get('issueId'));
+          document.getElementById("developers-reco").appendChild(devIssuesContainer);
         });
        return this;
     }

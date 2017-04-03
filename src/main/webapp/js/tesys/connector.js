@@ -226,10 +226,14 @@ define(["jquery"], function($) {
 	    });
 	  }
   
-  //Funcion que devuelve los desarrolladores recomendados
+    /**
+    * Pestaña de la recomendacion agregada
+    *
+    **/
+
     function getRecommendation(valueSkills, valueMetrics,metricName, metricValue, metricsValuesRecomendation, callback) {
-    var metricQuery = "" ;
-    var sprint=2 ; 
+    var metricQuery = "";
+    var sprint = 2; 
     pearsonFactor = 0.95;
     //Hacer Esto para las Skills
   /*  $.each(metricsValuesRecomendation, function(i, metric){
@@ -249,7 +253,7 @@ define(["jquery"], function($) {
       },
       success: function(data) {
     	  alert("success "+data);
-        callback(data) ;
+        callback(data);
       }
 
     });
@@ -268,6 +272,7 @@ define(["jquery"], function($) {
     storeMetric: storeMetric,
     getPredictions: getPredictions,
     getDevRecommendationbyIssue: getDevRecommendationbyIssue,
+    //Recomendacion
     getRecommendation: getRecommendation
   };
 });

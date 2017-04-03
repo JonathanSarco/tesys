@@ -110,6 +110,8 @@ define(
     model: IssueRecommendation
   });
 
+  
+
   return {
     Issue: Issue,
     IssueCollection: IssueCollection,

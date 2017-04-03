@@ -118,7 +118,8 @@ define(
       devNameContainer.setAttribute('data-parent', '#MainMenu2');
       devNameContainer.setAttribute('data-toggle', 'collapse');
       devNameContainer.setAttribute('href','#pred'+this.model.get('name'));
-      this.developerElement = devNameContainer ;
+      this.developerElement = devNameContainer;
+      //alert(this.model.get('displayName'));
       // If developer has not issues --> line-throught on devNameContainer.textContent
       if (_.isEmpty(this.model.get('issues').models)) {
         devNameContainer.style.textDecoration = this.DECORATION_HASNOT_ISSUES;
@@ -293,7 +294,6 @@ define(
       this.options = options || {};
       // every function that uses 'this' as the current object should be in here
       _.bindAll(this, 'render', 'appendItem');
-
       //Event subscription
       this.collection.on({'reset': this.render});
       
@@ -319,12 +319,71 @@ define(
     }
   });
 
+  /**
+  * Pestaña de RECOMENDACION DE DESARROLLADORES
+  **/
+
+    var DeveloperRecommendationView = Backbone.View.extend({
+    initialize: function(options){
+      this.options = options || {};
+      _.bindAll(this, 'render');
+    },
+    render: function(){
+        var self = this ;  
+        var devIssuesContainer = document.createElement("a");
+        devIssuesContainer.setAttribute('class', 'list-group-item list-group-item-success');
+        devIssuesContainer.setAttribute('data-parent', '#MainMenu4');
+        devIssuesContainer.setAttribute('href','#pred'+this.model.get('name'));
+        devIssuesContainer.textContent = this.model.get('displayName');
+        alert('Model displayName'+this.model.get('displayName'));
+        this.el.appendChild(devIssuesContainer); 
+        //});
+      return this;
+    }
+    });
+
+    var DeveloperRecommendationCollectionView = Backbone.View.extend({
+    
+    initialize: function(options){
+      this.options = options || {};
+      // every function that uses 'this' as the current object should be in here
+      _.bindAll(this, 'render', 'appendItem');
+      this.collection.on({'reset': this.render});
+      this.render();
+    },
+
+    render: function(){
+      this.$el.empty();
+      var self = this;
+      alert(this.collection.models.length);
+      _(this.collection.models).each(function(item) { // in case collection is not empty
+        self.appendItem(item);
+        alert('Paso por aca');
+      }, this);
+    },
+
+    appendItem: function(item){
+      var itemView = new DeveloperRecommendationView(
+        { model: item, 
+          plotter: this.options.plotter,
+          attrToPlot: this.options.attrToPlot
+        }
+      );
+      this.$el.append(itemView.render().el);
+      //alert("Elemento developerrecoomendation"+itemView.render().el);
+    }
+  });
+
+
   return {
     SkillCollectionView: SkillCollectionView,
     issuesViewsToPlot: issuesViewsToPlot,
     DeveloperPredictionView: DeveloperPredictionView,
     DeveloperPredictionCollectionView: DeveloperPredictionCollectionView,
     MetricPredictionView: MetricPredictionView,
-    MetricPredictionCollectionView: MetricPredictionCollectionView
+    MetricPredictionCollectionView: MetricPredictionCollectionView,
+    // Recomendacion
+    DeveloperRecommendationView: DeveloperRecommendationView,
+    DeveloperRecommendationCollectionView: DeveloperRecommendationCollectionView 
   };
 });
