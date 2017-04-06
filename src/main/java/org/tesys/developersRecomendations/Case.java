@@ -1,12 +1,16 @@
 package org.tesys.developersRecomendations;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.tesys.core.analysis.skilltraceability.Skill;
 import org.tesys.core.estructures.Developer;
+import org.tesys.core.estructures.Issue;
 import org.tesys.core.estructures.Metric;
+import org.tesys.correlations.DeveloperPrediction;
 import org.tesys.util.MD5;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -18,19 +22,20 @@ public class Case {
 	
 	static int idCase=0;
 	// *** Problema ***
-	String idIssue;
+	Issue idIssue;
 	String[] labels;
 	Skill[] neededSkills;
 	// *** Fin Problema ***
 	
 	// *** Solucion ***
-	Developer[] recommendedDevelopers;
+	DeveloperPrediction[] recommendedDevelopers;
+	//String displayName;
 	Metric[] estimatedMetrics;
 	// *** Fin Solucion ***
 	
 	// *** Resultado ***
 	Developer performDeveloper;
-	Metric[] realMetrics;
+	Map<String, Double> realMetrics;
 	Skill[] realSkills;
 	// *** Fin Resultado ***
 	
@@ -38,14 +43,14 @@ public class Case {
 		// for jason
 	}
 	
-    public Case(String idIssue) {
+    public Case(Issue idIssue) {
 	super();
 	this.idIssue = idIssue;
 	this.idCase++;
     }
     
-    public Case(String idIssue, String[] labels, Metric[] estimatedMetrics, Developer[] recommendedDevelopers, 
-    		Developer performDeveloper, Metric[] realMetrics) {
+    public Case(Issue idIssue, String[] labels, Metric[] estimatedMetrics, DeveloperPrediction[] recommendedDevelopers, 
+    		Developer performDeveloper, Map<String, Double> realMetrics) {
     	// *** Problema ***
     	this.idIssue = idIssue;
     	this.labels = labels;
@@ -63,12 +68,12 @@ public class Case {
     	this.idCase++;
     }
 
-	public String getIdIssue() {
+	public Issue getIdIssue() {
 		return idIssue;
 	}
 
-	public void setIdIssue(String idIssue) {
-		this.idIssue = idIssue;
+	public void setIdIssue(Issue i) {
+		this.idIssue = i;
 	}
 
 	public String[] getLabels() {
@@ -87,12 +92,12 @@ public class Case {
 		this.estimatedMetrics = estimatedMetrics;
 	}
 
-	public Developer[] getRecommendedDevelopers() {
+	public DeveloperPrediction[] getRecommendedDevelopers() {
 		return recommendedDevelopers;
 	}
 
-	public void setRecommendedDevelopers(Developer[] recommendedDevelopers) {
-		this.recommendedDevelopers = recommendedDevelopers;
+	public void setRecommendedDevelopers(DeveloperPrediction[] devPredictionSimilar2) {
+		this.recommendedDevelopers = devPredictionSimilar2;
 	}
 
 	public Developer getPerformDeveloper() {
@@ -103,12 +108,12 @@ public class Case {
 		this.performDeveloper = performDeveloper;
 	}
 
-	public Metric[] getRealMetrics() {
+	public Map<String, Double> getRealMetrics() {
 		return realMetrics;
 	}
 
-	public void setRealMetrics(Metric[] realMetrics) {
-		this.realMetrics = realMetrics;
+	public void setRealMetrics(Map<String, Double> map) {
+		this.realMetrics = map;
 	}
 	public Skill[] getNeededSkills() {
 		return neededSkills;
@@ -127,6 +132,6 @@ public class Case {
 	}
 
     public String getId() {
-	return MD5.generateId( idCase + idIssue);
+	return MD5.generateId( idCase + idIssue.getIssueId());
     }	
 }

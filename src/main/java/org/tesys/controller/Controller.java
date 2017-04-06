@@ -684,8 +684,8 @@ public class Controller {
         
         List<Case> cases = dao.readAll();
         if(cases.isEmpty()){
-        	Case cdp = new Case("idIssuPrueba");
-        	dao.create("caso de prueba", cdp);
+        //	Case cdp = new Case("idIssuPrueba");
+        //	dao.create("caso de prueba", cdp);
         }
 
         response = Response.ok();
