@@ -96,7 +96,7 @@ public class CaseBasedReasoning {
 
 				//Recorro los desarrolladores similares para obtener la correlación entre las tareas del mismo
 				List<MetricPrediction> metrics = new LinkedList<MetricPrediction>();
-				double correlationVariation=0.3;
+				double correlationVariation=0.1;
 				List<DeveloperPrediction> devPredictionSimilar = new LinkedList<DeveloperPrediction>();
 				
 				for(Developer developer: similarDevelopers){

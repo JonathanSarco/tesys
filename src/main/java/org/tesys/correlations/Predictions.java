@@ -130,17 +130,17 @@ public class Predictions {
 					pearson2 = new ArrayList<Double>();
 
 					for (Issue issue : l) {
-						if( issue.getUser().equals(developer.getName()) && metrics.get(i).equals(metricKey) ) { 
+						/*if( issue.getUser().equals(developer.getName()) && metrics.get(i).equals(metricKey) ) { 
 							List<String> isk = new LinkedList<String>();
 							if(issue.getSkills() != null){
 								for (Skill sk : issue.getSkills()) {
 									isk.add(sk.skillName);
 								}
-							}
+							}*/
 							pearson1.add(issue.getMetrics().get(metrics.get(i)));
 							pearson2.add(issue.getMetrics().get(metrics.get(j)));
 
-						}
+						//}
 
 					}
 
