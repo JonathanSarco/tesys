@@ -361,13 +361,13 @@ define(
       }
       console.log("Recomendacion "+predictionsRecommendation);
       devRecom.reset(predictionsRecommendation);
-      
+    /*  
       metricsRecommendationPredicted.reset(
-        selectMetricsFromModel(
+          selectMetricsFromModel(
           metricsRecommendation, 
           metricSetFromPredictions(predictionsRecommendation)
         ).models
-      );
+      );*/
     }
 
       //Boton de recomendar
@@ -377,13 +377,13 @@ define(
       var minCorrelation = parseFloat($('#recommendationCorrelation').val());
       if (minCorrelation <= 1.0) {  
         alert("antes del for");
-       // for (var m in metricsValuesRecomendation) {
-          //Cambiar el 0.5 , 0.5 por una variable
-          //alert("metrica "+m);
-          //alert("valor "+metricsValuesRecomendation[m]);
-          tesys.getRecommendation(0.5, 0.5,"a",0,metricsValuesRecomendation, addPredictionsRecommendations);
-      //  }         
-        }
+       for (var m in metricsValuesRecomendation) {
+         // Cambiar el 0.5 , 0.5 por una variable
+          alert("metrica "+m);
+          alert("valor "+metricsValuesRecomendation[m]);
+          tesys.getDevRecommendationbyIssue(0.5, 0.5,m,metricsValuesRecomendation[m],metricsValuesRecomendation, addPredictionsRecommendations);
+        }         
+       }
       });
 
       /**

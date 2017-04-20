@@ -1,4 +1,4 @@
-package org.tesys.developersRecomendations;
+package org.tesys.core.estructures;
 
 import java.util.Map;
 
@@ -7,9 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.tesys.core.analysis.skilltraceability.Skill;
-import org.tesys.core.estructures.Developer;
-import org.tesys.core.estructures.Issue;
-import org.tesys.core.estructures.Metric;
 import org.tesys.correlations.DeveloperPrediction;
 import org.tesys.util.MD5;
 

@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.tesys.core.analysis.skilltraceability.Skill;
 import org.tesys.core.db.AnalysisVersionsQuery;
 import org.tesys.core.db.ElasticsearchDao;
+import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
 import org.tesys.core.estructures.Metric;
@@ -43,35 +44,35 @@ public class CaseBasedReasoning {
 		List<Long> versiones = avq.execute();
 		ElasticsearchDao<Case> dao;
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
-		
-		List<Case>dbCases=new LinkedList<Case>();
+		List<Case> cases = new LinkedList<Case>();
+		List<Case>dbCases = new LinkedList<Case>();
 
 		try {
 			dao = new ElasticsearchDao<Case>(
 					Case.class, 
-					ElasticsearchDao.DEFAULT_RESOURCE_CASE ); //devuelve la version mas actualizada de los analisis.
+					ElasticsearchDao.DEFAULT_RESOURCE_CASE); //devuelve la version mas actualizada de los analisis.
 		} catch (Exception e) {
-			return (List<Case>) response.build();
+			return cases;
 		}
 
-		List<Case> cases = dao.readAll();
+		cases = dao.readAll();
 		if(cases.isEmpty()){
-		//	dbCases = getRecommendation(factorLabel, factorSkill, metricKey, value, sprint);
+			dbCases = getRecommendation(factorLabel, factorSkill, metricKey, value, sprint);
 			if(dbCases != null && !dbCases.isEmpty()){
 				for(Case c : dbCases){
-					dao.create(c.getId(), c);;
+					dao.create(c.getId(), c);
 				}			
 			}
 		}
-		response = Response.ok();
+		//response = Response.ok(cases);
 
-		return (List<Case>) response.build();
+		return cases;
 
 
 
 	}
 
-	public static List<Developer> getRecommendation(double factorLabel, double factorSkill, String metricKey, double value, int sprint){
+	public static List<Case> getRecommendation(double factorLabel, double factorSkill, String metricKey, double value, int sprint){
 
 		//aca los factores no deberian ser cero para que no influya despues durante la recomendacion??
 		ElasticsearchDao<Developer> daoi = new ElasticsearchDao<Developer>(Developer.class,
@@ -86,77 +87,78 @@ public class CaseBasedReasoning {
 
 		for (Developer d : ld) {			
 			List<Issue> li = d.getIssues();
-			for (Issue i : li) {
-				Case caseDevSmilar = new Case();
-				similarIssues.addAll(DevelopersShortedBySimilarLabelsAndSkills.getDevelopersShortedBySimilarLabelsAndSkills(i,factorLabel,factorSkill,ld));
-				//ver si nos quedamos con los que tengan mejor coeficiente
-				similarDevelopers = getAllSimilarDevelopers(similarIssues);	
-				
-				List<Metric>metricsEstimateForDev = new LinkedList<Metric>();
+			if (li != null && !li.isEmpty()){
+				for (Issue i : li) {
+					Case caseDevSmilar = new Case();
+					similarIssues.addAll(DevelopersShortedBySimilarLabelsAndSkills.getDevelopersShortedBySimilarLabelsAndSkills(i,factorLabel,factorSkill,ld));
+					//ver si nos quedamos con los que tengan mejor coeficiente
+					similarDevelopers = getAllSimilarDevelopers(similarIssues);	
+					
+					List<Metric>metricsEstimateForDev = new LinkedList<Metric>();
 
-				//Recorro los desarrolladores similares para obtener la correlación entre las tareas del mismo
-				List<MetricPrediction> metrics = new LinkedList<MetricPrediction>();
-				double correlationVariation=0.1;
-				List<DeveloperPrediction> devPredictionSimilar = new LinkedList<DeveloperPrediction>();
-				
-				for(Developer developer: similarDevelopers){
-					caseDevSmilar.setIdIssue(i);
-					DeveloperPrediction dev = new DeveloperPrediction();				
-					MetricPrediction m = predictions.getPredictionsDeveloper(metricKey, value, correlationVariation, sprint, developer);
-					metrics.add(m);
-					m.getMetrics().keySet();
-					if(m != null){
-						Map<String, Double>metricPredictionMetrics = m.getMetrics();
-						Set<String> keys = metricPredictionMetrics.keySet();
-						
-						for(String s : keys){
-							Metric metricDevSimilar = new Metric(s, s, s, s, null , new NumericMetric());
-							metricsEstimateForDev.add(metricDevSimilar);
+					//Recorro los desarrolladores similares para obtener la correlación entre las tareas del mismo
+					List<MetricPrediction> metrics = new LinkedList<MetricPrediction>();
+					double correlationVariation=0.1;
+					List<DeveloperPrediction> devPredictionSimilar = new LinkedList<DeveloperPrediction>();
+					
+					for(Developer developer: similarDevelopers){
+						caseDevSmilar.setIdIssue(i);
+						DeveloperPrediction dev = new DeveloperPrediction();				
+						MetricPrediction m = predictions.getPredictionsDeveloper(metricKey, value, correlationVariation, sprint, developer);
+						metrics.add(m);
+						m.getMetrics().keySet();
+						if(m != null){
+							Map<String, Double>metricPredictionMetrics = m.getMetrics();
+							Set<String> keys = metricPredictionMetrics.keySet();
+							
+							for(String s : keys){
+								Metric metricDevSimilar = new Metric(s, s, s, s, null , new NumericMetric());
+								metricsEstimateForDev.add(metricDevSimilar);
+							}
 						}
+						dev.setIssues(metrics);
+						dev.setName(d.getName());
+						dev.setDisplayName(d.getDisplayName());	
+						/*
+						 * Lo agrego al Vector que se va a setear en el caso 
+						 */
+						devPredictionSimilar.add(dev);
 					}
-					dev.setIssues(metrics);
-					dev.setName(d.getName());
-					dev.setDisplayName(d.getDisplayName());	
+					List<Double> manhattan = getManhattanEstimationForDevelopers(metrics);
 					/*
-					 * Lo agrego al Vector que se va a setear en el caso 
+					 * Creo el Caso para esa issue con los valores estimados y los reales 
 					 */
-					devPredictionSimilar.add(dev);
-				}
-				List<Double> manhattan = getManhattanEstimationForDevelopers(metrics);
-				/*
-				 * Creo el Caso para esa issue con los valores estimados y los reales 
-				 */
-				if(!devPredictionSimilar.isEmpty() && devPredictionSimilar != null && manhattan != null && !manhattan.isEmpty()){
-					for(Double dou : manhattan){
-						for(Metric metric : metricsEstimateForDev){
-							metric.setValue(new SimpleValue(dou.toString()));
+					if(!devPredictionSimilar.isEmpty() && devPredictionSimilar != null && manhattan != null && !manhattan.isEmpty()){
+						for(Double dou : manhattan){
+							for(Metric metric : metricsEstimateForDev){
+								metric.setValue(new SimpleValue(dou.toString()));
+							}
 						}
-					}
-					if(metricsEstimateForDev != null){
-						Metric metricsEstimateForDev2[] = new Metric[metricsEstimateForDev.size()];
-						metricsEstimateForDev2 = metricsEstimateForDev.toArray(metricsEstimateForDev2);
-						caseDevSmilar.setEstimatedMetrics(metricsEstimateForDev2);
-					}
-					caseDevSmilar.setPerformDeveloper(d);
-					caseDevSmilar.setLabels(i.getLabels());
-					if(i.getSkills() != null){
-						Skill skillsArray[] = new Skill[i.getSkills().size()];
-						skillsArray = i.getSkills().toArray(skillsArray);
-						caseDevSmilar.setNeededSkills(skillsArray);
-						caseDevSmilar.setRealSkills(skillsArray);
-					}
-					DeveloperPrediction devPredictionSimilar2[] = new DeveloperPrediction[devPredictionSimilar.size()];
-					devPredictionSimilar2 = devPredictionSimilar.toArray(devPredictionSimilar2);
-					caseDevSmilar.setRecommendedDevelopers(devPredictionSimilar2);
-					caseDevSmilar.setRealMetrics(i.getMetrics());					
-					//caseDevSmilar.setEstimatedMetrics(manhattan);
-					dbCases.add(caseDevSmilar);
-				}				
-			}
-			
+						/*if(metricsEstimateForDev != null){
+							Metric metricsEstimateForDev2[] = new Metric[metricsEstimateForDev.size()];
+							metricsEstimateForDev2 = metricsEstimateForDev.toArray(metricsEstimateForDev2);
+							caseDevSmilar.setEstimatedMetrics(metricsEstimateForDev2);
+						}
+						caseDevSmilar.setPerformDeveloper(d);
+						caseDevSmilar.setLabels(i.getLabels());
+						if(i.getSkills() != null){
+							Skill skillsArray[] = new Skill[i.getSkills().size()];
+							skillsArray = i.getSkills().toArray(skillsArray);
+							caseDevSmilar.setNeededSkills(skillsArray);
+							caseDevSmilar.setRealSkills(skillsArray);
+						}*/
+						/*DeveloperPrediction devPredictionSimilar2[] = new DeveloperPrediction[devPredictionSimilar.size()];
+						devPredictionSimilar2 = devPredictionSimilar.toArray(devPredictionSimilar2);
+						caseDevSmilar.setRecommendedDevelopers(devPredictionSimilar2);
+						caseDevSmilar.setRealMetrics(i.getMetrics());	*/				
+						//caseDevSmilar.setEstimatedMetrics(manhattan);
+						dbCases.add(caseDevSmilar);
+					}				
+				}
+			}		
 		}
 
-		return similarDevelopers;	
+		return dbCases;	
 	}
 	
 	private static List<Double> getManhattanEstimationForDevelopers(List<MetricPrediction> metrics) {

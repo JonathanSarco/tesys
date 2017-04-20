@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.tesys.core.analysis.skilltraceability.Skill;
 import org.tesys.core.db.*;
+import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Metric;
 

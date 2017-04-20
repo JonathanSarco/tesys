@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Singleton;
@@ -31,6 +32,7 @@ import org.tesys.core.db.AnalysisVersionsQuery;
 import org.tesys.core.db.ElasticsearchDao;
 import org.tesys.core.db.IssuesWithMetrics;
 import org.tesys.core.db.MetricDao;
+import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
 import org.tesys.core.estructures.Metric;
@@ -41,7 +43,6 @@ import org.tesys.core.project.scm.ScmPostCommitDataPOJO;
 import org.tesys.core.project.scm.ScmPreCommitDataPOJO;
 import org.tesys.core.project.tracking.IssueTypePOJO;
 import org.tesys.correlations.Predictions;
-import org.tesys.developersRecomendations.Case;
 import org.tesys.developersRecomendations.CaseBasedReasoning;
 import org.tesys.recomendations.DevelopersCriteriaIssues;
 import org.tesys.recomendations.DevelopersShortedByMetric;
@@ -60,7 +61,8 @@ public class Controller {
 
 	private static final String FAIL_CODE = "0";
 	private static final String OK_CODE = "1";
-
+    protected static final Logger LOG = Logger.getLogger(ElasticsearchDao.class
+    	    .getName());
 	// Componente encargado de las tareas relacionas con el SCM
 	private SCMManager scmManager;
 	// Componenete encargado con las tareas de recolectar e interpretar datos
@@ -253,7 +255,6 @@ public class Controller {
         
         List<Developer> developers = dao.readAll();
         ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
-
         for (Developer d: developers) {
             if (d.getName().equals( developer )) {
                 List<Issue> issues = d.getIssues();
@@ -663,7 +664,7 @@ public class Controller {
         response.entity(entity);
         return response.build();
 	}
-
+/*
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/cbr/case")
@@ -677,7 +678,7 @@ public class Controller {
         try {
             dao = new ElasticsearchDao<Case>(
                     Case.class, 
-                    ElasticsearchDao.DEFAULT_RESOURCE_CASE ); //devuelve la version mas actualizada de los analisis.
+                    ElasticsearchDao.DEFAULT_RESOºURCE_CASE ); //devuelve la version mas actualizada de los analisis.
         } catch (Exception e) {
             return response.build();
         }
@@ -692,21 +693,42 @@ public class Controller {
 
         return response.build();
 	}
-	
-	@GET
+*/	
+	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/getRecommendation/{label}/{skill}/{metricName}/{metricValue}/{sprint}")
-	public Response getRecommendation(	@PathParam("label") Double label,
-										@PathParam("skill") Double skill,
-										@PathParam("metricName") String metricKey,
-										@PathParam("metricValue") Double value,
-										@PathParam("sprint") Integer sprint/*, 
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/getDevRecommendationbyIssue/{label}/{skill}/{metricName}/{metricValue}/{sprint}")
+	public Response getDevRecommendationbyIssue(	@PathParam("label") Double label,
+			@PathParam("skill") Double skill,
+			@PathParam("metricName") String metricKey,
+			@PathParam("metricValue") Double value,
+			@PathParam("sprint") Integer sprint/*, 
 										@QueryParam("m") List<String> metric*/) {
-		
-		ResponseBuilder response;
-		response = Response.ok(
-			CaseBasedReasoning.getRecommendation(label,skill,metricKey, value, sprint)
-		);
+
+		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
+		List<Long> versiones = avq.execute();
+		ElasticsearchDao<Case> dao;
+		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
+		List<Case> cases = new LinkedList<Case>();
+		List<Case>dbCases = new LinkedList<Case>();
+
+		try {
+			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE); //devuelve la version mas actualizada de los analisis.
+		} catch (Exception e) {
+			return response.build();
+		}
+		//Case c = new Case(new Issue("hola"));
+		cases = dao.readAll();
+		//if(cases.isEmpty()){
+		dbCases = CaseBasedReasoning.getRecommendation(label,skill,metricKey, value, sprint);
+			//response = Response.ok();
+			if(dbCases != null && !dbCases.isEmpty()){
+				for(Case c : dbCases){
+					dao.create(c.getId(), c);
+				}			
+			}
+		//}
+		//response = Response.ok(dbCases.get(0));
 		return response.build();
 	}
 }

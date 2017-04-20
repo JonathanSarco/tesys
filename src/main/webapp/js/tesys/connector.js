@@ -202,13 +202,13 @@ define(["jquery"], function($) {
     });          
   }
   
-  function getDevRecommendationbyIssue() {
+ /* function getDevRecommendationbyIssue() {
 	   /* var toSend = "{\"url\": \"" + sonarUrl + "\"," +
 	      "\"user\": \"" + sonarUser + "\"," +
 	      "\"pass\": \"" + sonarPass + "\"," +
 	      "\"repository\": \"" + repository + "\"," +
 	      "\"revision\": \"" + revision + "\"," +
-	      "\"sonarKey\": \"" + sonarKey + "\"" +"}";*/
+	      "\"sonarKey\": \"" + sonarKey + "\"" +"}";
 	    $.ajax({
 	      url: location.origin+apiPath+'cbr/case',
 	      type: 'GET',
@@ -224,14 +224,14 @@ define(["jquery"], function($) {
 	        alert("Recommendation Performed" + data);
 	      }
 	    });
-	  }
+	  }*/
   
     /**
     * Pestaña de la recomendacion agregada
     *
     **/
 
-    function getRecommendation(valueSkills, valueMetrics,metricName, metricValue, metricsValuesRecomendation, callback) {
+    function getDevRecommendationbyIssue(valueSkills, valueMetrics,metricName, metricValue, metricsValuesRecomendation, callback) {
     var metricQuery = "";
     var sprint = 2; 
     pearsonFactor = 0.95;
@@ -244,11 +244,12 @@ define(["jquery"], function($) {
       }
     });*/
     $.ajax({
-      type: 'GET',
-      url: location.origin+apiPath+'getRecommendation/'+valueSkills+'/'+valueMetrics+'/'+metricName+'/'+metricValue+'/'+sprint/*+metricQuery*/,
+      type: 'PUT',
+      url: location.origin+apiPath+'getDevRecommendationbyIssue/'+valueSkills+'/'+valueMetrics+'/'+metricName+'/'+metricValue+'/'+sprint/*+metricQuery*/,
       dataType: 'json', // data type of response
+      contentType: "application/json; charset=utf-8",
       error: function(jqXHR, textStatus, errorThrown) {
-        alert("Error en el response de "+apiPath+"getRecommendation");
+        alert("Error en el response de "+apiPath+"getDevRecommendationbyIssue");
         console.log(jqXHR, textStatus, errorThrown);
       },
       success: function(data) {
@@ -271,8 +272,8 @@ define(["jquery"], function($) {
     storeAnalysis: storeAnalysis,
     storeMetric: storeMetric,
     getPredictions: getPredictions,
-    getDevRecommendationbyIssue: getDevRecommendationbyIssue,
+    //getDevRecommendationbyIssue: getDevRecommendationbyIssue,
     //Recomendacion
-    getRecommendation: getRecommendation
+    getDevRecommendationbyIssue: getDevRecommendationbyIssue
   };
 });
