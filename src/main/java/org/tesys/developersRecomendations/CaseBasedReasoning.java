@@ -138,7 +138,7 @@ public class CaseBasedReasoning {
 							Metric metricsEstimateForDev2[] = new Metric[metricsEstimateForDev.size()];
 							metricsEstimateForDev2 = metricsEstimateForDev.toArray(metricsEstimateForDev2);
 							caseDevSmilar.setEstimatedMetrics(metricsEstimateForDev2);
-						}
+						}*/
 						caseDevSmilar.setPerformDeveloper(d);
 						caseDevSmilar.setLabels(i.getLabels());
 						if(i.getSkills() != null){
@@ -146,11 +146,11 @@ public class CaseBasedReasoning {
 							skillsArray = i.getSkills().toArray(skillsArray);
 							caseDevSmilar.setNeededSkills(skillsArray);
 							caseDevSmilar.setRealSkills(skillsArray);
-						}*/
-						/*DeveloperPrediction devPredictionSimilar2[] = new DeveloperPrediction[devPredictionSimilar.size()];
+						}
+						DeveloperPrediction devPredictionSimilar2[] = new DeveloperPrediction[devPredictionSimilar.size()];
 						devPredictionSimilar2 = devPredictionSimilar.toArray(devPredictionSimilar2);
 						caseDevSmilar.setRecommendedDevelopers(devPredictionSimilar2);
-						caseDevSmilar.setRealMetrics(i.getMetrics());	*/				
+						caseDevSmilar.setRealMetrics(i.getMetrics());					
 						//caseDevSmilar.setEstimatedMetrics(manhattan);
 						dbCases.add(caseDevSmilar);
 					}				
