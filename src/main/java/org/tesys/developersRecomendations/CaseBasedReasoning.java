@@ -20,6 +20,7 @@ import org.tesys.core.estructures.Issue;
 import org.tesys.core.estructures.Metric;
 import org.tesys.core.estructures.SimilarIssue;
 import org.tesys.core.estructures.metrictypes.NumericMetric;
+import org.tesys.core.estructures.metricvalue.Constant;
 import org.tesys.core.estructures.metricvalue.SimpleValue;
 import org.tesys.correlations.MetricPrediction;
 import org.tesys.correlations.DeveloperPrediction;
@@ -129,9 +130,12 @@ public class CaseBasedReasoning {
 					 * Creo el Caso para esa issue con los valores estimados y los reales 
 					 */
 					if(!devPredictionSimilar.isEmpty() && devPredictionSimilar != null && manhattan != null && !manhattan.isEmpty()){
-						for(Double dou : manhattan){
+						MetricPrediction metricpred= new MetricPrediction(i.getIssueId(), d.getDisplayName());
+						for(Double dou : manhattan){							
 							for(Metric metric : metricsEstimateForDev){
-								metric.setValue(new SimpleValue(dou.toString()));
+								metricpred.putMetric(metric.getKey(), dou);
+								caseDevSmilar.setEstimatedMetrics(metricpred);
+								//metric.setValue(new Constant(dou.toString()));
 							}
 						}
 						/*if(metricsEstimateForDev != null){

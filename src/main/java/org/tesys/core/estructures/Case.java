@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.tesys.core.analysis.skilltraceability.Skill;
 import org.tesys.correlations.DeveloperPrediction;
+import org.tesys.correlations.MetricPrediction;
 import org.tesys.util.MD5;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,7 +28,7 @@ public class Case {
 	// *** Solucion ***
 	DeveloperPrediction[] recommendedDevelopers;
 	//String displayName;
-	Metric[] estimatedMetrics;
+	MetricPrediction estimatedMetrics;
 	// *** Fin Solucion ***
 	
 	// *** Resultado ***
@@ -46,7 +47,7 @@ public class Case {
 	this.idCase++;
     }
     
-    public Case(Issue idIssue, String[] labels, Metric[] estimatedMetrics, DeveloperPrediction[] recommendedDevelopers, 
+    public Case(Issue idIssue, String[] labels, MetricPrediction estimatedMetrics, DeveloperPrediction[] recommendedDevelopers, 
     		Developer performDeveloper, Map<String, Double> realMetrics) {
     	// *** Problema ***
     	this.idIssue = idIssue;
@@ -81,11 +82,11 @@ public class Case {
 		this.labels = labels;
 	}
 
-	public Metric[] getEstimatedMetrics() {
+	public MetricPrediction getEstimatedMetrics() {
 		return estimatedMetrics;
 	}
 
-	public void setEstimatedMetrics(Metric[] estimatedMetrics) {
+	public void setEstimatedMetrics(MetricPrediction estimatedMetrics) {
 		this.estimatedMetrics = estimatedMetrics;
 	}
 
