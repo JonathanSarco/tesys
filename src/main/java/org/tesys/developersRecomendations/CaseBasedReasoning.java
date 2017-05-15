@@ -24,18 +24,20 @@ import org.tesys.core.estructures.metricvalue.Constant;
 import org.tesys.core.estructures.metricvalue.SimpleValue;
 import org.tesys.correlations.MetricPrediction;
 import org.tesys.correlations.DeveloperPrediction;
-import org.tesys.correlations.ManhattanFunction;
 import org.tesys.correlations.Predictions;
+import org.tesys.distanceFunctions.FunctionSelector;
+import org.tesys.distanceFunctions.ManhattanFunction;
 import org.tesys.recomendations.DevelopersShortedBySimilarLabelsAndSkills;
+
+import com.atlassian.util.concurrent.Function;
 
 public class CaseBasedReasoning {
 
 	List<Case> cases= new ArrayList<Case>();
-	ManhattanFunction manhattan=new ManhattanFunction();
-
+	//ManhattanFunction manhattan=new ManhattanFunction();
 	public CaseBasedReasoning(){
 
-
+	
 
 	}
 
@@ -81,7 +83,7 @@ public class CaseBasedReasoning {
 		List<SimilarIssue> similarIssues= new LinkedList<SimilarIssue>();
 		List<Developer> ld  = daoi.readAll();
 		List<Developer> similarDevelopers = new LinkedList<>();
-		Vector<Double>manhattanValues=new Vector<Double>(); 
+		//Vector<Double>manhattanValues=new Vector<Double>(); 
 		Predictions predictions = new Predictions();
 		
 		List<Case>dbCases=new LinkedList<Case>();
@@ -125,13 +127,17 @@ public class CaseBasedReasoning {
 						 */
 						devPredictionSimilar.add(dev);
 					}
-					List<Double> manhattan = getManhattanEstimationForDevelopers(metrics);
+					
+					FunctionSelector function=new ManhattanFunction(); // Acá se define el tipo de funcion: manhattan, euclidea, otra
+					List<Double> values=function.getDistanceFunctionEstimationForDevelopers(metrics,function); // Construccion de matriz
+					
+					//List<Double> manhattan = getFunctionEstimationForDevelopers(metrics);
 					/*
 					 * Creo el Caso para esa issue con los valores estimados y los reales 
 					 */
-					if(!devPredictionSimilar.isEmpty() && devPredictionSimilar != null && manhattan != null && !manhattan.isEmpty()){
+					if(!devPredictionSimilar.isEmpty() && devPredictionSimilar != null && values != null && !values.isEmpty()){
 						MetricPrediction metricpred= new MetricPrediction(i.getIssueId(), d.getDisplayName());
-						for(Double dou : manhattan){							
+						for(Double dou : values){							
 							for(Metric metric : metricsEstimateForDev){
 								metricpred.putMetric(metric.getKey(), dou);
 								caseDevSmilar.setEstimatedMetrics(metricpred);
@@ -165,42 +171,7 @@ public class CaseBasedReasoning {
 		return dbCases;	
 	}
 	
-	private static List<Double> getManhattanEstimationForDevelopers(List<MetricPrediction> metrics) {
-		List<Double> manhattanValues = new LinkedList<Double>();
-		List<Double>values=new LinkedList<Double>();
-		int cantFilas = metrics.size();
-		for (MetricPrediction m : metrics){
-			Collection<Double>valores=m.getMetrics().values();
-			for(Double val : valores){
-				values.add(val);
-			}
-		}
-		int cantColumnas = values.size();
-		//Inicializo Matriz	
-		double[][] matValues = new double[cantFilas][cantColumnas];
-		for(int l=0;l<metrics.size();l++){
-			for(int j=0;j<values.size();j++){
-				matValues[l][j]=0.0;
-			}
-		}
-		//Completo Matriz con los valores de las Métricas estimadas
-		for(int k=0;k<metrics.size();k++){
-			for(int j=0;j<values.size();j++){
-				matValues[k][j]=values.get(j);
-			}
-		}
-
-		//Recorrer matriz
-		Vector<Double>aux= new Vector<Double>();
-		for(int j=0;j<values.size();j++){
-			for(int m=0;m<metrics.size();m++){
-				aux.add(matValues[m][j]);								
-			}
-			manhattanValues.add(ManhattanFunction.manhattan(aux));
-		}			
-		return manhattanValues;
-	}
-	
+		
 	private List<String> getDevSkillsForIssue(Developer d) {
 		List<String>skills=new LinkedList<String>();
 		List<Issue> issues = d.getIssues();
