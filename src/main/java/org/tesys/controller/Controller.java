@@ -649,7 +649,7 @@ public class Controller {
         try {
             dao = new ElasticsearchDao<Developer>(
                     Developer.class, 
-                    ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS ); //devuelve la version mas actualizada de los analisis.
+                    ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES ); //devuelve la version mas actualizada de los analisis.
         } catch (Exception e) {
             return response.build();
         }

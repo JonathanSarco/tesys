@@ -57,6 +57,7 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
     
     /*** Se crea un nuevo index para los casos del CBR***/
     public static final String DEFAULT_RESOURCE_CASE = "/cbr/case";
+    public static final String DEFAULT_RESOURCE_UNASSIGNED_ISSUES = "/unassigned_issues/";
 
 
     public static final String ES_URL = "http://localhost:9200/";
