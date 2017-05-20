@@ -47,7 +47,6 @@ public class LabelFilter extends Filter {
 					similarIssue.setSimilarLabels(similarLabels);
 					similarIssues.add(similarIssue);
 					similarIssue.setDeveloper(d);
-						
 				}			
 			}	
 		}

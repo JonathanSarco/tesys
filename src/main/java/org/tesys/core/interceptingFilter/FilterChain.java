@@ -15,12 +15,11 @@ public class FilterChain {
 	 List<Filter> filters;
 	  // Creates new FilterChain 
 	  public FilterChain()  {
-		  filters= new LinkedList<Filter>();
+		  filters = new LinkedList<Filter>();
 	  }
 
 	  public void processFilter(RequestFilter request, ResponseFilter response){
 	    // apply filters
-		
 	    for(Filter filter : filters)
 	    {
 	    	// pass request through various filters
@@ -31,6 +30,4 @@ public class FilterChain {
 	  public void addFilter(Filter filter)  {
 	    filters.add(filter);
 	  }
-	
-	
 }

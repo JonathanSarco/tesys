@@ -5,7 +5,9 @@ import java.util.List;
 import org.tesys.core.estructures.SimilarIssue;
 
 public abstract class Filter {
+	
 	List<SimilarIssue> similarIssues;
+	
 	public abstract ResponseFilter execute(RequestFilter request, ResponseFilter response);
 	    // Pass control to the next filter in the chain or 
 	    // to the target resource
