@@ -1,8 +1,11 @@
 package org.tesys.distanceFunctions;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.tesys.correlations.MetricPrediction;
@@ -11,17 +14,26 @@ public abstract class FunctionSelector {
 
 	public abstract double calculate(List<Double>valores);
 	
-	public List<Double> getDistanceFunctionEstimationForDevelopers(List<MetricPrediction> metrics, FunctionSelector function) {
+	public Map<String, Double> getDistanceFunctionEstimationForDevelopers(List<MetricPrediction> metrics, FunctionSelector function) {
 		
-		List<Double> functionValues = new LinkedList<Double>();
+		//List<Double>functionValues=new LinkedList<Double>();
+		Map<String, Double> result = new HashMap<String, Double>();
 		List<Double>values=new LinkedList<Double>();
+		List<String>keys=new LinkedList<String>();//nuevo
 		int cantFilas = metrics.size();
+		
 		for (MetricPrediction m : metrics){
 			Collection<Double>valores=m.getMetrics().values();
 			for(Double val : valores){
 				values.add(val);
 			}
+			Collection<String> claves=m.getMetrics().keySet();//nuevo
+			for(String key : claves){
+				keys.add(key);
+			}
 		}
+
+		
 		int cantColumnas = values.size();
 		//Inicializo Matriz	
 		double[][] matValues = new double[cantFilas][cantColumnas];
@@ -47,10 +59,11 @@ public abstract class FunctionSelector {
 			//manhattanValues.add(ManhattanFunction.manhattan(aux));
 			//FunctionSelector function=new ManhattanFunction(); // se puede elegir otra función
 			//functionValues.add(function.calculate(aux));
-			functionValues.add(function.calculate(aux));
-						
-		}			
-		return functionValues;
+			//functionValues.add(function.calculate(aux));
+			result.put(keys.get(j), function.calculate(aux));
+			}
+		
+		return result;
 	}
 	
 
