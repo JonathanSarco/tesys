@@ -4,6 +4,7 @@ package org.tesys.recomendations;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.tesys.core.db.ElasticsearchDao;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
 import org.tesys.core.estructures.SimilarIssue;
@@ -11,8 +12,10 @@ import org.tesys.core.estructures.SimilarIssue;
 public class DevelopersShortedBySimilarLabelsAndSkills {
 	
 	
-	public static List<SimilarIssue> getDevelopersShortedBySimilarLabelsAndSkills(Issue e, double factorLabel, double factorSkill, List<Developer> ld){
-		
+	public static List<SimilarIssue> getDevelopersShortedBySimilarLabelsAndSkills(Issue e, double factorLabel, double factorSkill){
+		ElasticsearchDao<Developer> daoi = new ElasticsearchDao<Developer>(Developer.class,
+						ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS);
+		List<Developer> ld  = daoi.readAll();
 		IssueSimilarityLabels isl = new IssueSimilarityLabels();
 		SkillsSimilarity iss = new SkillsSimilarity();
 		//Obtengo las issues similares a la que enviío por parámetro

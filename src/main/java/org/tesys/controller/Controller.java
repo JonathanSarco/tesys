@@ -722,14 +722,14 @@ private Issue getIssue(List<Developer> developers, String issueId) {
 
 		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
 		List<Long> versiones = avq.execute();
-		ElasticsearchDao<Case> dao;
+		//ElasticsearchDao<Case> dao;
 		ElasticsearchDao<Developer> daoIssue;
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
-		List<Case> cases = new LinkedList<Case>();
-		List<Case>dbCases = new LinkedList<Case>();
+		//List<Case> cases = new LinkedList<Case>();
+		Case dbCases = new Case();
 
 		try {
-			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
+		//	dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
 			daoIssue = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);//devuelve la version mas actualizada de los analisis.
 		} catch (Exception e) {
 			return response.build();
@@ -737,7 +737,7 @@ private Issue getIssue(List<Developer> developers, String issueId) {
 		
 		List<Developer> developers = daoIssue.readAll();
 		Issue unasignedIssue = getIssue(developers, issue);
-		cases = dao.readAll();
+		//cases = dao.readAll();
 	
 		dbCases = CaseBasedReasoning.getRecommendation(label,skill,metricKey, value, sprint, unasignedIssue);
 			/*if(dbCases != null && !dbCases.isEmpty()){

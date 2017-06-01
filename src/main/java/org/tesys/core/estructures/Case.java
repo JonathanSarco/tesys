@@ -20,116 +20,76 @@ public class Case {
 	
 	static int idCase=0;
 	// *** Problema ***
-	Issue idIssue;
-	String[] labels;
-	Skill[] neededSkills;
+	Issue issue;
 	// *** Fin Problema ***
 	
 	// *** Solucion ***
-	DeveloperPrediction[] recommendedDevelopers;
-	//String displayName;
-	MetricPrediction estimatedMetrics;
+	/*
+	 * Se Hace una lista de developers recomendados, los cuales van a tener "asignada"
+	 * sólo la tarea para la cual se hace la recomendación
+	 * Se almacena en las issues del Desarrollador la tarea NUEVA
+	 * Las Métricas estimadas se almacenan en el Map measures de Issues 
+	 */
+	Developer[] issuesWithDevelopersRecommended;
 	// *** Fin Solucion ***
 	
 	// *** Resultado ***
-	Developer performDeveloper;
-	Map<String, Double> realMetrics;
-	Skill[] realSkills;
+	/*
+	 * Se Almacenan las Metricas Reales en el Map measures de la Issue Nueva desarrollada por el Developer PerformIssue
+	 */
+	Developer performIssue;
 	// *** Fin Resultado ***
+
+	// *** Criterio ***
+	String orderCriteria;
+	// *** Fin Criterio ***
 	
+
+
 	public Case(){
 		// for jason
 	}
 	
     public Case(Issue idIssue) {
 	super();
-	this.idIssue = idIssue;
+	this.issue = issue;
 	this.idCase++;
     }
-    
-    public Case(Issue idIssue, String[] labels, MetricPrediction estimatedMetrics, DeveloperPrediction[] recommendedDevelopers, 
-    		Developer performDeveloper, Map<String, Double> realMetrics) {
-    	// *** Problema ***
-    	this.idIssue = idIssue;
-    	this.labels = labels;
-    	this.estimatedMetrics = estimatedMetrics;
-    	// *** Fin Problema ***
-    	
-    	// *** Solucion ***
-    	this.recommendedDevelopers = recommendedDevelopers;
-    	// *** Fin Solucion ***
-    	
-    	// *** Resultado ***
-    	this.performDeveloper = performDeveloper;
-    	this.realMetrics = realMetrics;
-    	// *** Fin Resultado ***
-    	this.idCase++;
-    }
 
-	public Issue getIdIssue() {
-		return idIssue;
+	public Issue getIssue() {
+		return issue;
 	}
 
-	public void setIdIssue(Issue i) {
-		this.idIssue = i;
+	public void setIssue(Issue issue) {
+		this.issue = issue;
 	}
 
-	public String[] getLabels() {
-		return labels;
+	public Developer[] getIssuesWithDevelopersRecommended() {
+		return issuesWithDevelopersRecommended;
 	}
 
-	public void setLabels(String[] labels) {
-		this.labels = labels;
+	public void setIssuesWithDevelopersRecommended(Developer[] issuesWithDevelopersRecommended) {
+		this.issuesWithDevelopersRecommended = issuesWithDevelopersRecommended;
 	}
 
-	public MetricPrediction getEstimatedMetrics() {
-		return estimatedMetrics;
+	public Developer getPerformIssue() {
+		return performIssue;
 	}
 
-	public void setEstimatedMetrics(MetricPrediction estimatedMetrics) {
-		this.estimatedMetrics = estimatedMetrics;
+	public void setPerformIssue(Developer performIssue) {
+		this.performIssue = performIssue;
 	}
 
-	public DeveloperPrediction[] getRecommendedDevelopers() {
-		return recommendedDevelopers;
+	public static int getIdCase() {
+		return idCase;
+	}
+	
+	public String getOrderCriteria() {
+		return orderCriteria;
 	}
 
-	public void setRecommendedDevelopers(DeveloperPrediction[] devPredictionSimilar2) {
-		this.recommendedDevelopers = devPredictionSimilar2;
+	public void setOrderCriteria(String orderCriteria) {
+		this.orderCriteria = orderCriteria;
 	}
-
-	public Developer getPerformDeveloper() {
-		return performDeveloper;
-	}
-
-	public void setPerformDeveloper(Developer performDeveloper) {
-		this.performDeveloper = performDeveloper;
-	}
-
-	public Map<String, Double> getRealMetrics() {
-		return realMetrics;
-	}
-
-	public void setRealMetrics(Map<String, Double> map) {
-		this.realMetrics = map;
-	}
-	public Skill[] getNeededSkills() {
-		return neededSkills;
-	}
-
-	public void setNeededSkills(Skill[] neededSkills) {
-		this.neededSkills = neededSkills;
-	}
-
-	public Skill[] getRealSkills() {
-		return realSkills;
-	}
-
-	public void setRealSkills(Skill[] realSkills) {
-		this.realSkills = realSkills;
-	}
-
-    public String getId() {
-	return MD5.generateId( idCase + idIssue.getIssueId());
-    }	
+	
 }
