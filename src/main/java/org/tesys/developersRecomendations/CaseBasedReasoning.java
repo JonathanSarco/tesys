@@ -60,7 +60,7 @@ public class CaseBasedReasoning {
 
 		cases = dao.readAll();
 		if(cases.isEmpty()){
-			dbCases = getRecommendation(factorLabel, factorSkill, metricKey, value, sprint);
+			//dbCases = getRecommendation(factorLabel, factorSkill, metricKey, value, sprint);
 			if(dbCases != null && !dbCases.isEmpty()){
 				for(Case c : dbCases){
 					dao.create(c.getId(), c);
@@ -75,7 +75,7 @@ public class CaseBasedReasoning {
 
 	}
 
-	public static List<Case> getRecommendation(double factorLabel, double factorSkill, String metricKey, double value, int sprint){
+	public static List<Case> getRecommendation(double factorLabel, double factorSkill, String metricKey, double value, int sprint, Issue issue){
 
 		//aca los factores no deberian ser cero para que no influya despues durante la recomendacion??
 		ElasticsearchDao<Developer> daoi = new ElasticsearchDao<Developer>(Developer.class,

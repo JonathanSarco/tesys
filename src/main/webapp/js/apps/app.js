@@ -34,7 +34,7 @@ define(
     var issues = new model.RecommendationCollection();
     var metrics = new model.MetricCollection() ;
     var skills = new model.MetricCollection() ;
-
+    
     /**
     * Modelo de Recomendacion
     *
@@ -50,9 +50,10 @@ define(
           attrToPlot: ['metrics', 'skills']
         }
     );
-    
+    var issuesSelected = {array: []};
     var recommendation = new view.IssueRecommendationView(
             { collection: issues,
+              selectedIssues: issuesSelected,	
               el: $('#developers-reco')
             }
     );       
@@ -370,21 +371,23 @@ define(
       );*/
     }
 
-      //Boton de recomendar
-      $('#RecommendDeveloperbyIssue').click(function(){
-      //alert("hice click en recomendar");
-      predictionsRecommendation = [] ;
-      var minCorrelation = parseFloat($('#recommendationCorrelation').val());
-      if (minCorrelation <= 1.0) {  
-        alert("antes del for");
-       for (var m in metricsValuesRecomendation) {
-         // Cambiar el 0.5 , 0.5 por una variable
-          alert("metrica "+m);
-          alert("valor "+metricsValuesRecomendation[m]);
-          tesys.getDevRecommendationbyIssue(0.5, 0.5,m,metricsValuesRecomendation[m],metricsValuesRecomendation, addPredictionsRecommendations);
-        }         
-       }
-      });
+    //Boton de recomendar
+    $('#RecommendDeveloperbyIssue').click(function(){
+    	//alert("hice click en recomendar");
+    	predictionsRecommendation = [] ;
+    	var minCorrelation = parseFloat($('#recommendationCorrelation').val());
+
+    	if (minCorrelation <= 1.0) {  
+    		//alert("HOLA BUENAS TARDES");
+    		for (var m in metricsValuesRecomendation) {
+    			// Cambiar el 0.5 , 0.5 por una variable
+    			alert("valor "+metricsValuesRecomendation[m]);
+    			alert("issue "+ issuesSelected.array[0]);
+    			//      var issue = .issuesSelected.array[0].model.attributes;
+    			tesys.getDevRecommendationbyIssue(0.5, 0.5,m,metricsValuesRecomendation[m],metricsValuesRecomendation, issuesSelected.array[0], addPredictionsRecommendations);
+    		}         
+    	}
+    });
 
       /**
       * Fin de pestaña de RECOMENDACIONES

@@ -231,7 +231,7 @@ define(["jquery"], function($) {
     *
     **/
 
-    function getDevRecommendationbyIssue(valueSkills, valueMetrics,metricName, metricValue, metricsValuesRecomendation, callback) {
+    function getDevRecommendationbyIssue(valueSkills, valueMetrics,metricName, metricValue, metricsValuesRecomendation, issue, callback) {
     var metricQuery = "";
     var sprint = 2; 
     pearsonFactor = 0.95;
@@ -245,7 +245,7 @@ define(["jquery"], function($) {
     });*/
     $.ajax({
       type: 'PUT',
-      url: location.origin+apiPath+'getDevRecommendationbyIssue/'+valueSkills+'/'+valueMetrics+'/'+metricName+'/'+metricValue+'/'+sprint/*+metricQuery*/,
+      url: location.origin+apiPath+'getDevRecommendationbyIssue/'+valueSkills+'/'+valueMetrics+'/'+metricName+'/'+metricValue+'/'+sprint +'/' + issue/*+metricQuery*/,
       dataType: 'json', // data type of response
       contentType: "application/json; charset=utf-8",
       error: function(jqXHR, textStatus, errorThrown) {

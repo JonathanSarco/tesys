@@ -164,6 +164,7 @@ public class Controller {
 	 * los issues que tiene cada developer y para poder conocer el conjunto por
 	 * el cual se recomienda
 	 */
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/developers/{version}")
@@ -694,41 +695,60 @@ public class Controller {
         return response.build();
 	}
 */	
+
+private Issue getIssue(List<Developer> developers, String issueId) {
+	
+	for(Developer d: developers){
+		List<Issue> unasignesIssues = d.getIssues();
+		for(Issue i : unasignesIssues){
+			if(i.getIssueId().equals(issueId)){
+				return i;
+			}
+		}
+	}
+	return null;
+}
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/getDevRecommendationbyIssue/{label}/{skill}/{metricName}/{metricValue}/{sprint}")
+	@Path("/getDevRecommendationbyIssue/{label}/{skill}/{metricName}/{metricValue}/{sprint}/{issue}")
 	public Response getDevRecommendationbyIssue(	@PathParam("label") Double label,
 			@PathParam("skill") Double skill,
 			@PathParam("metricName") String metricKey,
 			@PathParam("metricValue") Double value,
-			@PathParam("sprint") Integer sprint/*, 
+			@PathParam("sprint") Integer sprint,
+			@PathParam("issue") String issue/*, 
 										@QueryParam("m") List<String> metric*/) {
 
 		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
 		List<Long> versiones = avq.execute();
 		ElasticsearchDao<Case> dao;
+		ElasticsearchDao<Developer> daoIssue;
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 		List<Case> cases = new LinkedList<Case>();
 		List<Case>dbCases = new LinkedList<Case>();
 
 		try {
-			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE); //devuelve la version mas actualizada de los analisis.
+			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
+			daoIssue = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);//devuelve la version mas actualizada de los analisis.
 		} catch (Exception e) {
 			return response.build();
 		}
-		//Case c = new Case(new Issue("hola"));
+		
+		List<Developer> developers = daoIssue.readAll();
+		Issue unasignedIssue = getIssue(developers, issue);
 		cases = dao.readAll();
-		//if(cases.isEmpty()){
-		dbCases = CaseBasedReasoning.getRecommendation(label,skill,metricKey, value, sprint);
-			//response = Response.ok();
-			if(dbCases != null && !dbCases.isEmpty()){
+	
+		dbCases = CaseBasedReasoning.getRecommendation(label,skill,metricKey, value, sprint, unasignedIssue);
+			/*if(dbCases != null && !dbCases.isEmpty()){
 				for(Case c : dbCases){
 					dao.create(c.getId(), c);
 				}			
 			}
-		//}
-		//response = Response.ok(dbCases.get(0));
+*/
 		return response.build();
 	}
+
+
+
 }

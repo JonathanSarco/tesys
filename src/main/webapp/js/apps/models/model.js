@@ -103,7 +103,7 @@ define(
   });
 
   var IssueRecommendation = Backbone.RelationalModel.extend({
-    idAttribute: 'issueId'
+    idAttribute: 'issueIdRecommendation'
   });
 
   var RecommendationCollection = Backbone.Collection.extend({
