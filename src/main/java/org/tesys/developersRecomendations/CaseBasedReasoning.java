@@ -2,6 +2,7 @@ package org.tesys.developersRecomendations;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import org.tesys.distanceFunctions.ManhattanFunction;
 import org.tesys.recomendations.DevelopersShortedBySimilarLabelsAndSkills;
 
 import com.atlassian.util.concurrent.Function;
+
 
 public class CaseBasedReasoning {
 
@@ -75,16 +77,18 @@ public class CaseBasedReasoning {
 
 	}
 
-	public static Case getRecommendation(double factorLabel, double factorSkill, String metricKey, double value, int sprint, Issue issue){
+	public static Case getRecommendation(double factorLabel, double factorSkill, String metricKey, double value, int sprint, Issue issue, Map<String, Double> desiredmetrics){
 		/*
 		 * Se Crea La Issue Nueva en base a la Issue que tengo por parametro
 		 */
 		
 		Issue newIssue = new Issue();
 		newIssue.setLabels(issue.getLabels());
+		newIssue.setIssueId(issue.getIssueId());
+		newIssue.setIssueType(issue.getIssueType());
+		newIssue.setUser("");;
 		//newIssue.setSkills(skills);
-		//Map<String, Double>desiredmetrics; -> Se completa con el modelo de Jony
-		//newIssue.setMetrics(desiredmetrics);
+		newIssue.setMetrics(desiredmetrics);
 		
 		//*** FIN NUEVA ISSUE ***
 		
@@ -93,7 +97,7 @@ public class CaseBasedReasoning {
 		 */
 		
 		Case newCase = new Case();
-		newCase.setIssue(issue);
+		newCase.setIssue(newIssue);
 		
 		//** FIN NUEVO CASO ***
 		
@@ -121,23 +125,30 @@ public class CaseBasedReasoning {
 			 * Creo una copia de la Tarea Nueva Para cada desarrollador
 			 */
 			Issue issueDev = new Issue ();
-			issueDev = newIssue;
+			issueDev.setIssueId(newIssue.getIssueId()); 
+			issueDev.setIssueType(newIssue.getIssueType());
+			issueDev.setLabels(newIssue.getLabels());
+			issueDev.setPuntuaciones(newIssue.getPuntuaciones());
+			issueDev.setSkills(newIssue.getSkills());
 			Developer similarDev = new Developer();
 			similarDev.setDisplayName(developer.getDisplayName());
 			similarDev.setName(developer.getName());
 			similarDev.setTimestamp(developer.getTimestamp());
 			
-		//	for (Metric metric : desireMetric){
+			Iterator<String> metricsKeys = desiredmetrics.keySet().iterator();
+			while( metricsKeys.hasNext() ) {
+				String key = metricsKeys.next();
+			    Double valueKey = desiredmetrics.get(key);
 				//*** Issue se completa con las metricas estimadas y luego se agrega al developer ***
-				MetricPrediction m = predictions.getPredictionsDeveloper(metricKey, value, correlationVariation, sprint, developer);
+				MetricPrediction m = predictions.getPredictionsDeveloper(key, valueKey, correlationVariation, sprint, developer);
 				metrics.add(m);
-		//	}
+			}
 			/*
 			 * Se puede Cambiar a distancia euclidea o cambiar por otra función extensible
 			 */
 			FunctionSelector function=new ManhattanFunction(); // Acá se define el tipo de funcion: manhattan, euclidea, otra
-			//Map<String, Double> values=function.getDistanceFunctionEstimationForDevelopers(metrics,function); // Construccion de matriz
-			//issueDev.setMetrics(values);
+			Map<String, Double> values=function.getDistanceFunctionEstimationForDevelopers(metrics,function); // Construccion de matriz
+			issueDev.setMetrics(values);
 			List<Issue>unasignedIssues = new LinkedList <Issue>();
 			unasignedIssues.add(issueDev);
 			similarDev.setIssues(unasignedIssues);

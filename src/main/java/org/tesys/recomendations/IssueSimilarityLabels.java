@@ -10,7 +10,7 @@ import org.tesys.core.estructures.SimilarIssue;
 
 public class IssueSimilarityLabels {
 	
-	final static int matching=2;
+	final static int matching=1;
 	
 	public boolean areSimilar(Issue ip, Issue i, int similarLabels) {
 		List<String> labelsip = Arrays.asList(ip.getLabels());

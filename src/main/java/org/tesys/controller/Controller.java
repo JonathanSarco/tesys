@@ -3,8 +3,10 @@ package org.tesys.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -722,14 +724,14 @@ private Issue getIssue(List<Developer> developers, String issueId) {
 
 		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
 		List<Long> versiones = avq.execute();
-		//ElasticsearchDao<Case> dao;
+		ElasticsearchDao<Case> dao;
 		ElasticsearchDao<Developer> daoIssue;
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 		//List<Case> cases = new LinkedList<Case>();
 		Case dbCases = new Case();
 
 		try {
-		//	dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
+			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
 			daoIssue = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);//devuelve la version mas actualizada de los analisis.
 		} catch (Exception e) {
 			return response.build();
@@ -738,14 +740,14 @@ private Issue getIssue(List<Developer> developers, String issueId) {
 		List<Developer> developers = daoIssue.readAll();
 		Issue unasignedIssue = getIssue(developers, issue);
 		//cases = dao.readAll();
-	
-		dbCases = CaseBasedReasoning.getRecommendation(label,skill,metricKey, value, sprint, unasignedIssue);
-			/*if(dbCases != null && !dbCases.isEmpty()){
-				for(Case c : dbCases){
-					dao.create(c.getId(), c);
-				}			
-			}
-*/
+		Map<String, Double> pruebaMetrics = new HashMap<String, Double>();
+		pruebaMetrics.put("Worked Time", 10.0);
+		pruebaMetrics.put("Critical issues", 5.0);
+		pruebaMetrics.put("Accessors", 11.0);
+		dbCases = CaseBasedReasoning.getRecommendation(label,skill,metricKey, value, sprint, unasignedIssue, pruebaMetrics);
+		if(dbCases != null){
+			dao.create(((Integer)dbCases.getIdCase()).toString(), dbCases);
+		}			
 		return response.build();
 	}
 

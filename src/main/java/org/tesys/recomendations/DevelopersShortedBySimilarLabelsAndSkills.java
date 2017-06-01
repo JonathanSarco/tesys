@@ -13,8 +13,7 @@ public class DevelopersShortedBySimilarLabelsAndSkills {
 	
 	
 	public static List<SimilarIssue> getDevelopersShortedBySimilarLabelsAndSkills(Issue e, double factorLabel, double factorSkill){
-		ElasticsearchDao<Developer> daoi = new ElasticsearchDao<Developer>(Developer.class,
-						ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS);
+		ElasticsearchDao<Developer> daoi = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS);
 		List<Developer> ld  = daoi.readAll();
 		IssueSimilarityLabels isl = new IssueSimilarityLabels();
 		SkillsSimilarity iss = new SkillsSimilarity();
@@ -24,17 +23,25 @@ public class DevelopersShortedBySimilarLabelsAndSkills {
 		List<SimilarIssue>similars = new LinkedList<SimilarIssue>();
 		
 		for(SimilarIssue si : similarIssuesLabel){
-			for(SimilarIssue sis : similarIssuesSkill){
-				if(si.getIssue().getIssueId().equals(sis.getIssue().getIssueId())){
-					si.setSimilarSkills(sis.getSimilarSkills());
-					//similarIssuesSkill.remove(sis);
-					si.setFactorOfSimilarity(si.getSimilarLabels()*factorLabel+sis.getSimilarSkills()*factorSkill);
-				}
-				else{
-					sis.setFactorOfSimilarity(si.getSimilarLabels()*factorLabel+sis.getSimilarSkills()*factorSkill);
-					similars.add(sis);
+			if(similarIssuesSkill.size()>0){
+				for(SimilarIssue sis : similarIssuesSkill){
+					if(si.getIssue().getIssueId().equals(sis.getIssue().getIssueId())){
+						si.setSimilarSkills(sis.getSimilarSkills());
+						//similarIssuesSkill.remove(sis);
+						si.setFactorOfSimilarity(si.getSimilarLabels()*factorLabel+sis.getSimilarSkills()*factorSkill);
+						similars.add(si);
+					}
+					else{
+						sis.setFactorOfSimilarity(si.getSimilarLabels()*factorLabel+sis.getSimilarSkills()*factorSkill);
+						similars.add(sis);
+					}
 				}
 			}
+			else {
+				si.setFactorOfSimilarity(si.getSimilarLabels()*factorLabel + 0);
+				similars.add(si);
+			}
+			
 		}
 		
 		
