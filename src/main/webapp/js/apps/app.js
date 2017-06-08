@@ -16,8 +16,8 @@ define(
     bar,
     radar
   ) {
-	
-	/* Main function */
+  
+  /* Main function */
   var start = function() {
     //TODO arreglar el sig bug. Cuand se elije un nuevo issue para graficar, 
     //desaparece el grafico que esta en el panel inactivo. Esto se debe a 
@@ -53,7 +53,7 @@ define(
     var issuesSelected = {array: []};
     var recommendation = new view.IssueRecommendationView(
             { collection: issues,
-              selectedIssues: issuesSelected,	
+              selectedIssues: issuesSelected, 
               el: $('#developers-reco')
             }
     );       
@@ -122,7 +122,6 @@ define(
         }
         var li = $('<li class="list-group-item" id="'+metricId+'">').text(metricId+"= "+metricValue) ;
         metricList.append(li);
-
         //Event listener para eliminar metrica si le hago doble click
         li.on('dblclick', function(){
           delete metricsValues[this.id] ;
@@ -158,23 +157,17 @@ define(
           attrToPlot: ['metrics', 'skills']
         }
     );
-
-    //Metricas de recomendacion
-    var metricsValuesRecomendation = {};
     
     //Vistas de la recomendacion. Seleccion de las metricas.
-    var recomendationsMetricsView = new view.MetricSelectView(
-      {
-        collection: metricsRecommendation,
-        el: $('#recomendationMetricSelect2')
-      });
-    
+    var recommendationMetricsView = new view.MetricSelectView({
+      collection: metricsRecommendation,
+      el: $('#recomendationMetricSelect2')
+    })
+
     //Skills para la recomendacion
     var recommendationSelectedSkills = { array: [] };
-    
     //Recomendacion de los contenedores.
-    var recomendationsSkillSelectorView = new recomendationView.SkillCollectionView(
-      {
+    var recomendationsSkillSelectorView = new recomendationView.SkillCollectionView({
        collection: skills,
        el: $('#recomendationsSkillSelector'), 
        selectedSkills:recommendationSelectedSkills
@@ -308,27 +301,29 @@ define(
         //attrToPlot: ['metrics', 'skills']
       });
 
+    //Metricas de recomendacion
+    var metricsValuesRecommendation = {};
     //Hacer lo mismo que el insert de estimacion pero para la pestaña de recomendacion
     $('#recomendationInsertBtn').click(function(){
       var metricValue = parseFloat($('#recomendationMetricInput').val());
        if (!isNaN(metricValue) && isFinite(metricValue)) {
           var metricId = $('#recomendationMetricSelect2').val();
-          //inserto o reemplazo la metrica en map metricsValues
-          metricsValuesRecomendation[metricId] = metricValue;
+          metricsValuesRecommendation[metricId] = metricValue;
+          alert(metricsValuesRecommendation);
           //inserto o reemplazo la metrica en la vista
           var metricList = $('#metricListRecommendation');
           var metricListElement = $('#'+metricId, metricList) ;
           if (metricListElement) {
             metricListElement.remove();
-        }
+          }
         var li = $('<li class="list-group-item" id="'+metricId+'">').text(metricId+"= "+metricValue) ;
         metricList.append(li);
         //Event listener para eliminar metrica si le hago doble click
         li.on('dblclick', function(){
-          delete metricsValuesRecomendation[this.id] ;
+          delete metricsValuesRecommendation[this.id] ;
           $(this).remove();
         });
-        console.log(metricsValuesRecomendation);
+        console.log(metricsValuesRecommendation);
       } else {
         alert("Invalid Input");
       }
@@ -373,20 +368,17 @@ define(
 
     //Boton de recomendar
     $('#RecommendDeveloperbyIssue').click(function(){
-    	//alert("hice click en recomendar");
-    	predictionsRecommendation = [] ;
-    	var minCorrelation = parseFloat($('#recommendationCorrelation').val());
-
-    	if (minCorrelation <= 1.0) {  
-    		//alert("HOLA BUENAS TARDES");
-    		for (var m in metricsValuesRecomendation) {
-    			// Cambiar el 0.5 , 0.5 por una variable
-    			alert("valor "+metricsValuesRecomendation[m]);
-    			alert("issue "+ issuesSelected.array[0]);
-    			//      var issue = .issuesSelected.array[0].model.attributes;
-    			tesys.getDevRecommendationbyIssue(0.5, 0.5,m,metricsValuesRecomendation[m],metricsValuesRecomendation, issuesSelected.array[0], addPredictionsRecommendations);
-    		}         
-    	}
+      //alert("hice click en recomendar");
+      var metrics = "";
+      for (var m in metricsValuesRecommendation)
+        metrics = metrics + m + ":" + metricsValuesRecommendation[m] + ", ";
+      metrics = metrics.substring(0,metrics.length-1);
+      var minCorrelation = parseFloat($('#recommendationCorrelation').val());
+      if (minCorrelation <= 1.0) {  
+          // Cambiar el 0.5 , 0.5 por una variable
+          alert("String metricas: " + metrics);
+          tesys.getDevRecommendationbyIssue(0.5, 0.5,metrics,issuesSelected.array[0], addPredictionsRecommendations);
+        }         
     });
 
       /**
@@ -408,7 +400,6 @@ define(
 
 
     tesys.getSkills(function(data){
-
       //adapt skills to metrics format
       var adaptedData = [];
       $.each(data, function(index, el) {
@@ -500,5 +491,5 @@ define(
   return { 
     'start': start 
   };
-	
+  
 });

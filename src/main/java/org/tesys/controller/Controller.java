@@ -63,8 +63,8 @@ public class Controller {
 
 	private static final String FAIL_CODE = "0";
 	private static final String OK_CODE = "1";
-    protected static final Logger LOG = Logger.getLogger(ElasticsearchDao.class
-    	    .getName());
+	protected static final Logger LOG = Logger.getLogger(ElasticsearchDao.class
+			.getName());
 	// Componente encargado de las tareas relacionas con el SCM
 	private SCMManager scmManager;
 	// Componenete encargado con las tareas de recolectar e interpretar datos
@@ -76,7 +76,7 @@ public class Controller {
 		analizer = Analyzer.getInstance();
 	}
 
-	
+
 
 	/**
 	 * Metodo que dada la informacion sobre un commit devuelve Si el sistema
@@ -121,7 +121,7 @@ public class Controller {
 		}
 		return FAIL_CODE;
 	}
-	
+
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -130,18 +130,18 @@ public class Controller {
 
 		SonarAnalizer sa = SonarAnalizer.getInstance();
 		boolean exito = sa.executeSonarAnalysis(sonarAnalysisRequest);
-		
+
 		ResponseBuilder response;
 		if(exito) {
 			response = Response.ok("{\"status\":\"200\"}");
 			return response.build();
 		}
 		response = Response.ok("{\"status\":\"500\"}");
-		
+
 		return response.build();
 	}
-	
-	
+
+
 
 	/**
 	 * Cuando se llama se recolectan todos los datos esparcidos a lo largo del
@@ -166,16 +166,16 @@ public class Controller {
 	 * los issues que tiene cada developer y para poder conocer el conjunto por
 	 * el cual se recomienda
 	 */
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/developers/{version}")
 	public Response getDevelopers(@PathParam("version") Integer version) {
-		
+
 		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
-		
+
 		List<Long> versiones = avq.execute();
-		
+
 		ElasticsearchDao<Developer> dao;
 		try {
 			dao = new ElasticsearchDao<Developer>(
@@ -184,7 +184,7 @@ public class Controller {
 			ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 			return response.build();
 		}
-		
+
 		List<Developer> developers = dao.readAll();
 
 		GenericEntity<List<Developer>> entity = new GenericEntity<List<Developer>>(
@@ -196,83 +196,83 @@ public class Controller {
 		return response.build();
 
 	}	
-	
+
 	/**
-     * Dado un developer, devuelve todos los issues asociados a ese developer.
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/issues/{developer}")
-    public Response getIssuesByDeveloper(@PathParam("developer") String developer) {
-        
-        AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
-        List<Long> versiones = avq.execute();
-        ElasticsearchDao<Developer> dao;
-        ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
+	 * Dado un developer, devuelve todos los issues asociados a ese developer.
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/issues/{developer}")
+	public Response getIssuesByDeveloper(@PathParam("developer") String developer) {
 
-        try {
-            dao = new ElasticsearchDao<Developer>(
-                    Developer.class, 
-                    ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS 
-                        + versiones.get( versiones.size()-1 )); //devuelve la version mas actualizada de los analisis.
-        } catch (Exception e) {
-            return response.build();
-        }
-        
-        List<Developer> developers = dao.readAll();
+		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
+		List<Long> versiones = avq.execute();
+		ElasticsearchDao<Developer> dao;
+		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 
-        for (Developer d: developers) {
-            if (developer.equals( d.getName() )) {
-                List<Issue> issues = d.getIssues();
-                GenericEntity<List<Issue>> entity = new GenericEntity<List<Issue>>(issues) {};
-                response = Response.ok();
-                response.entity(entity);
-            }
-        }
-        return response.build();
+		try {
+			dao = new ElasticsearchDao<Developer>(
+					Developer.class, 
+					ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS 
+					+ versiones.get( versiones.size()-1 )); //devuelve la version mas actualizada de los analisis.
+		} catch (Exception e) {
+			return response.build();
+		}
 
-    }   
-    
-    
-    /**
-     * Dado un developer, devuelve todos los issues asociados a ese developer.
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/issue/{developer}/{issue}")
-    public Response getIssue(@PathParam("developer") String developer, @PathParam("issue") String issue) {
-        
-        Integer version = 0; // Or last version
-        AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
-        
-        List<Long> versiones = avq.execute();
-        
-        ElasticsearchDao<Developer> dao;
-        try {
-            dao = new ElasticsearchDao<Developer>(
-                    Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS + versiones.get(version));
-        } catch (Exception e) {
-            ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
-            return response.build();
-        }
-        
-        List<Developer> developers = dao.readAll();
-        ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
-        for (Developer d: developers) {
-            if (d.getName().equals( developer )) {
-                List<Issue> issues = d.getIssues();
-                for (Issue i: issues) {
-                    if (i.getIssueId().equals(issue) ) {
-                        GenericEntity<Issue> entity = new GenericEntity<Issue>(i) {};
-                        response = Response.ok();
-                        response.entity(entity);
-                    }
-                }
-            }
-        }
+		List<Developer> developers = dao.readAll();
 
-        return response.build();
-    }   
+		for (Developer d: developers) {
+			if (developer.equals( d.getName() )) {
+				List<Issue> issues = d.getIssues();
+				GenericEntity<List<Issue>> entity = new GenericEntity<List<Issue>>(issues) {};
+				response = Response.ok();
+				response.entity(entity);
+			}
+		}
+		return response.build();
+
+	}   
+
+
+	/**
+	 * Dado un developer, devuelve todos los issues asociados a ese developer.
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/issue/{developer}/{issue}")
+	public Response getIssue(@PathParam("developer") String developer, @PathParam("issue") String issue) {
+
+		Integer version = 0; // Or last version
+		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
+
+		List<Long> versiones = avq.execute();
+
+		ElasticsearchDao<Developer> dao;
+		try {
+			dao = new ElasticsearchDao<Developer>(
+					Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS + versiones.get(version));
+		} catch (Exception e) {
+			ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
+			return response.build();
+		}
+
+		List<Developer> developers = dao.readAll();
+		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
+		for (Developer d: developers) {
+			if (d.getName().equals( developer )) {
+				List<Issue> issues = d.getIssues();
+				for (Issue i: issues) {
+					if (i.getIssueId().equals(issue) ) {
+						GenericEntity<Issue> entity = new GenericEntity<Issue>(i) {};
+						response = Response.ok();
+						response.entity(entity);
+					}
+				}
+			}
+		}
+
+		return response.build();
+	}   
 
 
 	/**
@@ -306,10 +306,10 @@ public class Controller {
 		response.entity(entity);
 
 		return response.build();
-		
+
 	}
-	
-	
+
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/metricsavailable")
@@ -322,14 +322,14 @@ public class Controller {
 		metrics.addAll(l.get(0).getMetrics().keySet());
 		metrics.remove("quacode");
 		metrics.remove("prec");
-		
+
 		MetricDao dao = new MetricDao();
 		List<Metric> metrics2 = new LinkedList<Metric>();
-		
+
 		for (String metric : metrics) {
 			metrics2.add(dao.read(metric));
 		}
-		
+
 		List<ObjectNode> metricsJson = new LinkedList<ObjectNode>();
 
 		for (Metric m : metrics2) {
@@ -349,9 +349,9 @@ public class Controller {
 		response.entity(entity);
 
 		return response.build();
-		
+
 	}
-	
+
 
 
 	/**
@@ -390,9 +390,9 @@ public class Controller {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/newmetric")
 	public Response addMetric(String metric) {
-		
 
-		
+
+
 		MetricFactory mf = new MetricFactory();
 		Metric m;
 		try {
@@ -401,7 +401,7 @@ public class Controller {
 			ResponseBuilder response = Response.ok("{\"status\":\"500\"}");
 			return response.build();
 		}
-		
+
 
 
 		MetricDao dao = new MetricDao();
@@ -455,23 +455,23 @@ public class Controller {
 	}
 
 	/**
-     * Este metodo devuelve los tipos de skill que el programa maneja.
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/skills")
-    public Response getSkills() {
-        
-        ElasticsearchDao<SkillIndicator> dao = new ElasticsearchDao<SkillIndicator>(SkillIndicator.class, ElasticsearchDao.DEFAULT_RESOURCE_SKILL);
-        List<SkillIndicator> SkillIndicator = dao.readAll();
-        GenericEntity<List<SkillIndicator>> entity = new GenericEntity<List<SkillIndicator>>(SkillIndicator) {};
-        
-        ResponseBuilder response = Response.ok();
-        response.entity(entity);
+	 * Este metodo devuelve los tipos de skill que el programa maneja.
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/skills")
+	public Response getSkills() {
 
-        return response.build();
-    }
-	
+		ElasticsearchDao<SkillIndicator> dao = new ElasticsearchDao<SkillIndicator>(SkillIndicator.class, ElasticsearchDao.DEFAULT_RESOURCE_SKILL);
+		List<SkillIndicator> SkillIndicator = dao.readAll();
+		GenericEntity<List<SkillIndicator>> entity = new GenericEntity<List<SkillIndicator>>(SkillIndicator) {};
+
+		ResponseBuilder response = Response.ok();
+		response.entity(entity);
+
+		return response.build();
+	}
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -493,15 +493,15 @@ public class Controller {
 
 		return response.build();
 	}
-	
-	
+
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getdevmetric/{metric}")
 	public Response getDevelopersShortedByMetric(@PathParam("metric") String metricKey) {
-		
+
 		ResponseBuilder response;
-		
+
 		//Verificar que existe
 		MetricDao dao = new MetricDao();
 		Metric m;
@@ -516,61 +516,61 @@ public class Controller {
 			response = Response.ok("{\"error\":\"metric doesn't exist\"}");
 			return response.build();
 		}
-		
+
 		DevelopersShortedByMetric d = new DevelopersShortedByMetric(m);
-		
+
 		response = Response.ok( d.getDevelopersShortedByMetric() );
 		return response.build();
 	}
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getdevskill/{skills}")
 	public Response getDevelopersShortedBySkills(@PathParam("skills") String skills) {
-		
+
 		ResponseBuilder response;
 		//se espera o un skill o varios separados por &
 		//de la forma: localhost:8080/getdevskill/java&c++
-		
+
 		//se verifica que todos esten
 		List<String> lskills = Arrays.asList(skills.split("&"));
-		
+
 		ElasticsearchDao<SkillIndicator> dao = new ElasticsearchDao<SkillIndicator>(
 				SkillIndicator.class, ElasticsearchDao.DEFAULT_RESOURCE_SKILL);
-		
+
 		for (String id : lskills) {
-			
+
 			if ( dao.search("{\"query\": { \"term\": {\"skillName\":  \"server\" }}}").isEmpty() ) {
 				response = Response.ok("{\"error\":\"skill "+ id +" doesn't exist\"}");
 				return response.build();
 			}
 		}
-		
+
 		DevelopersShortedBySkills d = new DevelopersShortedBySkills(lskills);
 
 		response = Response.ok( d.getDevelopersShortedBySkills() );
 
 		return response.build();
 	}
-	
-	
+
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getdevtask/{task}/{criteria}")
 	public Response getRecomendedDevelopersForTask(@PathParam("task") String task,
-													@PathParam("criteria") String criteria) {
-		
+			@PathParam("criteria") String criteria) {
+
 		ResponseBuilder response;
-	
+
 		//transformo el issue key a el issue que exista en el jira con esa key
 		/*ProjectTrackingRESTClient pt = new ProjectTrackingRESTClient();
 		IssuePOJO ip = (IssuePOJO) pt.getIssue(task);
-		
+
 		if( ip == null ) {
 			response = Response.ok("{\"error\":\"task "+ task +" doesn't exist\"}");
 			return response.build();
 		}*/
-		
+
 		//conseguir metrica
 		//Verificar que existe
 		MetricDao dao = new MetricDao();
@@ -586,53 +586,53 @@ public class Controller {
 			response = Response.ok("{\"error\":\"metric doesn't exist\"}");
 			return response.build();
 		}
-		
+
 		//---- completa labels del issue de jira con los de ES si es que ya existe, por el problema de que en jira no hay
 		ElasticsearchDao<Developer> daoi = new ElasticsearchDao<Developer>(Developer.class,
 				ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS);
-		
+
 		List<Developer> ld  = daoi.readAll();
-		
+
 		Issue ip = null;
-		
+
 		for (Developer d : ld) {
 			List<Issue> li = d.getIssues();
-			
+
 			for (Issue i : li) {
 				if(i.getIssueId().equals(task)) {
 					ip = i;
 				}
 			}
-			
+
 		}
 		//-------
 
 		List<Developer> l = new IssuesaAlike().getSimilarIssuesTo(ip, new IssueSimilarity());
 
 		List<RecomendedDeveloper> dr = new DevelopersCriteriaIssues().getBestDeveloperIssue(m, l, ip);
-		
+
 		response = Response.ok(dr);
 
 		return response.build();
 	}
-	
-	
+
+
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getpredic/{metricKey}/{value}/{correlation}/{sprint}")
 	public Response getPrediction(@PathParam("metricKey") String metricKey,
-									@PathParam("value") Double value,
-									@PathParam("correlation") Double correlation,
-									@PathParam("sprint") Integer sprint,
-									@QueryParam("s") List<String> skills) {
-		
+			@PathParam("value") Double value,
+			@PathParam("correlation") Double correlation,
+			@PathParam("sprint") Integer sprint,
+			@QueryParam("s") List<String> skills) {
+
 		ResponseBuilder response;
 
 		response = Response.ok(
-			Predictions.getPredictions(metricKey, value, correlation, sprint, skills)
-		);
-		
+				Predictions.getPredictions(metricKey, value, correlation, sprint, skills)
+				);
+
 
 		return response.build();
 	}
@@ -643,36 +643,36 @@ public class Controller {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/issues")
 	public Response getAllIssues()	{
-        
-        AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
-        List<Long> versiones = avq.execute();
-        ElasticsearchDao<Developer> dao;
-        ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 
-        try {
-            dao = new ElasticsearchDao<Developer>(
-                    Developer.class, 
-                    ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES ); //devuelve la version mas actualizada de los analisis.
-        } catch (Exception e) {
-            return response.build();
-        }
-        
-        List<Developer> developers = dao.readAll();
-        List<Issue> issues = new ArrayList<Issue>();
-        for (Developer d: developers) {
-        	issues.addAll(d.getIssues());
-        }
-        GenericEntity<List<Issue>> entity = new GenericEntity<List<Issue>>(issues) {};
-        response = Response.ok();
-        response.entity(entity);
-        return response.build();
+		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
+		List<Long> versiones = avq.execute();
+		ElasticsearchDao<Developer> dao;
+		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
+
+		try {
+			dao = new ElasticsearchDao<Developer>(
+					Developer.class, 
+					ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES ); //devuelve la version mas actualizada de los analisis.
+		} catch (Exception e) {
+			return response.build();
+		}
+
+		List<Developer> developers = dao.readAll();
+		List<Issue> issues = new ArrayList<Issue>();
+		for (Developer d: developers) {
+			issues.addAll(d.getIssues());
+		}
+		GenericEntity<List<Issue>> entity = new GenericEntity<List<Issue>>(issues) {};
+		response = Response.ok();
+		response.entity(entity);
+		return response.build();
 	}
-/*
+	/*
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/cbr/case")
 	public Response getDevRecommendationbyIssue()	{
-        
+
 		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
         List<Long> versiones = avq.execute();
         ElasticsearchDao<Case> dao;
@@ -685,7 +685,7 @@ public class Controller {
         } catch (Exception e) {
             return response.build();
         }
-        
+
         List<Case> cases = dao.readAll();
         if(cases.isEmpty()){
         //	Case cdp = new Case("idIssuPrueba");
@@ -696,33 +696,65 @@ public class Controller {
 
         return response.build();
 	}
-*/	
+	 */	
 
-private Issue getIssue(List<Developer> developers, String issueId) {
-	
-	for(Developer d: developers){
-		List<Issue> unasignesIssues = d.getIssues();
-		for(Issue i : unasignesIssues){
-			if(i.getIssueId().equals(issueId)){
-				return i;
+	private Issue getIssue(List<Developer> developers, String issueId) {
+
+		for(Developer d: developers){
+			List<Issue> unasignesIssues = d.getIssues();
+			for(Issue i : unasignesIssues){
+				if(i.getIssueId().equals(issueId)){
+					return i;
+				}
 			}
 		}
+		return null;
 	}
-	return null;
-}
+	/**
+	 * Convierto a un Map el string recibido desde la View, cargado con las metricas y sus valores.
+	 * @param metrics
+	 * @return Map<String,Double>
+	 */
+	private Map<String,Double> convertToMap(String metrics)	{
+		Map<String,Double> m = new HashMap<String,Double>();
+		String key="";
+		String value="";
+		for (int i=0; i < metrics.length(); i++) {
+			if (metrics.charAt(i) != ':')
+				//Genero la key
+				key += metrics.charAt(i);
+			else {
+				int aux;
+				for (aux = i+1; aux < metrics.length(); aux++) {
+					//Cuando llego a la , luego del :, o al final del string
+					if ( (metrics.charAt(aux) != ','))	{
+						//Genero el valor luego del ;
+						value += metrics.charAt(aux);
+					}
+					else { 
+						i = aux+1;
+						aux = metrics.length(); }
+				}
+				m.put(key, Double.valueOf(value));
+				key = value = "";		
+			}
+		}	
+		return m;
+	}
+
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/getDevRecommendationbyIssue/{label}/{skill}/{metricName}/{metricValue}/{sprint}/{issue}")
-	public Response getDevRecommendationbyIssue(	@PathParam("label") Double label,
+	@Path("/getDevRecommendationbyIssue/{label}/{skill}/{metrics}/{sprint}/{issue}")
+	public Response getDevRecommendationbyIssue(	
+			@PathParam("label") Double label,
 			@PathParam("skill") Double skill,
-			@PathParam("metricName") String metricKey,
-			@PathParam("metricValue") Double value,
+			@PathParam("metrics") String metrics,
 			@PathParam("sprint") Integer sprint,
-			@PathParam("issue") String issue/*, 
-										@QueryParam("m") List<String> metric*/) {
+			@PathParam("issue") String issue) {
 
 		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
+		Map<String,Double> metricsRecommendation = this.convertToMap(metrics);
 		List<Long> versiones = avq.execute();
 		ElasticsearchDao<Case> dao;
 		ElasticsearchDao<Developer> daoIssue;
@@ -736,7 +768,7 @@ private Issue getIssue(List<Developer> developers, String issueId) {
 		} catch (Exception e) {
 			return response.build();
 		}
-		
+
 		List<Developer> developers = daoIssue.readAll();
 		Issue unasignedIssue = getIssue(developers, issue);
 		//cases = dao.readAll();
@@ -744,7 +776,7 @@ private Issue getIssue(List<Developer> developers, String issueId) {
 		pruebaMetrics.put("Worked Time", 10.0);
 		pruebaMetrics.put("Critical issues", 5.0);
 		pruebaMetrics.put("Accessors", 11.0);
-		dbCases = CaseBasedReasoning.getRecommendation(label,skill,metricKey, value, sprint, unasignedIssue, pruebaMetrics);
+		//dbCases = CaseBasedReasoning.getRecommendation(label,skill,metricKey, value, sprint, unasignedIssue, pruebaMetrics);
 		if(dbCases != null){
 			dao.create(((Integer)dbCases.getIdCase()).toString(), dbCases);
 		}			
