@@ -12,7 +12,6 @@ define(["jquery"], function($) {
         console.log(jqXHR, textStatus, errorThrown);
       },
       success: function(data) {
-        //alert(location.origin);
         callback(data) ;
       }
     });
@@ -201,37 +200,12 @@ define(["jquery"], function($) {
       data: tosend
     });          
   }
-  
- /* function getDevRecommendationbyIssue() {
-	   /* var toSend = "{\"url\": \"" + sonarUrl + "\"," +
-	      "\"user\": \"" + sonarUser + "\"," +
-	      "\"pass\": \"" + sonarPass + "\"," +
-	      "\"repository\": \"" + repository + "\"," +
-	      "\"revision\": \"" + revision + "\"," +
-	      "\"sonarKey\": \"" + sonarKey + "\"" +"}";
-	    $.ajax({
-	      url: location.origin+apiPath+'cbr/case',
-	      type: 'GET',
-	      dataType: 'json',
-	      contentType: "application/json; charset=utf-8",
-	   //   data: toSend,
-	      error: function(jqXHR, textStatus, errorThrown) {
-	        alert("Error en el response de "+apiPath+"cbr/case");
-	        console.log(jqXHR, textStatus, errorThrown);
-	      },
-	      success: function (data) {
-	          //TODO ver casos de error
-	        alert("Recommendation Performed" + data);
-	      }
-	    });
-	  }*/
-  
     /**
     * Pestaña de la recomendacion agregada
     *
     **/
 
-    function getDevRecommendationbyIssue(valueSkills, valueMetrics,metricName, metricValue, metricsValuesRecomendation, issue, callback) {
+    function getDevRecommendationbyIssue(valueSkills, valueMetrics, metricsValuesRecomendation, issue, callback) {
     var metricQuery = "";
     var sprint = 2; 
     pearsonFactor = 0.95;
@@ -245,7 +219,7 @@ define(["jquery"], function($) {
     });*/
     $.ajax({
       type: 'PUT',
-      url: location.origin+apiPath+'getDevRecommendationbyIssue/'+valueSkills+'/'+valueMetrics+'/'+metricName+'/'+metricValue+'/'+sprint +'/' + issue/*+metricQuery*/,
+      url: location.origin+apiPath+'getDevRecommendationbyIssue/'+valueSkills+'/'+valueMetrics+'/'+metricsValuesRecomendation+'/'+sprint +'/' + issue/*+metricQuery*/,
       dataType: 'json', // data type of response
       contentType: "application/json; charset=utf-8",
       error: function(jqXHR, textStatus, errorThrown) {
@@ -272,7 +246,6 @@ define(["jquery"], function($) {
     storeAnalysis: storeAnalysis,
     storeMetric: storeMetric,
     getPredictions: getPredictions,
-    //getDevRecommendationbyIssue: getDevRecommendationbyIssue,
     //Recomendacion
     getDevRecommendationbyIssue: getDevRecommendationbyIssue
   };
