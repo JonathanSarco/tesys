@@ -1,18 +1,19 @@
 package org.tesys.distanceFunctions;
 
-import java.util.List;
-import java.util.Random;
-import java.util.Vector;
+import java.util.Map;
+import java.util.Set;
+
 
 public class ManhattanFunction extends FunctionSelector { 
   	
-	public double calculate(List<Double>x){ 
-        double sum = 0; 
-        for (int i=0; i< x.size()-1; i++){  
-	    sum += Math.abs(x.get(i)- x.get(i+1)) ;
-        } 
-     
-        return sum; 
-    }     
+	public double calculate(Map<String, Double> valores, Map<String, Double> desiredMetrics) {
+		
+		double sum = 0.0; 
+		Set<String> keysVal = valores.keySet();
+		for(String s : keysVal){
+			sum += (Math.abs((valores.get(s) == null ? 0 : valores.get(s)) - (desiredMetrics.get(s) == null ? 0 : desiredMetrics.get(s))));
+		}
+		return sum; 
+	}     
 
 }

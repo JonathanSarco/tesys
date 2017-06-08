@@ -29,6 +29,8 @@ import org.tesys.correlations.Predictions;
 import org.tesys.distanceFunctions.FunctionSelector;
 import org.tesys.distanceFunctions.ManhattanFunction;
 import org.tesys.recomendations.DevelopersShortedBySimilarLabelsAndSkills;
+import org.tesys.recomendations.IssueSimilarityLabels;
+import org.tesys.recomendations.SimilarCaseByIssueSkill;
 
 import com.atlassian.util.concurrent.Function;
 
@@ -99,6 +101,23 @@ public class CaseBasedReasoning {
 		Case newCase = new Case();
 		newCase.setIssue(newIssue);
 		
+		//Obtengo los casos de la base
+		ElasticsearchDao<Case> dao;
+		dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
+		List<Case> cases = dao.readAll();
+		
+		newCase.setIdCase(cases.size()+1);
+		
+		/*
+		 * Se Buscan Casos similares a la Issue nueva
+		 */
+		List<Case> similarCases = new LinkedList<Case>();
+		for(Case c : cases){
+			if(SimilarCaseByIssueSkill.areSimilar(c.getIssue(), issue)){
+				similarCases.add(c);
+			}
+		}
+		
 		//** FIN NUEVO CASO ***
 		
 		List<SimilarIssue> similarIssues= new LinkedList<SimilarIssue>();
@@ -116,14 +135,22 @@ public class CaseBasedReasoning {
 		/*
 		 * Recorro los desarrolladores similares para obtener la correlación entre las tareas del mismo
 		 */
-		List<MetricPrediction> metrics = new LinkedList<MetricPrediction>();
 		double correlationVariation=0.1;
+		List<DeveloperPrediction> developerPredictions = new LinkedList<DeveloperPrediction>();
+		Iterator<String> metricsKeys = desiredmetrics.keySet().iterator();
+		while( metricsKeys.hasNext() ) {
+			String key = metricsKeys.next();
+		    Double valueKey = desiredmetrics.get(key);
+			//*** Issue se completa con las metricas estimadas y luego se agrega al developer ***
+		    developerPredictions = predictions.getPredictions(key, valueKey, correlationVariation, sprint, null);
+		}
 		List<Developer> developerWithNewIssue = new LinkedList<Developer>();
 		for(Developer developer: similarDevelopers){
 			/*
 			 * Copio el Desarrollador en una nuevo objeto sin tareas asignadas
 			 * Creo una copia de la Tarea Nueva Para cada desarrollador
 			 */
+			List<MetricPrediction> metrics = new LinkedList<MetricPrediction>();
 			Issue issueDev = new Issue ();
 			issueDev.setIssueId(newIssue.getIssueId()); 
 			issueDev.setIssueType(newIssue.getIssueType());
@@ -135,19 +162,20 @@ public class CaseBasedReasoning {
 			similarDev.setName(developer.getName());
 			similarDev.setTimestamp(developer.getTimestamp());
 			
-			Iterator<String> metricsKeys = desiredmetrics.keySet().iterator();
-			while( metricsKeys.hasNext() ) {
-				String key = metricsKeys.next();
-			    Double valueKey = desiredmetrics.get(key);
-				//*** Issue se completa con las metricas estimadas y luego se agrega al developer ***
-				MetricPrediction m = predictions.getPredictionsDeveloper(key, valueKey, correlationVariation, sprint, developer);
-				metrics.add(m);
+			/*
+			 * Obtengo las metricas Estimadas para cada developer Similar
+			 * 
+			 */
+			for(DeveloperPrediction dv : developerPredictions){
+				if(dv.getName().equals(developer.getName())){
+					metrics.addAll(dv.getIssues());
+				}
 			}
 			/*
 			 * Se puede Cambiar a distancia euclidea o cambiar por otra función extensible
 			 */
 			FunctionSelector function=new ManhattanFunction(); // Acá se define el tipo de funcion: manhattan, euclidea, otra
-			Map<String, Double> values=function.getDistanceFunctionEstimationForDevelopers(metrics,function); // Construccion de matriz
+			Map<String, Double> values=function.getDistanceFunctionEstimationForDevelopers(metrics,function, desiredmetrics); // Construccion de matriz
 			issueDev.setMetrics(values);
 			List<Issue>unasignedIssues = new LinkedList <Issue>();
 			unasignedIssues.add(issueDev);
@@ -157,6 +185,9 @@ public class CaseBasedReasoning {
 		Developer deveoperComplete[] = new Developer[developerWithNewIssue.size()];
 		deveoperComplete = developerWithNewIssue.toArray(deveoperComplete);
 		newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
+		/*
+		 * Agregar La Lógica para comparar con el casoNuevo y el caso de la base de casos 
+		 */
 	return newCase;	
 }
 

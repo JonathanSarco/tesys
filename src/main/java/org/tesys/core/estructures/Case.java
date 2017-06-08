@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Case {
 	
-	static int idCase=0;
+	int idCase;
 	// *** Problema ***
 	Issue issue;
 	// *** Fin Problema ***
@@ -44,7 +44,7 @@ public class Case {
 	String orderCriteria;
 	// *** Fin Criterio ***
 	
-
+	boolean goodRecommendation;
 
 	public Case(){
 		// for jason
@@ -53,7 +53,7 @@ public class Case {
     public Case(Issue idIssue) {
 	super();
 	this.issue = issue;
-	this.idCase++;
+	this.idCase = 0;
     }
 
 	public Issue getIssue() {
@@ -79,8 +79,10 @@ public class Case {
 	public void setPerformIssue(Developer performIssue) {
 		this.performIssue = performIssue;
 	}
-
-	public static int getIdCase() {
+	public int setIdCase(int Value) {
+		return idCase = Value;
+	}
+	public int getIdCase() {
 		return idCase;
 	}
 	
@@ -90,6 +92,14 @@ public class Case {
 
 	public void setOrderCriteria(String orderCriteria) {
 		this.orderCriteria = orderCriteria;
+	}
+	
+	public boolean isGoodRecommendation() {
+		return goodRecommendation;
+	}
+
+	public void setGoodRecommendation(boolean goodRecommendation) {
+		this.goodRecommendation = goodRecommendation;
 	}
 	
 }

@@ -60,10 +60,10 @@ public class Predictions {
 									isk.add(sk.skillName);
 								}
 
-								if( isk.containsAll(skills) ) {
+								//if( isk.containsAll(skills) ) {
 									pearson1.add(issue.getMetrics().get(metrics.get(i)));
 									pearson2.add(issue.getMetrics().get(metrics.get(j)));
-								}
+								//}
 
 							}
 
@@ -130,17 +130,11 @@ public class Predictions {
 					pearson2 = new ArrayList<Double>();
 
 					for (Issue issue : l) {
-						/*if( issue.getUser().equals(developer.getName()) && metrics.get(i).equals(metricKey) ) { 
-							List<String> isk = new LinkedList<String>();
-							if(issue.getSkills() != null){
-								for (Skill sk : issue.getSkills()) {
-									isk.add(sk.skillName);
-								}
-							}*/
+						if( issue.getUser().equals(developer.getName()) && metrics.get(i).equals(metricKey) ) { 						
 							pearson1.add(issue.getMetrics().get(metrics.get(i)));
 							pearson2.add(issue.getMetrics().get(metrics.get(j)));
 
-						//}
+						}
 
 					}
 

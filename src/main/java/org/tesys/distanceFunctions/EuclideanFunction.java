@@ -1,6 +1,7 @@
 package org.tesys.distanceFunctions;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Vector; 
  
@@ -13,6 +14,12 @@ public class EuclideanFunction extends FunctionSelector {
         } 
          
         return Math.sqrt(sum); 
-    } 
+    }
+
+	@Override
+	public double calculate(Map<String, Double> valores, Map<String, Double> desiredMetrics) {
+		// TODO Auto-generated method stub
+		return 0;
+	} 
          
 }

@@ -6,15 +6,49 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.tesys.correlations.MetricPrediction;
 
 public abstract class FunctionSelector {
 
-	public abstract double calculate(List<Double>valores);
+	public abstract double calculate(Map<String, Double>valores, Map<String, Double>desiredMetrics);
 	
-	public Map<String, Double> getDistanceFunctionEstimationForDevelopers(List<MetricPrediction> metrics, FunctionSelector function) {
+	public Map<String, Double> getDistanceFunctionEstimationForDevelopers(List<MetricPrediction> metrics, FunctionSelector function, Map<String, Double> desiredmetrics) {
+		
+		Map<MetricPrediction, Double> distancias = new HashMap<MetricPrediction, Double>();
+		for (MetricPrediction metric : metrics){
+			Set<String> keys = metric.getMetrics().keySet();
+			Map<String, Double> values = new HashMap<String, Double>();
+			for(String s : keys){
+				if(desiredmetrics.containsKey(s)){
+					values.put(s, metric.getMetrics().get(s));
+				}
+			}
+			distancias.put(metric, function.calculate(values, desiredmetrics));
+		}
+		
+		Set<MetricPrediction> keysDistancias = distancias.keySet();
+		double distanciaMin = 999999999;
+		MetricPrediction minimo = new MetricPrediction();
+		for (MetricPrediction mp : keysDistancias){
+			if(distancias.get(mp) < distanciaMin){
+				distanciaMin = distancias.get(mp);
+				minimo = mp;
+			}
+		}
+		
+		return minimo.getMetrics();
+		
+		
+		
+		
+		
+		
+		
+		/*
+		
 		
 		//List<Double>functionValues=new LinkedList<Double>();
 		Map<String, Double> result = new HashMap<String, Double>();
@@ -23,37 +57,39 @@ public abstract class FunctionSelector {
 		int cantFilas = metrics.size();
 		
 		for (MetricPrediction m : metrics){
-			Collection<Double>valores=m.getMetrics().values();
-			for(Double val : valores){
-				values.add(val);
-			}
 			Collection<String> claves=m.getMetrics().keySet();//nuevo
 			for(String key : claves){
-				keys.add(key);
+				if(!keys.contains(key)){
+					keys.add(key);
+				}
 			}
 		}
 
 		
-		int cantColumnas = values.size();
+		int cantColumnas = keys.size();
 		//Inicializo Matriz	
 		double[][] matValues = new double[cantFilas][cantColumnas];
-		for(int l=0;l<metrics.size();l++){
-			for(int j=0;j<values.size();j++){
+		for(int l=0;l<cantFilas;l++){
+			for(int j=0;j<cantColumnas;j++){
 				matValues[l][j]=0.0;
 			}
 		}
 		//Completo Matriz con los valores de las Métricas estimadas
-		for(int k=0;k<metrics.size();k++){
-			for(int j=0;j<values.size();j++){
-				matValues[k][j]=values.get(j);
+		for(int k=0;k<cantFilas;k++){
+			for(int j=0;j<cantColumnas;j++){
+				Set<String> keysm = metrics.get(k).getMetrics().keySet();
+				for(String s : keysm){
+					int poss = keys.indexOf(s);
+					matValues[k][poss]=metrics.get(k).getMetrics().get(s);
+				}
 			}
 		}
 
 		//Recorrer matriz
 		Vector<Double>aux= new Vector<Double>();
-		for(int j=0;j<values.size();j++){
-			for(int m=0;m<metrics.size();m++){
-				aux.add(matValues[m][j]);								
+		for(int j=0;j<cantColumnas;j++){
+			for(int m=0;m<cantFilas;m++){
+				aux.add(matValues[m][j]);		
 			}
 			
 			//manhattanValues.add(ManhattanFunction.manhattan(aux));
@@ -63,7 +99,7 @@ public abstract class FunctionSelector {
 			result.put(keys.get(j), function.calculate(aux));
 			}
 		
-		return result;
+		return result;*/
 	}
 	
 
