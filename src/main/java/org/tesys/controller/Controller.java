@@ -751,7 +751,8 @@ public class Controller {
 			@PathParam("skill") Double skill,
 			@PathParam("metrics") String metrics,
 			@PathParam("sprint") Integer sprint,
-			@PathParam("issue") String issue) {
+			@PathParam("issue") String issue,
+			@QueryParam("s") List<String> skills) {
 
 		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
 		Map<String,Double> metricsRecommendation = this.convertToMap(metrics);
@@ -759,7 +760,6 @@ public class Controller {
 		ElasticsearchDao<Case> dao;
 		ElasticsearchDao<Developer> daoIssue;
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
-		//List<Case> cases = new LinkedList<Case>();
 		Case dbCases = new Case();
 
 		try {
@@ -771,12 +771,8 @@ public class Controller {
 
 		List<Developer> developers = daoIssue.readAll();
 		Issue unasignedIssue = getIssue(developers, issue);
-		//cases = dao.readAll();
-		Map<String, Double> pruebaMetrics = new HashMap<String, Double>();
-		pruebaMetrics.put("Worked Time", 10.0);
-		pruebaMetrics.put("Critical issues", 5.0);
-		pruebaMetrics.put("Accessors", 11.0);
-		//dbCases = CaseBasedReasoning.getRecommendation(label,skill,metricKey, value, sprint, unasignedIssue, pruebaMetrics);
+		
+		dbCases = CaseBasedReasoning.getRecommendation(label,skill, sprint, unasignedIssue, metricsRecommendation, skills);
 		if(dbCases != null){
 			dao.create(((Integer)dbCases.getIdCase()).toString(), dbCases);
 		}			

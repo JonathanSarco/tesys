@@ -377,7 +377,7 @@ define(
       if (minCorrelation <= 1.0) {  
           // Cambiar el 0.5 , 0.5 por una variable
           alert("String metricas: " + metrics);
-          tesys.getDevRecommendationbyIssue(0.5, 0.5,metrics,issuesSelected.array[0], addPredictionsRecommendations);
+          tesys.getDevRecommendationbyIssue(0.5, 0.5,metrics,issuesSelected.array[0], recommendationSelectedSkills.array,  addPredictionsRecommendations);
         }         
     });
 

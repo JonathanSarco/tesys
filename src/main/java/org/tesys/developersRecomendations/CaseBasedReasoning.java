@@ -79,7 +79,7 @@ public class CaseBasedReasoning {
 
 	}
 
-	public static Case getRecommendation(double factorLabel, double factorSkill, String metricKey, double value, int sprint, Issue issue, Map<String, Double> desiredmetrics){
+	public static Case getRecommendation(double factorLabel, double factorSkill, int sprint, Issue issue, Map<String, Double> desiredmetrics, List<String> skills){
 		/*
 		 * Se Crea La Issue Nueva en base a la Issue que tengo por parametro
 		 */
@@ -113,9 +113,12 @@ public class CaseBasedReasoning {
 		 */
 		List<Case> similarCases = new LinkedList<Case>();
 		for(Case c : cases){
-			if(SimilarCaseByIssueSkill.areSimilar(c.getIssue(), issue)){
-				similarCases.add(c);
+			if(c.getIssue()!= null){
+				if(SimilarCaseByIssueSkill.areSimilar(c.getIssue(), issue)){
+					similarCases.add(c);
+				}
 			}
+
 		}
 		
 		//** FIN NUEVO CASO ***
@@ -142,7 +145,7 @@ public class CaseBasedReasoning {
 			String key = metricsKeys.next();
 		    Double valueKey = desiredmetrics.get(key);
 			//*** Issue se completa con las metricas estimadas y luego se agrega al developer ***
-		    developerPredictions = predictions.getPredictions(key, valueKey, correlationVariation, sprint, null);
+		    developerPredictions = predictions.getPredictions(key, valueKey, correlationVariation, sprint, skills);
 		}
 		List<Developer> developerWithNewIssue = new LinkedList<Developer>();
 		for(Developer developer: similarDevelopers){

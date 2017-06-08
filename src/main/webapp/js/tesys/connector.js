@@ -205,21 +205,21 @@ define(["jquery"], function($) {
     *
     **/
 
-    function getDevRecommendationbyIssue(valueSkills, valueMetrics, metricsValuesRecomendation, issue, callback) {
-    var metricQuery = "";
+    function getDevRecommendationbyIssue(valueSkills, valueMetrics, metricsValuesRecomendation, issue, recommendationSelectedSkills, callback) {
+    var skillQuery = "";
     var sprint = 2; 
     pearsonFactor = 0.95;
     //Hacer Esto para las Skills
-  /*  $.each(metricsValuesRecomendation, function(i, metric){
-      if (i===0) {
-    	  metricQuery+='?s='+metric;
-      } else {
-    	  metricQuery+='&s='+metric;
-      }
-    });*/
+    $.each(recommendationSelectedSkills, function(i, skill){
+        if (i===0) {
+          skillQuery+='?s='+skill;
+        } else {
+          skillQuery+='&s='+skill;
+        }
+      });
     $.ajax({
       type: 'PUT',
-      url: location.origin+apiPath+'getDevRecommendationbyIssue/'+valueSkills+'/'+valueMetrics+'/'+metricsValuesRecomendation+'/'+sprint +'/' + issue/*+metricQuery*/,
+      url: location.origin+apiPath+'getDevRecommendationbyIssue/'+valueSkills+'/'+valueMetrics+'/'+metricsValuesRecomendation+'/'+sprint +'/' + issue + skillQuery,
       dataType: 'json', // data type of response
       contentType: "application/json; charset=utf-8",
       error: function(jqXHR, textStatus, errorThrown) {

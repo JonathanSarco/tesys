@@ -13,16 +13,19 @@ public class SimilarCaseByIssueSkill {
 		String[] labelsIssueCase = issueCase.getLabels();
 		String[] labelsIssue = issue.getLabels();
 		int similars=0;
-		for(int i = 0 ; i < labelsIssueCase.length ; i++ ){
-			for(int j =0; j<labelsIssue.length; j++){
-				if(labelsIssueCase[i].equals(labelsIssue[j])){
-					similars++;
-					if(similars >= machingLabels){
-						return true;
+		if(labelsIssue.length > 0 && labelsIssue.length > 0 ){
+			for(int i = 0 ; i < labelsIssueCase.length ; i++ ){
+				for(int j =0; j<labelsIssue.length; j++){
+					if(labelsIssueCase[i].equals(labelsIssue[j])){
+						similars++;
+						if(similars >= machingLabels){
+							return true;
+						}
 					}
 				}
 			}
 		}
+		
 		List<Skill> skillsIssueCase = issueCase.getSkills();
 		List<Skill> skillsIssue = issue.getSkills();
 		if(skillsIssueCase != null && skillsIssue != null){
