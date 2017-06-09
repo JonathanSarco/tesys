@@ -7,7 +7,7 @@ import org.tesys.core.analysis.telemetry.SkillsAggregator;
 import org.tesys.core.estructures.Issue;
 
 public class SimilarCaseByIssueSkill {
-	final static int machingLabels = 3;
+	final static int machingLabels = 1;
 	public static boolean areSimilar(Issue issueCase, Issue issue) {
 		
 		String[] labelsIssueCase = issueCase.getLabels();

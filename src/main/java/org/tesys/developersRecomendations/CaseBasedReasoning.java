@@ -1,7 +1,9 @@
 package org.tesys.developersRecomendations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,40 +47,6 @@ public class CaseBasedReasoning {
 
 	}
 
-	public static List<Case> getDevRecommendationbyIssue(double factorLabel, double factorSkill, String metricKey, double value, int sprint)	{
-
-		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
-		List<Long> versiones = avq.execute();
-		ElasticsearchDao<Case> dao;
-		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
-		List<Case> cases = new LinkedList<Case>();
-		List<Case>dbCases = new LinkedList<Case>();
-
-		try {
-			dao = new ElasticsearchDao<Case>(
-					Case.class, 
-					ElasticsearchDao.DEFAULT_RESOURCE_CASE); //devuelve la version mas actualizada de los analisis.
-		} catch (Exception e) {
-			return cases;
-		}
-
-		cases = dao.readAll();
-		if(cases.isEmpty()){
-			//dbCases = getRecommendation(factorLabel, factorSkill, metricKey, value, sprint);
-			if(dbCases != null && !dbCases.isEmpty()){
-				for(Case c : dbCases){
-					//dao.create(c.getId(), c);
-				}			
-			}
-		}
-		//response = Response.ok(cases);
-
-		return cases;
-
-
-
-	}
-
 	public static Case getRecommendation(double factorLabel, double factorSkill, int sprint, Issue issue, Map<String, Double> desiredmetrics, List<String> skills){
 		/*
 		 * Se Crea La Issue Nueva en base a la Issue que tengo por parametro
@@ -88,10 +56,20 @@ public class CaseBasedReasoning {
 		newIssue.setLabels(issue.getLabels());
 		newIssue.setIssueId(issue.getIssueId());
 		newIssue.setIssueType(issue.getIssueType());
-		newIssue.setUser("");;
-		//newIssue.setSkills(skills);
+		newIssue.setUser("");
 		newIssue.setMetrics(desiredmetrics);
 		
+		/*
+		 * Agrego las Skills en la nueva tarea
+		 */
+		List<Skill> desiredSkills = new LinkedList<Skill>();
+		for (String s : skills){
+			Skill newSkill = new Skill();
+			newSkill.setName(s);
+			newSkill.setWeight(1);
+			desiredSkills.add(newSkill);
+		}
+		newIssue.setSkills(desiredSkills);
 		//*** FIN NUEVA ISSUE ***
 		
 		/*
@@ -188,12 +166,64 @@ public class CaseBasedReasoning {
 		Developer deveoperComplete[] = new Developer[developerWithNewIssue.size()];
 		deveoperComplete = developerWithNewIssue.toArray(deveoperComplete);
 		newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
+		
 		/*
-		 * Agregar La Lógica para comparar con el casoNuevo y el caso de la base de casos 
+		 * Si Hay casos Similares en la BD de Casos, Agrego el criterio de ordenamiento del caso viejo
+		 * y ordeno la lista de desarrolladores según el criterio del caso viejo
+		 * - Si el caso es malo ordeno en orden inverso respecto del criterio de ordenamiento elegido
+		 * - Si el caso fue bueno entonces utilizo el criterio de ordenamiento
+		 * Adicionalmente se modifica la lista de desarrolladores similares según la clasificación del caso
+		 * - Si fue bueno agrego el desarrollador seleccionado al caso nuevo si es q no esta entre los desarrolladores similares
+		 * - Si fue malo elimino al desarrollador seleccionado de los similares. 
 		 */
+		if(!similarCases.isEmpty()){
+			/*
+			 * Adapto la nueva recomendacion al caso viejo
+			 */
+			newCase = adaptNewCase(similarCases, newCase);
+			/*
+			 * Ordeno la Recomendación Según el Criterio
+			 */
+			newCase.setIssuesWithDevelopersRecommended(orderDevelopersByCriteria(newCase.getIssuesWithDevelopersRecommended(), similarCases));
+		}
 	return newCase;	
 }
 
+private static Developer[] orderDevelopersByCriteria(Developer[] issuesWithDevelopersRecommended, List<Case> similarCases) {
+	/*
+	 * Ahora oderna alfabeticamente, falta ver como hacemos con los criterios 
+	 */
+	List<Developer> developers = Arrays.asList(issuesWithDevelopersRecommended);
+	Collections.sort(developers); 
+	Developer deveoperComplete[] = new Developer[developers.size()];
+	deveoperComplete = (Developer[]) developers.toArray();
+	return deveoperComplete;
+}
+
+private static Case adaptNewCase(List<Case> similarCases, Case newCase) {
+	List<Developer> developers = Arrays.asList(newCase.getIssuesWithDevelopersRecommended());
+	for(Case c: similarCases){
+		if(c.getPerformIssue() != null){	
+			if(c.isGoodRecommendation()){
+				boolean existsDeveloper = false;
+				if(!developers.contains(c.getPerformIssue())){
+					Developer developer = c.getPerformIssue();
+					developer.setIssues(developers.get(0).getIssues());
+					developers.add(developer);
+				}			
+			}
+			else{
+				if(developers.contains(c.getPerformIssue())){
+					developers.remove(c.getPerformIssue());
+				}		
+			}
+		}
+	}
+	Developer deveoperComplete[] = new Developer[developers.size()];
+	deveoperComplete = (Developer[]) developers.toArray();
+	newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
+	return newCase;
+}
 
 private List<String> getDevSkillsForIssue(Developer d) {
 	List<String>skills=new LinkedList<String>();
