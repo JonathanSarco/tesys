@@ -1,6 +1,10 @@
 package org.tesys.core.estructures;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,6 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.tesys.core.analysis.skilltraceability.Skill;
 import org.tesys.correlations.DeveloperPrediction;
 import org.tesys.correlations.MetricPrediction;
+import org.tesys.orderCriteria.CriteriaBestValue;
+import org.tesys.orderCriteria.CriteriaSelector;
 import org.tesys.util.MD5;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -31,6 +37,7 @@ public class Case {
 	 * Las Métricas estimadas se almacenan en el Map measures de Issues 
 	 */
 	Developer[] issuesWithDevelopersRecommended;
+	
 	// *** Fin Solucion ***
 	
 	// *** Resultado ***
@@ -41,7 +48,7 @@ public class Case {
 	// *** Fin Resultado ***
 
 	// *** Criterio ***
-	String orderCriteria;
+	Map<String,String> orderCriteria;
 	// *** Fin Criterio ***
 	
 	boolean goodRecommendation;
@@ -86,11 +93,11 @@ public class Case {
 		return idCase;
 	}
 	
-	public String getOrderCriteria() {
+	public Map<String,String> getOrderCriteria() {
 		return orderCriteria;
 	}
 
-	public void setOrderCriteria(String orderCriteria) {
+	public void setOrderCriteria(Map<String,String> orderCriteria) {
 		this.orderCriteria = orderCriteria;
 	}
 	
@@ -102,4 +109,13 @@ public class Case {
 		this.goodRecommendation = goodRecommendation;
 	}
 	
+	public Map<String,String> getOrderCriterion(){
+//		CriteriaSelector criterion=new CriteriaBestValue();
+//		List<MetricPrediction>metrics = null;//este seria el vector de metric Prediction
+//		Map<String,String> orderCriteria=criterion.getMetricsToOrder(metrics, performIssue, criterion);
+		return orderCriteria;
+	}
+
+	
+
 }

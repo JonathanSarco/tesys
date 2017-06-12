@@ -27,19 +27,19 @@ public class prueba {
 		values[0][3]=0.1; //metrica 4,desarrollador 1
 		values[1][3]=0.3; //metrica 4,desarrollador 2
 		values[2][3]=0.2; //metrica 4,desarrollador 3
-		List<Integer>criteria=criterion.getCriterio(values, 0,"mayor");
-
-		System.out.println("Matriz             m1   m2   m3   m4");
-		for(int i=0;i<3;i++){
-				System.out.println("Desarrollador "+i+"    "+values[i][0]+"  "+values[i][1]+"  "+values[i][2]+"  "+values[i][3]);
-		}
-		for(int i=0;i<criteria.size();i++){
-			System.out.println("El mejor criterio para el desarrollador 2 es el que pertence a la columna:"+criteria.get(i));
-		}
-
-		List<Integer>criteria1=criterion1.getCriterio(values, 0,"mayor");
-		for(int i=0;i<criteria1.size();i++){
-			System.out.println("Los mejores criterios para el desarrollador 2 son los que pertencen a las columnas:"+criteria1.get(i));
-		}
+//		List<Integer>criteria=criterion.getCriterio(values, 0,"mayor");
+//		System.out.println(pos);
+//		System.out.println("Matriz             m1   m2   m3   m4");
+//		for(int i=0;i<3;i++){
+//				System.out.println("Desarrollador "+i+"    "+values[i][0]+"  "+values[i][1]+"  "+values[i][2]+"  "+values[i][3]);
+//		}
+//		for(int i=0;i<criteria.size();i++){
+//			System.out.println("El mejor criterio para el desarrollador 2 es el que pertence a la columna:"+criteria.get(i));
+//		}
+//
+//		List<Integer>criteria1=criterion1.getCriterio(values, 0,"mayor");
+//		for(int i=0;i<criteria1.size();i++){
+//			System.out.println("Los mejores criterios para el desarrollador 2 son los que pertencen a las columnas:"+criteria1.get(i));
+//		}
 	}
 }

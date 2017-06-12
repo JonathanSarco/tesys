@@ -1,18 +1,18 @@
 package org.tesys.orderCriteria;
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.tesys.core.estructures.Developer;
 import org.tesys.correlations.MetricPrediction;
 
 public abstract class CriteriaSelector {
 
-	protected int cantFilas;
-	protected int cantColumnas;
-	//establece si la metrica es mejor por mayor o por menor
+	//Establece si la metrica es mejor por mayor o por menor
 	protected Hashtable<String,String> bestMetrics= new Hashtable<String, String>(); 
 	
 	public void completeHash(List<MetricPrediction> metrics){
@@ -68,48 +68,38 @@ public abstract class CriteriaSelector {
 
 		
 	
-	public double[][] buildArray(List<MetricPrediction> metrics/*,CriteriaSelector criterion*/){
-		List<Double>values=new LinkedList<Double>();
-		cantFilas = metrics.size();
-		for (MetricPrediction m : metrics){
-			Collection<Double>valores=m.getMetrics().values();
-			for(Double val : valores){
-				values.add(val);
-			}
-		}
-		cantColumnas = values.size();
-		//Inicializo Matriz	
-		double[][] matValues = new double[cantFilas][cantColumnas];
-		for(int l=0;l<metrics.size();l++){
-			for(int j=0;j<values.size();j++){
-				matValues[l][j]=0.0;
-			}
-		}
-		//Completo Matriz con los valores de las Métricas estimadas
-		for(int k=0;k<metrics.size();k++){
-			for(int j=0;j<values.size();j++){
-				matValues[k][j]=values.get(j);
+	//Recibe las metricas estimadas de cada desarrollador, el desarrollador seleccionado para hacer la tarea y el criterio de mejor valor
+	//Devuelve el nombre de la metrica por el cual ese desarrollador es mejor y si se debe ordenar por mayor o menor
+	public Map<String,String> getMetricsToOrder(List<MetricPrediction> metrics, Developer chosenDeveloper, CriteriaSelector criterion){
+				
+		//Se obtiene en allKeys todas los nombres(keys) de las metricas estimadas por todos los desarrolladores
+		List<String>allKeys=new LinkedList<>();
+		for (MetricPrediction metric : metrics){
+			Set<String> keys = metric.getMetrics().keySet();
+			for(String k:keys){
+				if(!allKeys.contains(k))
+					allKeys.add(k);
 			}
 		}
 		
-		//Recorrer matriz->lo hago en el metodo de getCriterio
-		/*		Vector<Double>aux= new Vector<Double>();
-				for(int j=0;j<values.size();j++){
-					for(int m=0;m<metrics.size();m++){
-						aux.add(matValues[m][j]);								
-					}
-					
-					//manhattanValues.add(ManhattanFunction.manhattan(aux));
-					//FunctionSelector function=new ManhattanFunction(); // se puede elegir otra función
-					//functionValues.add(function.calculate(aux));
-					criteria.addAll(criterion.getCriterio(aux));
-								
-				}*/
-				return matValues;
+		//Se arma un map metricsWithValuesByDev que va a tener por cada metrica, un conjunto de valores estimados por cada desarrollador
+		Map<String,Map<String,Double>> metricsWithValuesByDev=new HashMap<String, Map<String,Double>>();
+		Map<String,Double>ValuesByDev=new HashMap<String,Double>(); //el double es valor, y el String es el desarrollador
+		for(int i=0;i<allKeys.size();i++){
+			for (MetricPrediction metric : metrics){
+				if(metric.getMetrics().containsKey(allKeys.get(i)))
+					ValuesByDev.put(metric.getUser(),metric.getMetrics().get(allKeys.get(i)));
+				metricsWithValuesByDev.put(allKeys.get(i),ValuesByDev);
+			}
+		}
+		
+		//Se obtiene en que metrica(por menor o por mayor segun corresponda), es mejor el desarrollador seleccionado
+		Map<String,String>criterios=criterion.obtenerValor(chosenDeveloper, metricsWithValuesByDev);			
+				
+		return criterios;				
 	}
+	
 
-	//devuelve las columnas(criterios) en los que el desarrollador seleccionado, tuvo el mejor valor
-	public abstract List<Integer> getCriterio(double[][]values, int developer,String value);
-	//el int en developers corresponde al nro de fila seleccionada por el usuario
+	public abstract Map<String,String> obtenerValor(Developer chosenDeveloper, Map<String,Map<String,Double>> metricsWithValuesByDev);
 
 }
