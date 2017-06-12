@@ -398,34 +398,54 @@ define(
 			/**
 			 * Agrego la vista
 			 *
-			 **/
-
+			 **/	
+			var selectedIssues =  {array: []};
+			
 			var IssueRecommendationView = Backbone.View.extend({
 				
+				tagName: 'a',
+
+				//constants definitions 
+				UNSELECTED_COLOR: "white", 
+				SELECTED_COLOR: "darksalmon", 
+				//end constants definitions
+
 				events: {
 					'click': 'select'
 				},
-
 				initialize: function(options){
 					this.options = options || {};
-					_.bindAll(this, 'render', 'select');
-					this.collection.on({'reset': this.render});
+					_.bindAll(this, 'render', 'select', 'plot', 'tag', 'adapt'); 
+					this.isSelected = false;
 					this.render();
 				},
+				render: function(){
+					var issueId = this.model.get('issueId');
 
-				render: function(){ 
-					_(this.collection.models).each(function(item){ // in case collection is not empty
-						var devIssuesContainer = document.createElement("a");
-						devIssuesContainer.setAttribute('class', 'list-group-item list-group-item-warning');
-						devIssuesContainer.setAttribute('data-parent','#MainMenu3');
-						devIssuesContainer.id = item.get('issueId');
-						devIssuesContainer.textContent = item.get('issueId');
-						//Referencia
-						devIssuesContainer.setAttribute('href','#pred'+item.get('issueId'));
-						document.getElementById("developers-reco").appendChild(devIssuesContainer);
-					});
-					return this;
+					//Al renderizar deberia limpiar el elemento viejo, 
+					//ya que podria quedar basura en los atributos
+					this.el.id = issueId; 
+					this.el.setAttribute('class', 'list-group-item list-group-item-success');
+					this.el.textContent = "" ;
+
+					if (this.model.get('metrics').ncloc) {
+						//Si el Issue tiene codigo (suponesmos que hay codigo si existe la metrica 'nlocs')
+						//Inserto in icono distintivo al issue
+						var codeIcon = document.createElement("i");
+						codeIcon.setAttribute('class', 'glyphicon glyphicon glyphicon-bookmark');
+						this.el.appendChild(codeIcon);
+					}
+
+					//Debo insertar el texto, luego del icono del issue (si es que este fue creado)
+					this.el.appendChild(document.createTextNode(issueId)) ;
+
+					return this; // for chainable calls, like .render().el
 				},
+
+				tag: function(){
+					return this.model.get('user') + "::" + this.model.get('issueId') ;
+				},
+
 				/**
 				 * [select Este metodo se ocupa de cambiar de estado a un issue 
 				 * (seleccionado/no-seleccionado) de manera tal de que se lleve un registro
@@ -433,27 +453,108 @@ define(
 				 *   Este evento se dispara cuando se hace click sobre un issue.]
 				 */
 				select: function() { 
-					if (this.isSelected == null || this.isSelected == 'undefined') {
+				//	this.isSelected = !this.isSelected;
+					if (this.isSelected == null || this.isSelected == 'undefined' || this.isSelected == false) {
 						this.isSelected = !this.isSelected;
 					}
 					if(this.isSelected) {
+						this.el.style.backgroundColor = this.SELECTED_COLOR ;
+						if(this.options.selectedIssues.array.length>0){
+							this.options.selectedIssues.array[0].el.style.backgroundColor = this.UNSELECTED_COLOR;
+							this.options.selectedIssues.array = _.without(this.options.selectedIssues.array, this.options.selectedIssues.array[0]);
+						}
+						this.options.selectedIssues.array.push(this);
+						this.plot(); 
+					} /*else {
+						selectedIssues.array = _.without(selectedIssues.array, this);
+						this.el.style.backgroundColor = this.UNSELECTED_COLOR ;
 						var self = this;
-						_(this.collection.models).each ( function ( item ) {self.appendItem(item);},this); 
-					}
+						_(this.options.plotter).each(function(p){
+							p.removeGraph(self.tag());
+						});*/
+					//}
 				},
-				
-				appendItem: function(item) {
-					var issue = new IssueView(
-							{
-								model: item
-							});
-					if (this.el.attributes[2].ownerDocument.activeElement.attributes[2].value == issue.el.id){
-						this.options.selectedIssues.array.pop();
-						this.options.selectedIssues.array.push(issue.model.get('issueId'));
+
+				/**
+				 * [adapt convierte un atributo del modelo en un arreglo, para poder ser
+				 * graficado en un formato estandar]
+				 * @param  {[type]} attributeToAdapt [el atributo puede ser 'metrics' o 
+				 * 'skills']
+				 * @return {[JSON of metricKey:metricValue]}                  
+				 * [es el formato estandar con el cual se le pasaran los valores a graficar
+				 * al plotter]
+				 */
+				adapt: function(attributeToAdapt){
+					if (attributeToAdapt == 'metrics'){
+						return this.model.get('metrics');
+					} else if (attributeToAdapt == 'skills') {
+						var skills = {} ;
+
+						// convert skills to simple array
+						_(this.model.get('skills')).each(function(skill){
+							skills[skill.skillName] = skill.skillWeight;
+						});
+						return skills;
 					}
-				}
-				
+
+				},
+
+				/**
+				 * [plot Dibuja el gráfico del issue dentro del conjunto de plotters]
+				 */
+				plot: function(){
+					//Ploting metrics
+					var self = this;
+					$(this.options.attrToPlot).each(function(i, attr){
+						if (self.options.plotter[i]){
+							var toPlot = self.adapt(attr) ;
+							if (!_.isEmpty(toPlot)){
+								self.options.plotter[i].addGraph(self.tag(), toPlot);
+							}
+						}
+					});
+				},
+
+				plotSingle: function(plotter, attr) {
+					if (plotter) {
+						var toPlot = this.adapt(attr) ;
+						if (!_.isEmpty(toPlot)){
+							plotter.addGraph(this.tag(), toPlot);
+						}
+					}
+				} 
 			});
+			
+			var IssueRecommendationCollectionView = Backbone.View.extend({
+				  //  el: $('#metrics'), // el attaches to existing element
+				    initialize: function(options){
+				      this.options = options || {};
+				      // every function that uses 'this' as the current object should be in here
+				      _.bindAll(this, 'render', 'appendItem');
+
+				      //Event subscription
+				      this.collection.on({'reset': this.render});
+				      
+				      this.render();
+				    },
+				    
+				    render: function(){
+				      var self = this;
+				      _(this.collection.models).each(function(item){ // in case collection is not empty
+				        self.appendItem(item);
+				      });
+				      return this;
+				    },
+				    
+				    appendItem: function(item){
+				      var aux = new IssueRecommendationView(
+				        { model: item, 
+				          selectedIssues: this.options.selectedIssues,
+				        }
+				      );
+				      this.$el.append(aux.render().el);
+				    }
+				  });
 
 			return {
 				IssueView: IssueView,
@@ -464,6 +565,7 @@ define(
 				MetricSelectView: MetricSelectView,
 				DeveloperSelectView: DeveloperSelectView,
 				issuesViewsToPlot: issuesViewsToPlot,
-				IssueRecommendationView: IssueRecommendationView
+				IssueRecommendationView: IssueRecommendationView,
+				IssueRecommendationCollectionView: IssueRecommendationCollectionView
 			};
 		});

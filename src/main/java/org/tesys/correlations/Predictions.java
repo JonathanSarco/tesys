@@ -41,7 +41,7 @@ public class Predictions {
 		metrics.remove("quacode");
 		metrics.remove("prec");
 
-
+		correlationVariation = 0.1;
 		for (String userKey : users) {
 
 			metricPrediction = new MetricPrediction(userKey, userKey);
@@ -60,10 +60,10 @@ public class Predictions {
 									isk.add(sk.skillName);
 								}
 
-								if( isk.containsAll(skills) ) {
+							//	if( isk.containsAll(skills) ) {
 									pearson1.add(issue.getMetrics().get(metrics.get(i)));
 									pearson2.add(issue.getMetrics().get(metrics.get(j)));
-								}
+							//	}
 
 							}
 

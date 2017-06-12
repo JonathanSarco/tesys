@@ -40,66 +40,6 @@ public abstract class FunctionSelector {
 		}
 		
 		return minimo.getMetrics();
-		
-		
-		
-		
-		
-		
-		
-		/*
-		
-		
-		//List<Double>functionValues=new LinkedList<Double>();
-		Map<String, Double> result = new HashMap<String, Double>();
-		List<Double>values=new LinkedList<Double>();
-		List<String>keys=new LinkedList<String>();//nuevo
-		int cantFilas = metrics.size();
-		
-		for (MetricPrediction m : metrics){
-			Collection<String> claves=m.getMetrics().keySet();//nuevo
-			for(String key : claves){
-				if(!keys.contains(key)){
-					keys.add(key);
-				}
-			}
-		}
-
-		
-		int cantColumnas = keys.size();
-		//Inicializo Matriz	
-		double[][] matValues = new double[cantFilas][cantColumnas];
-		for(int l=0;l<cantFilas;l++){
-			for(int j=0;j<cantColumnas;j++){
-				matValues[l][j]=0.0;
-			}
-		}
-		//Completo Matriz con los valores de las Métricas estimadas
-		for(int k=0;k<cantFilas;k++){
-			for(int j=0;j<cantColumnas;j++){
-				Set<String> keysm = metrics.get(k).getMetrics().keySet();
-				for(String s : keysm){
-					int poss = keys.indexOf(s);
-					matValues[k][poss]=metrics.get(k).getMetrics().get(s);
-				}
-			}
-		}
-
-		//Recorrer matriz
-		Vector<Double>aux= new Vector<Double>();
-		for(int j=0;j<cantColumnas;j++){
-			for(int m=0;m<cantFilas;m++){
-				aux.add(matValues[m][j]);		
-			}
-			
-			//manhattanValues.add(ManhattanFunction.manhattan(aux));
-			//FunctionSelector function=new ManhattanFunction(); // se puede elegir otra función
-			//functionValues.add(function.calculate(aux));
-			//functionValues.add(function.calculate(aux));
-			result.put(keys.get(j), function.calculate(aux));
-			}
-		
-		return result;*/
 	}
 	
 
