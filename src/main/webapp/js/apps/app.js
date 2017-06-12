@@ -51,7 +51,7 @@ define(
         }
     );
     var issuesSelected = {array: []};
-    var recommendation = new view.IssueRecommendationView(
+    var recommendation = new view.IssueRecommendationCollectionView(
             { collection: issues,
               selectedIssues: issuesSelected, 
               el: $('#developers-reco')
@@ -377,7 +377,7 @@ define(
       if (minCorrelation <= 1.0) {  
           // Cambiar el 0.5 , 0.5 por una variable
           alert("String metricas: " + metrics);
-          tesys.getDevRecommendationbyIssue(0.5, 0.5,metrics,issuesSelected.array[0], recommendationSelectedSkills.array,  addPredictionsRecommendations);
+          tesys.getDevRecommendationbyIssue(0.5, 0.5,metrics,issuesSelected.array[0].model.get('issueId'), recommendationSelectedSkills.array,  addPredictionsRecommendations);
         }         
     });
 
