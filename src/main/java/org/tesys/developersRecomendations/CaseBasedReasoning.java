@@ -116,7 +116,7 @@ public class CaseBasedReasoning {
 		/*
 		 * Recorro los desarrolladores similares para obtener la correlación entre las tareas del mismo
 		 */
-		double correlationVariation=0.1;
+		double correlationVariation=0;
 		List<DeveloperPrediction> developerPredictions = new LinkedList<DeveloperPrediction>();
 		Iterator<String> metricsKeys = desiredmetrics.keySet().iterator();
 		while( metricsKeys.hasNext() ) {
@@ -185,6 +185,12 @@ public class CaseBasedReasoning {
 			 * Ordeno la Recomendación Según el Criterio
 			 */
 			newCase.setIssuesWithDevelopersRecommended(orderDevelopersByCriteria(newCase.getIssuesWithDevelopersRecommended(), similarCases));
+		}
+		else{
+			List<Developer> developers = Arrays.asList(newCase.getIssuesWithDevelopersRecommended());
+			Collections.sort(developers); 
+			Developer deveoperOrdered[] = new Developer[developers.size()];
+			newCase.setIssuesWithDevelopersRecommended(deveoperOrdered = (Developer[]) developers.toArray());
 		}
 	return newCase;	
 }
