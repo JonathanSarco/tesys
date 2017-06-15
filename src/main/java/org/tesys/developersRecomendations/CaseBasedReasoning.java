@@ -176,115 +176,41 @@ public class CaseBasedReasoning {
 		Developer deveoperComplete[] = new Developer[developerWithNewIssue.size()];
 		deveoperComplete = developerWithNewIssue.toArray(deveoperComplete);
 		newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
-		
 		/*
-		 * Si Hay casos Similares en la BD de Casos, Agrego el criterio de ordenamiento del caso viejo
-		 * y ordeno la lista de desarrolladores según el criterio del caso viejo
-		 * - Si el caso es malo ordeno en orden inverso respecto del criterio de ordenamiento elegido
-		 * - Si el caso fue bueno entonces utilizo el criterio de ordenamiento
-		 * Adicionalmente se modifica la lista de desarrolladores similares según la clasificación del caso
+		 *  * Adicionalmente se modifica la lista de desarrolladores similares según la clasificación del caso
 		 * - Si fue bueno agrego el desarrollador seleccionado al caso nuevo si es q no esta entre los desarrolladores similares
 		 * - Si fue malo elimino al desarrollador seleccionado de los similares. 
 		 */
-		newCase.setIssuesWithDevelopersRecommended(orderDevelopersWithoutCriteria(newCase.getIssuesWithDevelopersRecommended()));
-	/*	if(similarCases.isEmpty()){
-			
-			 /* Ordeno la Recomendación alfabeticamente
-			 
-			
-			
+		if(!similarCases.isEmpty() && similarCases.size() > 0){
+			adaptNewCase(similarCases, newCase);
 		}
-		else
-		{
-			/*
-			 * Adapto la nueva recomendacion al caso viejo
-			 
-			newCase = adaptNewCase(similarCases, newCase);
-			/*
-			 * 
-			 
-			 /*Ordeno la Recomendación Según el Criterio
-			
-			//newCase.setIssuesWithDevelopersRecommended(orderDevelopersByCriteria(similarCases,similarDevelopersPredictions,newCase));
-			newCase.setIssuesWithDevelopersRecommended(orderDevelopersByCriteria(similarCases,newCase.getIssuesWithDevelopersRecommended()));
-
-		}*/
+		newCase.orderDeveloper(similarCases);
 	return newCase;	
 }
-
-
-private static Developer[] orderDevelopersWithoutCriteria(Developer[] issuesWithDevelopersRecommended) {
-//	/*
-//	 * Ordena alfabeticamente desarrolladores por nombre
-//	 */
-	
-	List<Developer> developers = Arrays.asList(issuesWithDevelopersRecommended);
-	Collections.sort(developers, new OrderDevbyName()); 
-	Developer deveoperComplete[] = new Developer[developers.size()];
-	deveoperComplete = (Developer[]) developers.toArray();
-	return deveoperComplete;	
-}
-
-	private static Developer[] orderDevelopersByCriteria(List<Case> similarCases, Developer[] issuesWithDevelopersRecommended) {
-	
-	//Busca si alguno de los casos similares es una buena recomendancion
-	boolean found=false;
-	Case similarCaseGood=new Case();
-	for(int i=0;i<similarCases.size() && !found;i++){
-		if(similarCases.get(i).isGoodRecommendation()){
-			similarCaseGood=similarCases.get(i);
-			found=true;
+	private static Case adaptNewCase(List<Case> similarCases, Case newCase) {
+		List<Developer> developers = Arrays.asList(newCase.getIssuesWithDevelopersRecommended());
+		for(Case c: similarCases){
+			if(c.getPerformIssue() != null){	
+				if(c.isGoodRecommendation()){
+					boolean existsDeveloper = false;
+					if(!developers.contains(c.getPerformIssue())){
+						Developer developer = c.getPerformIssue();
+						developer.setIssues(developers.get(0).getIssues());
+						developers.add(developer);
+					}			
+				}
+				else{
+					if(developers.contains(c.getPerformIssue())){
+						developers.remove(c.getPerformIssue());
+					}		
+				}
 			}
 		}
-	
-	//Si existe un caso similar que sea una buena recomendacion, obtengo el criterio por el cual ordeno, y sino ordeno al reves por ese criterio
-	Map<String,String>criterion=new HashMap<String,String>();
-	if(similarCaseGood!=null){
-		criterion=similarCaseGood.getOrderCriteria();
-		//Establezco el criterio por el cual se va a ordenar
-		Case.setOrderCriteria(criterion);
-		}
-	else{
-		//Elijo el primero, ya que cualquiera es una mala recomendacion
-		Case similarCaseBad=similarCases.get(0);
-		criterion=similarCaseBad.getOrderCriteria();
-		//Establezco el criterio por el cual se va a ordenar
-		Case.setInverseOrderCriteria(criterion);
+		Developer deveoperComplete[] = new Developer[developers.size()];
+		deveoperComplete = (Developer[]) developers.toArray();
+		newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
+		return newCase;
 	}
-	
-	List<Developer> developers = Arrays.asList(issuesWithDevelopersRecommended);	
-	//Ordeno por ese criterio (el primer String me indica la metrica, y el segundo si debo ordenar ascendente o descendente a los desarrolladores)
-	//Collections.sort(developers);	
-	Developer deveoperComplete[] = new Developer[developers.size()];
-	deveoperComplete = (Developer[]) developers.toArray();
-	return deveoperComplete;
-
-}
-
-private static Case adaptNewCase(List<Case> similarCases, Case newCase) {
-	List<Developer> developers = Arrays.asList(newCase.getIssuesWithDevelopersRecommended());
-	for(Case c: similarCases){
-		if(c.getPerformIssue() != null){	
-			if(c.isGoodRecommendation()){
-				boolean existsDeveloper = false;
-				if(!developers.contains(c.getPerformIssue())){
-					Developer developer = c.getPerformIssue();
-					developer.setIssues(developers.get(0).getIssues());
-					developers.add(developer);
-				}			
-			}
-			else{
-				if(developers.contains(c.getPerformIssue())){
-					developers.remove(c.getPerformIssue());
-				}		
-			}
-		}
-	}
-	Developer deveoperComplete[] = new Developer[developers.size()];
-	deveoperComplete = (Developer[]) developers.toArray();
-	newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
-	return newCase;
-}
 
 private List<String> getDevSkillsForIssue(Developer d) {
 	List<String>skills=new LinkedList<String>();
