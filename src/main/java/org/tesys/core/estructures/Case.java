@@ -1,7 +1,9 @@
 package org.tesys.core.estructures;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Case {
+public class Case  {
 	
 	int idCase;
 	// *** Problema ***
@@ -45,14 +47,17 @@ public class Case {
 	 * Se Almacenan las Metricas Reales en el Map measures de la Issue Nueva desarrollada por el Developer PerformIssue
 	 */
 	Developer performIssue;
-	// *** Fin Resultado ***
+	 // *** Fin Resultado ***
 
 	// *** Criterio ***
-	Map<String,String> orderCriteria;
+	static Map<String,String> orderCriteria;
 	// *** Fin Criterio ***
 	
 	boolean goodRecommendation;
 
+	Double value;
+
+	
 	public Case(){
 		// for jason
 	}
@@ -97,8 +102,18 @@ public class Case {
 		return orderCriteria;
 	}
 
-	public void setOrderCriteria(Map<String,String> orderCriteria) {
-		this.orderCriteria = orderCriteria;
+	public static  void setOrderCriteria(Map<String,String> criteria) {
+		List<String>aux=(List<String>) criteria.keySet(); //Nose si castea bien
+		orderCriteria.put(aux.get(0), criteria.get(aux.get(0)));
+	}
+	
+	public static void setInverseOrderCriteria(Map<String, String> criteria) {
+		List<String>aux=(List<String>) criteria.keySet(); // Nose si castea bien
+		// Invierte el orden de los desarrolladores
+		if((criteria.get(aux.get(0))).equals("mayor"))
+			orderCriteria.put(aux.get(0), "menor");
+		else
+			orderCriteria.put(aux.get(0), "mayor");
 	}
 	
 	public boolean isGoodRecommendation() {
@@ -110,12 +125,8 @@ public class Case {
 	}
 	
 	public Map<String,String> getOrderCriterion(){
-//		CriteriaSelector criterion=new CriteriaBestValue();
-//		List<MetricPrediction>metrics = null;//este seria el vector de metric Prediction
-//		Map<String,String> orderCriteria=criterion.getMetricsToOrder(metrics, performIssue, criterion);
 		return orderCriteria;
 	}
 
-	
 
 }
