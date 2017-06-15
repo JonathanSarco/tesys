@@ -775,7 +775,13 @@ public class Controller {
 		dbCases = CaseBasedReasoning.getRecommendation(label,skill, sprint, unasignedIssue, metricsRecommendation, skills);
 		if(dbCases != null){
 			dao.create(((Integer)dbCases.getIdCase()).toString(), dbCases);
-		}			
+		}
+		List<Developer> developersCase = Arrays.asList(dbCases.getIssuesWithDevelopersRecommended());
+		GenericEntity<List<Developer>> entity = new GenericEntity<List<Developer>>(
+				developersCase) {
+		};
+		response.entity(entity);
+
 		return response.build();
 	}
 
