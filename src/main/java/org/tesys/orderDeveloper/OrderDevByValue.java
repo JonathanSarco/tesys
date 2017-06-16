@@ -15,8 +15,8 @@ public class OrderDevByValue implements Comparator<Developer>{
 	}
 
 	public int compare(Developer dev1, Developer dev2) {
-		double valor1 = dev1.getIssues().get(0).getMetrics().get(metric);
-		double valor2 = dev2.getIssues().get(0).getMetrics().get(metric);
+		double valor1 = dev1.getIssues().get(0).getMetrics() == null || dev1.getIssues().get(0).getMetrics().get(metric) == null ? 0 : dev1.getIssues().get(0).getMetrics().get(metric);
+		double valor2 = dev2.getIssues().get(0).getMetrics() == null || dev2.getIssues().get(0).getMetrics().get(metric) == null ? 0 : dev2.getIssues().get(0).getMetrics().get(metric);
 		if(precedence.equals("menor")){
 			return (int) (valor1 - valor2);
 		}

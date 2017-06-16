@@ -776,7 +776,7 @@ public class Controller {
 		if(dbCases != null){
 			dao.create(((Integer)dbCases.getIdCase()).toString(), dbCases);
 			Map<String,String> criteria = new HashMap<String,String>();
-			criteria.put("progress", "menor");
+			criteria.put("complexity", "menor");
 			dbCases.setOrderCriteria(criteria);
 			dao.update(Integer.toString(dbCases.getIdCase()), dbCases);
 		}
