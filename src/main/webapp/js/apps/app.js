@@ -369,6 +369,7 @@ define(
     //Boton de recomendar
     $('#RecommendDeveloperbyIssue').click(function(){
       //alert("hice click en recomendar");
+    	$("#ajax_loader").show();
       var metrics = "";
       for (var m in metricsValuesRecommendation)
         metrics = metrics + m + ":" + metricsValuesRecommendation[m] + ", ";
@@ -378,7 +379,7 @@ define(
           // Cambiar el 0.5 , 0.5 por una variable
           alert("String metricas: " + metrics);
           tesys.getDevRecommendationbyIssue(0.5, 0.5,metrics,issuesSelected.array[0].model.get('issueId'), recommendationSelectedSkills.array,  addPredictionsRecommendations);
-        }         
+        }
     });
 
       /**

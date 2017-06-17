@@ -12,13 +12,11 @@
       <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <[endif]-->
 	
-	<link href="css/bootstrap.css" rel="stylesheet">
-	
+	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<!-- Bootstrap ultima version-->
+	<link href="css/styles.css" rel="stylesheet">
     <!--  link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"-->
-    <link href="css/styles.css" rel="stylesheet">
-    <!-- Optional theme -->
-   <!-- <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">-->
+  
 </head>
 <body id="body"> 
     <!-- Cambio nuevas versiones -->
@@ -90,7 +88,7 @@
 					data-toggle="tab"> <span class="glyphicon glyphicon-stats"></span> Analytics
 				</a></li>
 				<li><a class="navbar-brand" href="#secrecom" data-toggle="tab">
-						<span class="glyphicon glyphicon-signal"></span> Recomendations
+						<span class="glyphicon glyphicon-signal"></span> Recommendations
 				</a></li>
 				<li><a class="navbar-brand" href="#secestimation" data-toggle="tab">
 						<span class="glyphicon glyphicon-signal"></span> Estimation
@@ -530,7 +528,7 @@
 						</div>
 						<div class="control-group">
 							<div class="controls">
-								<a data-toggle="modal" href="#modalDevelopers" class="btn btn-primary" role="button" id="RecommendDeveloperbyIssue">Recommend Developer</a>
+								<a data-toggle="modal" class="btn btn-primary" role="button" id="RecommendDeveloperbyIssue">Recommend Developer</a>
 								<input type="hidden" placeholder="Minimal Correlation"  id="recommendationCorrelation" value="0.95">
 							</div>
 						</div>
@@ -551,31 +549,33 @@
 							<input class="col-md-4 form-control" placeholder="Filter metric" type="text" id="metricfilter"/> <br> <br>
 							<ul class="nav nav-stacked" id="recomendationsSkillSelector"></ul>
 						</div>					
+						
 					</div>
 						<!-- Modal -->
 						<div class="modal fade" id="modalDevelopers">
 						  	<div class="modal-dialog">
 								<div class="modal-content"> 
-								  <div class="modal-header"><button class="close" data-dismiss="modal">×</button></div>
-									<div class="modal-body" id="MainMenu4">
+								  <!--  div class="modal-header"><button class="close" data-dismiss="modal">×</button></div>-->
+									<div class="modal-body" id="MainMenu4" style="height:600px">
 											<div class="col-md-4 list-group panel panel-default">
 												<div class="panel-heading">
 													<h4><i class="glyphicon glyphicon-user"></i>Developers</h4>
 												</div>
-												<div class="panel-body" style="overflow-y: auto; height: 200px;" id="developers-predictions-recommendation"></div>
+												<div class="panel-body" style="overflow-y: auto; height: auto;" id="developers-predictions-recommendation"></div>
 											</div>
+									<!--  /div> -->
 									</div>
-								  <div class="modal-footer">
-								    <a href="#" class="btn" data-dismiss="modal">Close</a>
-								    <a href="#" class="btn btn-primary">Save changes</a>
-								  </div>
-								</div>
+									  <div class="modal-footer">
+									    <a href="#" class="btn" data-dismiss="modal">Close</a>
+									  </div>
 							</div>
 						</div>
 				</div>
 			</div>
 		</div>
+	<!-- Loading -->
+	<div id='ajax_loader' style="position: fixed; left: 20%; top: 10%; display: none;">
+   		<img src="css/loading/loading.gif"></img>
 	</div>
-
 </body>
 </html>

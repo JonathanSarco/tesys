@@ -228,7 +228,9 @@ define(["jquery"], function($) {
       },
       success: function(data) {
     	  alert("success "+data);
-        callback(data);
+    	  callback(data);
+          $("#ajax_loader").hide();
+          $("#modalDevelopers").modal('show');
       }
 
     });
