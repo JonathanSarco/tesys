@@ -154,8 +154,6 @@ public class Case  {
 		for(int i=0;i<similarCases.size() && !found;i++){
 			if(similarCases.get(i).isGoodRecommendation()){
 				similarCaseGood=similarCases.get(i);
-				metric = similarCaseGood.getMetric();
-				precedence = similarCaseGood.getPrecedence();
 				found=true;
 			}
 		}
@@ -169,8 +167,6 @@ public class Case  {
 		else{
 			//Elijo el primero, ya que cualquiera es una mala recomendacion
 			Case similarCaseBad=similarCases.get(0);
-			setMetric(similarCaseBad.getMetric()); 
-			setPrecedence(similarCaseBad.getPrecedence());
 			Map<String,String> orderCriteria = similarCaseBad.getOrderCriteria();
 			//Establezco el criterio por el cual se va a ordenar
 			setInverseOrderCriteria(orderCriteria);

@@ -776,7 +776,7 @@ public class Controller {
 		if(dbCases != null){
 			dao.create(((Integer)dbCases.getIdCase()).toString(), dbCases);
 			Map<String,String> criteria = new HashMap<String,String>();
-			criteria.put("complexity", "menor");
+			criteria.put("complexity", "mayor");
 			dbCases.setOrderCriteria(criteria);
 			dao.update(Integer.toString(dbCases.getIdCase()), dbCases);
 		}
@@ -790,6 +790,14 @@ public class Controller {
 		return response.build();
 	}
 
-
-
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/updateOrderCriteria/{recommendedDevelopers}/{selectedDeveloper}")
+	public Response updateOrderCriteria(	
+			@PathParam("recommendedDevelopers") List<String> recommendedDevelopers,
+			@PathParam("selectedDeveloper") String selectedDeveloper){
+				ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
+				return response.build();
+			}
 }
