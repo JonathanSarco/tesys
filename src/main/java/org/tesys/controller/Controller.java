@@ -775,7 +775,12 @@ public class Controller {
 		dbCases = CaseBasedReasoning.getRecommendation(label,skill, sprint, unasignedIssue, metricsRecommendation, skills);
 		if(dbCases != null){
 			dao.create(((Integer)dbCases.getIdCase()).toString(), dbCases);
+			Map<String,String> criteria = new HashMap<String,String>();
+			criteria.put("complexity", "menor");
+			dbCases.setOrderCriteria(criteria);
+			dao.update(Integer.toString(dbCases.getIdCase()), dbCases);
 		}
+		
 		List<Developer> developersCase = Arrays.asList(dbCases.getIssuesWithDevelopersRecommended());
 		GenericEntity<List<Developer>> entity = new GenericEntity<List<Developer>>(
 				developersCase) {

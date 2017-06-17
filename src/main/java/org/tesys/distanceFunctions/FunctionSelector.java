@@ -15,7 +15,7 @@ public abstract class FunctionSelector {
 
 	public abstract double calculate(Map<String, Double>valores, Map<String, Double>desiredMetrics);
 	
-	public Map<String, Double> getDistanceFunctionEstimationForDevelopers(List<MetricPrediction> metrics, FunctionSelector function, Map<String, Double> desiredmetrics) {
+	public MetricPrediction getDistanceFunctionEstimationForDevelopers(List<MetricPrediction> metrics, FunctionSelector function, Map<String, Double> desiredmetrics) {
 		
 		Map<MetricPrediction, Double> distancias = new HashMap<MetricPrediction, Double>();
 		for (MetricPrediction metric : metrics){
@@ -39,7 +39,7 @@ public abstract class FunctionSelector {
 			}
 		}
 		
-		return minimo.getMetrics();
+		return minimo;
 	}
 	
 

@@ -1,51 +1,59 @@
 package org.tesys.orderCriteria;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
 
-public class CriteriaBestValues extends CriteriaSelector {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-	//CAMBIAR 3 por cantFilas y 4 por cantColumnas, son para la prueba esos valores
-	@Override
-	public List<Integer> getCriterio(double[][] values, int developer,String value) {
-		List<Integer>criteria=new LinkedList<Integer>();
-		if(value.equals("mayor")){
-			for(int j=0;j<4;j++){
-			double higher=0.0;
-			int developerHigher=-1;
-			 //es mejor si es mayor
-				for(int i=0;i<3;i++){
-					if(values[i][j]>higher){
-						higher=values[i][j];
-						developerHigher=i;}
+import org.tesys.core.estructures.Developer;
+
+
+public class CriteriaBestValues extends CriteriaSelector{
+
+	public Map<String,String> obtenerValor(Developer chosenDeveloper, Map<String,Map<String,Double>> metricsWithValuesByDev){
+	
+		Set<String>keys=metricsWithValuesByDev.keySet();
+		Map<String,String>criteria=new HashMap<String, String>();
+
+		for(String k:keys){
+				// Se devuelve en precedence si se debe comparar por mayor o menor
+				String precedence=bestMetrics.get(k); 
+				// Se obtienen en values todos los vectores <Desarrollador,Valor> que corresponden a esa metrica(k)
+				Map<String,Double> values=metricsWithValuesByDev.get(k);
+				if(precedence.equals("mayor")){
+					String developerHigher=new String();
+					for(String dev: values.keySet()){
+						double higher=0.0;
+								if(values.get(dev)>higher){
+									higher=values.get(dev);
+									developerHigher=dev;
+									}
+								}
+					//Si el desarrollador que se selecciono corresponde al desarrollador que tiene el mayor valor en esa metrica(k)
+					//Se guarda esa metrica, y como se debe ordenar
+					if(chosenDeveloper.getName().equals(developerHigher)){ 
+						criteria.put(k, precedence);
+						}
 					}
-			//si el desarrollador corresponde al desarrollador que tiene el mayor valor en esa columna(criterio), guardo ese criterio
-			if(developer==developerHigher){ 
-				//agrego que se selecciono a ese developer por el criterio j(cada criterio es un numero de columna)
-				criteria.add(j);
+				else{
+					String developerLowest=new String();
+					for(String dev: values.keySet()){
+						double lowest=100.0;
+							if(values.get(dev)<=lowest){
+									lowest=values.get(dev);
+									developerLowest=dev;
+									}
+								}
+					//Si el desarrollador que se selecciono corresponde al desarrollador que tiene el menor valor en esa metrica(k)
+					//Se guarda esa metrica, y como se debe ordenar
+					if(chosenDeveloper.getName().equals(developerLowest)){ 
+						criteria.put(k, precedence);
+					}
+				}
 			}
-		}		
+				
+		//Si hay mas de una metrica, en el cual ese desarrollador tiene mejor valor, se devuelven todas
+		return criteria;
 	}
-			else
-			{ 	  for(int j=0;j<4;j++){
-					double lowest=100.0;
-					int developerLowest=-1;
-					for(int i=0;i<3;i++){
-					if(values[i][j]<lowest){
-						lowest=values[i][j];
-						developerLowest=i;}	
-					}
-					//si el desarrollador corresponde al desarrollador que tiene el mayor valor en esa columna(criterio), guardo ese criterio
-					if(developer==developerLowest){ 
-						//agrego que se selecciono a ese developer por el criterio j(cada criterio es un numero de columna)
-						criteria.add(j);
-					}
-				}						
-			}
-			
-		//Si hay mas de un criterio(osea mas de un j en un vector, devuelvo todos, no solo el mejor)	
-			return criteria;	
-	}
-
-}
+	
+}	

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,8 @@ import org.tesys.distanceFunctions.ManhattanFunction;
 import org.tesys.recomendations.DevelopersShortedBySimilarLabelsAndSkills;
 import org.tesys.recomendations.IssueSimilarityLabels;
 import org.tesys.recomendations.SimilarCaseByIssueSkill;
+import org.tesys.orderCriteria.*;
+import org.tesys.orderDeveloper.OrderDevbyName;
 
 import com.atlassian.util.concurrent.Function;
 
@@ -41,13 +44,14 @@ public class CaseBasedReasoning {
 
 	List<Case> cases= new ArrayList<Case>();
 	//ManhattanFunction manhattan=new ManhattanFunction();
+
 	public CaseBasedReasoning(){
-
-
-
 	}
 
 	public static Case getRecommendation(double factorLabel, double factorSkill, int sprint, Issue issue, Map<String, Double> desiredmetrics, List<String> skills){
+		
+		List<DeveloperPrediction> similarDevelopersPredictions;
+
 		/*
 		 * Se Crea La Issue Nueva en base a la Issue que tengo por parametro
 		 */
@@ -111,12 +115,11 @@ public class CaseBasedReasoning {
 		//ver si nos quedamos con los que tengan mejor coeficiente
 		similarDevelopers = getAllSimilarDevelopers(similarIssues);	
 
-		List<Metric>metricsEstimateForDev = new LinkedList<Metric>();
 
 		/*
 		 * Recorro los desarrolladores similares para obtener la correlación entre las tareas del mismo
 		 */
-		double correlationVariation=0;
+		double correlationVariation=0.1;
 		List<DeveloperPrediction> developerPredictions = new LinkedList<DeveloperPrediction>();
 		Iterator<String> metricsKeys = desiredmetrics.keySet().iterator();
 		while( metricsKeys.hasNext() ) {
@@ -126,6 +129,8 @@ public class CaseBasedReasoning {
 		    developerPredictions = predictions.getPredictions(key, valueKey, correlationVariation, sprint, skills);
 		}
 		List<Developer> developerWithNewIssue = new LinkedList<Developer>();
+		similarDevelopersPredictions=new LinkedList<DeveloperPrediction>();
+		
 		for(Developer developer: similarDevelopers){
 			/*
 			 * Copio el Desarrollador en una nuevo objeto sin tareas asignadas
@@ -150,86 +155,62 @@ public class CaseBasedReasoning {
 			for(DeveloperPrediction dv : developerPredictions){
 				if(dv.getName().equals(developer.getName())){
 					metrics.addAll(dv.getIssues());
+					/* Guardo en similarDevelopersPredictions, solo aquellos developerPredicition que son similarDeveloper*/
+					similarDevelopersPredictions.add(dv);
 				}
 			}
 			/*
 			 * Se puede Cambiar a distancia euclidea o cambiar por otra función extensible
 			 */
 			FunctionSelector function=new ManhattanFunction(); // Acá se define el tipo de funcion: manhattan, euclidea, otra
-			Map<String, Double> values=function.getDistanceFunctionEstimationForDevelopers(metrics,function, desiredmetrics); // Construccion de matriz
+			//Aca modifique para que nos devuelva una MetricPrediction, en vez de MetricPrediction.getMetrics()
+			MetricPrediction mp=function.getDistanceFunctionEstimationForDevelopers(metrics,function, desiredmetrics); // Construccion de matriz
+			Map<String, Double> values=	mp.getMetrics();		
 			issueDev.setMetrics(values);
 			List<Issue>unasignedIssues = new LinkedList <Issue>();
 			unasignedIssues.add(issueDev);
 			similarDev.setIssues(unasignedIssues);
 			developerWithNewIssue.add(similarDev);
 		}
+		
 		Developer deveoperComplete[] = new Developer[developerWithNewIssue.size()];
 		deveoperComplete = developerWithNewIssue.toArray(deveoperComplete);
 		newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
-		
 		/*
-		 * Si Hay casos Similares en la BD de Casos, Agrego el criterio de ordenamiento del caso viejo
-		 * y ordeno la lista de desarrolladores según el criterio del caso viejo
-		 * - Si el caso es malo ordeno en orden inverso respecto del criterio de ordenamiento elegido
-		 * - Si el caso fue bueno entonces utilizo el criterio de ordenamiento
-		 * Adicionalmente se modifica la lista de desarrolladores similares según la clasificación del caso
+		 *  * Adicionalmente se modifica la lista de desarrolladores similares según la clasificación del caso
 		 * - Si fue bueno agrego el desarrollador seleccionado al caso nuevo si es q no esta entre los desarrolladores similares
 		 * - Si fue malo elimino al desarrollador seleccionado de los similares. 
 		 */
-		if(!similarCases.isEmpty()){
-			/*
-			 * Adapto la nueva recomendacion al caso viejo
-			 */
-			newCase = adaptNewCase(similarCases, newCase);
-			/*
-			 * Ordeno la Recomendación Según el Criterio
-			 */
-			newCase.setIssuesWithDevelopersRecommended(orderDevelopersByCriteria(newCase.getIssuesWithDevelopersRecommended(), similarCases));
+		if(!similarCases.isEmpty() && similarCases.size() > 0){
+			adaptNewCase(similarCases, newCase);
 		}
-		else{
-			List<Developer> developers = Arrays.asList(newCase.getIssuesWithDevelopersRecommended());
-			Collections.sort(developers); 
-			Developer deveoperOrdered[] = new Developer[developers.size()];
-			newCase.setIssuesWithDevelopersRecommended(deveoperOrdered = (Developer[]) developers.toArray());
-		}
+		newCase.orderDeveloper(similarCases);
 	return newCase;	
 }
-
-private static Developer[] orderDevelopersByCriteria(Developer[] issuesWithDevelopersRecommended, List<Case> similarCases) {
-	/*
-	 * Ahora oderna alfabeticamente, falta ver como hacemos con los criterios 
-	 */
-	List<Developer> developers = Arrays.asList(issuesWithDevelopersRecommended);
-	Collections.sort(developers); 
-	Developer deveoperComplete[] = new Developer[developers.size()];
-	deveoperComplete = (Developer[]) developers.toArray();
-	return deveoperComplete;
-}
-
-private static Case adaptNewCase(List<Case> similarCases, Case newCase) {
-	List<Developer> developers = Arrays.asList(newCase.getIssuesWithDevelopersRecommended());
-	for(Case c: similarCases){
-		if(c.getPerformIssue() != null){	
-			if(c.isGoodRecommendation()){
-				boolean existsDeveloper = false;
-				if(!developers.contains(c.getPerformIssue())){
-					Developer developer = c.getPerformIssue();
-					developer.setIssues(developers.get(0).getIssues());
-					developers.add(developer);
-				}			
-			}
-			else{
-				if(developers.contains(c.getPerformIssue())){
-					developers.remove(c.getPerformIssue());
-				}		
+	private static Case adaptNewCase(List<Case> similarCases, Case newCase) {
+		List<Developer> developers = Arrays.asList(newCase.getIssuesWithDevelopersRecommended());
+		for(Case c: similarCases){
+			if(c.getPerformIssue() != null){	
+				if(c.isGoodRecommendation()){
+					boolean existsDeveloper = false;
+					if(!developers.contains(c.getPerformIssue())){
+						Developer developer = c.getPerformIssue();
+						developer.setIssues(developers.get(0).getIssues());
+						developers.add(developer);
+					}			
+				}
+				else{
+					if(developers.contains(c.getPerformIssue())){
+						developers.remove(c.getPerformIssue());
+					}		
+				}
 			}
 		}
+		Developer deveoperComplete[] = new Developer[developers.size()];
+		deveoperComplete = (Developer[]) developers.toArray();
+		newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
+		return newCase;
 	}
-	Developer deveoperComplete[] = new Developer[developers.size()];
-	deveoperComplete = (Developer[]) developers.toArray();
-	newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
-	return newCase;
-}
 
 private List<String> getDevSkillsForIssue(Developer d) {
 	List<String>skills=new LinkedList<String>();
@@ -251,6 +232,16 @@ private static List<Developer> getAllSimilarDevelopers(List<SimilarIssue> simila
 		}
 	}
 	return developers;
+}
+
+//Para setear el criterio de orden a los nuevos casos, ver donde lo llamo
+public void setOrderCriteriaNewCase(Developer chosenDeveloper, Case newCase){
+	//Por pantalla quizas no voy a tener MetricPrediction, lo que si voy a tener son todos los desarrolladores similares
+	//le paso todos los desarrolladores similares, y por cada uno puedo obtener un vector de  private List<Issue> issues, y cada issue
+	//tiene un Map<String, Double> measures, debo buscar la issue correspondiente al nuevo caso, pq es la no asignada aun;
+	CriteriaSelector criterion=new CriteriaBestValue();
+	Map<String,String> orderCriteria=criterion.getMetricsToOrder(newCase.getIssuesWithDevelopersRecommended(),chosenDeveloper, criterion,newCase);
+	newCase.setOrderCriteria(orderCriteria);
 }
 
 }

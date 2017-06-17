@@ -2,22 +2,26 @@ package org.tesys.correlations;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.tesys.core.estructures.Developer;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DeveloperPrediction {
+public class DeveloperPrediction /*implements Comparable*/ {
 	
 	private String name;
 	private String displayName;
 	private List<MetricPrediction> issues;
-
+	
 	public DeveloperPrediction() {}
 
 
@@ -59,5 +63,5 @@ public class DeveloperPrediction {
 	public void setIssues(List<MetricPrediction> metricPred) {
 		this.issues = metricPred;
 	}
-
+	  
 }
