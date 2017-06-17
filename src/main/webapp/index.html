@@ -5,21 +5,27 @@
 <meta charset="utf-8">
 <title>Telemetrical System</title>
 <meta name="generator" content="Bootply" />
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, maximum-scale=1">
-<link href="css/bootstrap.min.css" rel="stylesheet">
-<!--[if lt IE 9]>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!--
+	<[if lt IE 9]>
       <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-<link href="css/styles.css" rel="stylesheet">
+    <[endif]-->
+	
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap ultima version-->
+	<link href="css/styles.css" rel="stylesheet">
+    <!--  link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"-->
+  
 </head>
 <body id="body"> 
+    <!-- Cambio nuevas versiones -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>    
 	<script data-main="js/boot-index.js" src="js/libs/require.js"></script>
-	<script type="text/javascript" src="js/libs/jquery-1.11.2.min.js"></script>
-	<script type="text/javascript"
-		src="js/libs/tablesorter/jquery.tablesorter.js"></script>
-
-
+	<!-- Hasta aca-->
+	<!-- <script type="text/javascript" src="js/libs/jquery-1.11.2.min.js"></script> -->
+	<script type="text/javascript" src="js/libs/tablesorter/jquery.tablesorter.js"></script>
 	<script>
 		$(document).ready(function() {
 
@@ -82,7 +88,7 @@
 					data-toggle="tab"> <span class="glyphicon glyphicon-stats"></span> Analytics
 				</a></li>
 				<li><a class="navbar-brand" href="#secrecom" data-toggle="tab">
-						<span class="glyphicon glyphicon-signal"></span> Recomendations
+						<span class="glyphicon glyphicon-signal"></span> Recommendations
 				</a></li>
 				<li><a class="navbar-brand" href="#secestimation" data-toggle="tab">
 						<span class="glyphicon glyphicon-signal"></span> Estimation
@@ -522,13 +528,13 @@
 						</div>
 						<div class="control-group">
 							<div class="controls">
-								<a href="#" class="btn btn-primary" role="button" id="RecommendDeveloperbyIssue">Recommend Developer</a>
+								<a data-toggle="modal" class="btn btn-primary" role="button" id="RecommendDeveloperbyIssue">Recommend Developer</a>
 								<input type="hidden" placeholder="Minimal Correlation"  id="recommendationCorrelation" value="0.95">
 							</div>
 						</div>
 					</div>
 				<div class="row">
-					<div class="row" >
+					<div class="row">
 						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
 						    <div class="input-group">
 						     <input type="text" class="form-control" placeholder="Metric Value"  id="recomendationMetricInput">
@@ -542,21 +548,34 @@
 						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
 							<input class="col-md-4 form-control" placeholder="Filter metric" type="text" id="metricfilter"/> <br> <br>
 							<ul class="nav nav-stacked" id="recomendationsSkillSelector"></ul>
-						</div>
-						<div id="MainMenu4">
-							<div class="col-md-8 list-group panel panel-default">
-								<div class="panel-heading">
-									<h4><i class="glyphicon glyphicon-user"></i>Developers</h4>
-								</div>
-								<div class="panel-body" style="overflow-y: auto; height: 200px;" id="developers-predictions-recommendation"></div>
+						</div>					
+						
+					</div>
+						<!-- Modal -->
+						<div class="modal fade" id="modalDevelopers">
+						  	<div class="modal-dialog">
+								<div class="modal-content"> 
+								  <!--  div class="modal-header"><button class="close" data-dismiss="modal">×</button></div>-->
+									<div class="modal-body" id="MainMenu4" style="height:600px">
+											<div class="col-md-4 list-group panel panel-default">
+												<div class="panel-heading">
+													<h4><i class="glyphicon glyphicon-user"></i>Developers</h4>
+												</div>
+												<div class="panel-body" style="overflow-y: auto; height: auto;" id="developers-predictions-recommendation"></div>
+											</div>
+									<!--  /div> -->
+									</div>
+									  <div class="modal-footer">
+									    <a href="#" class="btn" data-dismiss="modal">Close</a>
+									  </div>
 							</div>
-						</div>						
-
-					</div>				
+						</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	<!-- Loading -->
+	<div id='ajax_loader' style="position: fixed; left: 20%; top: 10%; display: none;">
+   		<img src="css/loading/loading.gif"></img>
 	</div>
 </body>
 </html>
