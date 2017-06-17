@@ -30,7 +30,7 @@ public class CriteriaBestValue extends CriteriaSelector{
 							}
 				//Si el desarrollador que se selecciono corresponde al desarrollador que tiene el mayor valor en esa metrica(k)
 				//Se guarda esa metrica, y como se debe ordenar
-				if(chosenDeveloper.getName().equals(developerHigher)){ 
+				if(chosenDeveloper.getDisplayName().equals(developerHigher)){ 
 					criteria.put(k, precedence);
 					}
 				}
@@ -45,7 +45,7 @@ public class CriteriaBestValue extends CriteriaSelector{
 							}
 				//Si el desarrollador que se selecciono corresponde al desarrollador que tiene el menor valor en esa metrica(k)
 				//Se guarda esa metrica, y como se debe ordenar
-				if(chosenDeveloper.getName().equals(developerLowest)){ 
+				if(chosenDeveloper.getDisplayName().equals(developerLowest)){ 
 					criteria.put(k, precedence);
 				}
 			}
