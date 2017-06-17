@@ -77,14 +77,12 @@ public abstract class CriteriaSelector {
 		List<String>allKeys=new LinkedList<>();
 		for(Developer d:developers){
 			for(Issue issue:d.getIssues()){
-				if(issue.getIssueId().equals(newCase.getIssue().getIssueId())){
 					Map<String,Double> metrics=issue.getMetrics();
 					Set<String> keys = metrics.keySet();
 					for(String k:keys){
 						if(!allKeys.contains(k))
 							allKeys.add(k);
 					}
-				}
 			}
 		}
 		
@@ -95,14 +93,12 @@ public abstract class CriteriaSelector {
 		for(String k:allKeys){
 			for(Developer developer:developers){
 				for( Issue issue :developer.getIssues()){
-					if(issue.getIssueId().equals(newCase.getIssue().getIssueId())){
 						if(issue.getMetrics().containsKey(k)){
 							Map<String,Double> metrics=issue.getMetrics();
 							Double value=metrics.get(k);
-							ValuesByDev.put(developer.getName(),value);
+							ValuesByDev.put(developer.getDisplayName(),value);
 							metricsWithValuesByDev.put(k,ValuesByDev);						
 					}
-				  }
 				}
 			}
 		}
@@ -111,28 +107,6 @@ public abstract class CriteriaSelector {
 		Map<String,String>criterios=criterion.obtenerValor(chosenDeveloper, metricsWithValuesByDev);			
 						
 		return criterios;
-		
-//		//Se obtiene en allKeys todas los nombres(keys) de las metricas estimadas por todos los desarrolladores
-//		List<String>allKeys=new LinkedList<>();
-//		for (MetricPrediction metric : metrics){
-//			Set<String> keys = metric.getMetrics().keySet();
-//			for(String k:keys){
-//				if(!allKeys.contains(k))
-//					allKeys.add(k);
-//			}
-//		}
-//		
-//		//Se arma un map metricsWithValuesByDev que va a tener por cada metrica, un conjunto de valores estimados por cada desarrollador
-//		Map<String,Map<String,Double>> metricsWithValuesByDev=new HashMap<String, Map<String,Double>>();
-//		Map<String,Double>ValuesByDev=new HashMap<String,Double>(); //el double es valor, y el String es el desarrollador
-//		for(int i=0;i<allKeys.size();i++){
-//			for (MetricPrediction metric : metrics){
-//				if(metric.getMetrics().containsKey(allKeys.get(i)))
-//					ValuesByDev.put(metric.getUser(),metric.getMetrics().get(allKeys.get(i)));
-//				metricsWithValuesByDev.put(allKeys.get(i),ValuesByDev);
-//			}
-//		}
-		
 						
 	}
 	
