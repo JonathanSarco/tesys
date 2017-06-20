@@ -63,6 +63,7 @@ public class CaseBasedReasoning {
 		newIssue.setUser("");
 		newIssue.setMetrics(desiredmetrics);
 		
+		
 		/*
 		 * Agrego las Skills en la nueva tarea
 		 */
@@ -70,7 +71,7 @@ public class CaseBasedReasoning {
 		for (String s : skills){
 			Skill newSkill = new Skill();
 			newSkill.setName(s);
-			newSkill.setWeight(1);
+		//	newSkill.setWeight(1);
 			desiredSkills.add(newSkill);
 		}
 		newIssue.setSkills(desiredSkills);
@@ -82,13 +83,12 @@ public class CaseBasedReasoning {
 		
 		Case newCase = new Case();
 		newCase.setIssue(newIssue);
+		newCase.settimestamp();
 		
 		//Obtengo los casos de la base
 		ElasticsearchDao<Case> dao;
 		dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
 		List<Case> cases = dao.readAll();
-		
-		newCase.setIdCase(cases.size()+1);
 		
 		/*
 		 * Se Buscan Casos similares a la Issue nueva
@@ -146,7 +146,7 @@ public class CaseBasedReasoning {
 			Developer similarDev = new Developer();
 			similarDev.setDisplayName(developer.getDisplayName());
 			similarDev.setName(developer.getName());
-			similarDev.setTimestamp(developer.getTimestamp());
+			
 			
 			/*
 			 * Obtengo las metricas Estimadas para cada developer Similar

@@ -1,9 +1,12 @@
 package org.tesys.core.estructures;
 
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Case  {
 
-	int idCase;
+	Date timestamp;
 	// *** Problema ***
 	Issue issue;
 	// *** Fin Problema ***
@@ -64,11 +67,14 @@ public class Case  {
 	public Case(){
 		// for jason
 	}
-
-	public Case(Issue idIssue) {
+	public Case(Date idCase) {
+		super();
+		this.timestamp = idCase;
+	}
+	public Case(Issue idIssue, Date idCase) {
 		super();
 		this.issue = issue;
-		this.idCase = 0;
+		this.timestamp = idCase;
 	}
 
 	public Issue getIssue() {
@@ -94,16 +100,17 @@ public class Case  {
 	public void setPerformIssue(Developer performIssue) {
 		this.performIssue = performIssue;
 	}
-	public int setIdCase(int Value) {
-		return idCase = Value;
+	public Date settimestamp() {
+		return timestamp = new Date();
 	}
-	public int getIdCase() {
-		return idCase;
+	public Date gettimestamp() {
+		return timestamp;
 	}
 
 	public Map<String,String> getOrderCriteria() {
 		Map<String, String> criteria = new HashMap<String,String>();
-		criteria.put(metric, precedence);
+		if(metric != null && precedence != null)
+			criteria.put(metric, precedence);
 		return criteria;
 	}
 
@@ -113,16 +120,17 @@ public class Case  {
 	}
 
 	public void setInverseOrderCriteria(Map<String, String> criteria) {
-		// Invierte el orden de los desarrolladores
-		if(criteria.get(criteria.keySet().toArray()[0].toString()).equals("mayor")){
-			metric = criteria.keySet().toArray()[0].toString();
-			precedence =  "menor";
+		if(!criteria.isEmpty() && criteria != null){
+			// Invierte el orden de los desarrolladores
+			if(criteria.get(criteria.keySet().toArray()[0].toString()).equals("mayor")){
+				metric = criteria.keySet().toArray()[0].toString();
+				precedence =  "menor";
+			}
+			else{
+				metric = criteria.keySet().toArray()[0].toString();
+				precedence = "mayor";
+			}
 		}
-		else{
-			metric = criteria.keySet().toArray()[0].toString();
-			precedence = "mayor";
-		}
-			
 	}
 
 	public boolean isGoodRecommendation() {
@@ -173,7 +181,12 @@ public class Case  {
 		}
 		List<Developer> developers = Arrays.asList(issuesWithDevelopersRecommended);	
 		//Ordeno por ese criterio (el primer String me indica la metrica, y el segundo si debo ordenar ascendente o descendente a los desarrolladores)
-		Collections.sort(developers, new OrderDevByValue(metric, precedence));	
+		if(metric != null && precedence != null){
+			Collections.sort(developers, new OrderDevByValue(metric, precedence));	
+		}
+		else{
+			Collections.sort(developers, new OrderDevbyName()); 
+		}
 		Developer deveoperComplete[] = new Developer[developers.size()];
 		deveoperComplete = (Developer[]) developers.toArray();
 		return deveoperComplete;

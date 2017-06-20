@@ -31,9 +31,12 @@ import org.tesys.core.analysis.skilltraceability.SkillIndicator;
 import org.tesys.core.analysis.sonar.SonarAnalizer;
 import org.tesys.core.analysis.sonar.SonarAnalysisRequest;
 import org.tesys.core.db.AnalysisVersionsQuery;
+import org.tesys.core.db.DisplayNameQuery;
 import org.tesys.core.db.ElasticsearchDao;
 import org.tesys.core.db.IssuesWithMetrics;
 import org.tesys.core.db.MetricDao;
+import org.tesys.core.db.SearchCaseByIssueAndSkillsQuery;
+import org.tesys.core.db.SearchCasesByIssueQuery;
 import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
@@ -765,6 +768,7 @@ public class Controller {
 		try {
 			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
 			daoIssue = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);//devuelve la version mas actualizada de los analisis.
+			
 		} catch (Exception e) {
 			return response.build();
 		}
@@ -774,11 +778,16 @@ public class Controller {
 		
 		dbCases = CaseBasedReasoning.getRecommendation(label,skill, sprint, unasignedIssue, metricsRecommendation, skills);
 		if(dbCases != null){
-			dao.create(((Integer)dbCases.getIdCase()).toString(), dbCases);
-			Map<String,String> criteria = new HashMap<String,String>();
-			criteria.put("complexity", "mayor");
-			dbCases.setOrderCriteria(criteria);
-			dao.update(Integer.toString(dbCases.getIdCase()), dbCases);
+			dao.create(dbCases);
+			//SearchCasesByIssueQuery dnq = new SearchCasesByIssueQuery(dbCases.getIssue().getIssueId());
+			//Case similarIssuease = dnq.execute();
+			SearchCaseByIssueAndSkillsQuery dnq = new SearchCaseByIssueAndSkillsQuery(dbCases.getIssue().getLabels(), dbCases.getIssue().getSkills());
+			List<Case>casos = dnq.execute();
+			casos.size();
+			//Map<String,String> criteria = new HashMap<String,String>();
+			//criteria.put("complexity", "mayor");
+			//dbCases.setOrderCriteria(criteria);
+			//dao.update(Integer.toString(dbCases.getIdCase()), dbCases);
 		}
 		
 		List<Developer> developersCase = Arrays.asList(dbCases.getIssuesWithDevelopersRecommended());

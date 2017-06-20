@@ -57,6 +57,7 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
     
     /*** Se crea un nuevo index para los casos del CBR***/
     public static final String DEFAULT_RESOURCE_CASE = "/cbr/case";
+    public static final String DEFAULT_RESOURCE_CASEQUERY = "/cbr";
     public static final String DEFAULT_RESOURCE_UNASSIGNED_ISSUES = "/unassigned_issues/";
 
 
@@ -269,12 +270,9 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
 
 	while (it.hasNext()) {
 	    JsonNode j = ((JsonNode) it.next()).get("_source");
-	    
 
 	    try {
-	    	
 	    	T elem = mapper.readValue(j.toString(), inferedClass);
-		
 		elements.add(elem);
 	    } catch (Exception e) {
 		LOG.log(Level.SEVERE, e.toString());
@@ -284,5 +282,16 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
 	}
 	return elements;
     }
+
+	@Override
+	public void create(T object) {
+		try {
+		    client.POST(UriBuilder.fromPath(resource).toString(),
+			    object);
+		} catch (Exception e) {
+		    LOG.log(Level.SEVERE, e.toString());
+		}
+	}
+	
 
 }
