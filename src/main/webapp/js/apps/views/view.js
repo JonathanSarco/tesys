@@ -406,8 +406,8 @@ define(
 				tagName: 'a',
 
 				//constants definitions 
-				UNSELECTED_COLOR: "white", 
-				SELECTED_COLOR: "darksalmon", 
+				UNSELECTED_COLOR: "#dff0d8", 
+				SELECTED_COLOR: "#bec3c6", 
 				//end constants definitions
 
 				events: {
