@@ -31,12 +31,12 @@ public class SearchCaseByIssueAndSkillsQuery implements GenericQuery<List<Case>>
 			query += "{\"match\": {\"labels\": \"" + s + "\"  }},";
 		}
 		for(String s: skills){
-			query += "{\"match\": {\"skillName\": \"" + s + "\"  }},";
+			query += "{\"match\": {\"skillName\": \"" + s + "\"}},";
 		}
 		if (query.charAt(query.length()-1) == ','){
-			query.substring(0, query.length()-1);
+			query = query.substring(0, query.length()-1);
 		}
-		query +=" ] } }";
+		query +=" ] } }}";
 		try {
 			return dao.search(query);
 		} catch (Exception e) {

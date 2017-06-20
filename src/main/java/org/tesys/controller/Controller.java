@@ -768,28 +768,19 @@ public class Controller {
 		try {
 			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
 			daoIssue = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);//devuelve la version mas actualizada de los analisis.
-			
+
 		} catch (Exception e) {
 			return response.build();
 		}
 
 		List<Developer> developers = daoIssue.readAll();
 		Issue unasignedIssue = getIssue(developers, issue);
-		
+
 		dbCases = CaseBasedReasoning.getRecommendation(label,skill, sprint, unasignedIssue, metricsRecommendation, skills);
 		if(dbCases != null){
 			dao.create(dbCases);
-			//SearchCasesByIssueQuery dnq = new SearchCasesByIssueQuery(dbCases.getIssue().getIssueId());
-			//Case similarIssuease = dnq.execute();
-			SearchCaseByIssueAndSkillsQuery dnq = new SearchCaseByIssueAndSkillsQuery(dbCases.getIssue().getLabels(), dbCases.getIssue().getSkills());
-			List<Case>casos = dnq.execute();
-			casos.size();
-			//Map<String,String> criteria = new HashMap<String,String>();
-			//criteria.put("complexity", "mayor");
-			//dbCases.setOrderCriteria(criteria);
-			//dao.update(Integer.toString(dbCases.getIdCase()), dbCases);
 		}
-		
+
 		List<Developer> developersCase = Arrays.asList(dbCases.getIssuesWithDevelopersRecommended());
 		GenericEntity<List<Developer>> entity = new GenericEntity<List<Developer>>(
 				developersCase) {
@@ -802,11 +793,37 @@ public class Controller {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/updateOrderCriteria/{recommendedDevelopers}/{selectedDeveloper}")
+	@Path("/updateOrderCriteria/{selectedDeveloper}/{issue}/{recommendedDevelopers}")
 	public Response updateOrderCriteria(	
-			@PathParam("recommendedDevelopers") List<String> recommendedDevelopers,
-			@PathParam("selectedDeveloper") String selectedDeveloper){
-				ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
-				return response.build();
+			@PathParam("selectedDeveloper") String selectedDeveloper,
+			@PathParam("issue") String issue,
+			@QueryParam("recommendedDevelopers") List<String> recommendedDevelopers){
+		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
+		/*
+		 * Busco el caso por IsuueID
+		 */
+
+		SearchCasesByIssueQuery dnq = new SearchCasesByIssueQuery(issue);
+		Case similarIssueCase = dnq.execute();
+		/*
+		 * Obtengo el Developer Seleccionado
+		 */
+		Developer selectedDev = new Developer();
+		for(Developer d : similarIssueCase.getIssuesWithDevelopersRecommended()){
+			if(d.getName().equals(selectedDeveloper)){
+				selectedDev = d;
 			}
+		}
+		/*
+		 * Llamar al metodo de gabi
+		 */
+		/*
+		 * Metodo para hacer el update del caso
+		 */
+		//Map<String,String> criteria = new HashMap<String,String>();
+		//criteria.put("complexity", "mayor");
+		//dbCases.setOrderCriteria(criteria);
+		//dao.update(Integer.toString(dbCases.getIdCase()), dbCases);
+		return response.build();
+	}
 }

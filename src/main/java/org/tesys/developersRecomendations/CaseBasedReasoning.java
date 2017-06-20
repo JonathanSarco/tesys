@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.tesys.core.analysis.skilltraceability.Skill;
 import org.tesys.core.db.AnalysisVersionsQuery;
 import org.tesys.core.db.ElasticsearchDao;
+import org.tesys.core.db.SearchCaseByIssueAndSkillsQuery;
 import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
@@ -85,10 +86,9 @@ public class CaseBasedReasoning {
 		newCase.setIssue(newIssue);
 		newCase.settimestamp();
 		
-		//Obtengo los casos de la base
-		ElasticsearchDao<Case> dao;
-		dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
-		List<Case> cases = dao.readAll();
+		//Obtengo los casos similares de la base
+		SearchCaseByIssueAndSkillsQuery dnq = new SearchCaseByIssueAndSkillsQuery(newIssue.getLabels(), newIssue.getSkills());
+		List<Case> cases = dnq.execute();
 		
 		/*
 		 * Se Buscan Casos similares a la Issue nueva
@@ -187,6 +187,7 @@ public class CaseBasedReasoning {
 		newCase.orderDeveloper(similarCases);
 	return newCase;	
 }
+
 	private static Case adaptNewCase(List<Case> similarCases, Case newCase) {
 		List<Developer> developers = Arrays.asList(newCase.getIssuesWithDevelopersRecommended());
 		for(Case c: similarCases){
