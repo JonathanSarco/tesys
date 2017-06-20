@@ -548,9 +548,9 @@
 					</div>
 						<!-- Modal -->
 						<div class="modal fade" id="modalDevelopers">
-						  	<div class="modal-dialog-lg">
+						  	<div class="modal-dialog">
 								<div class="modal-content"> 
-									<div class="modal-body" id="MainMenu4" style="height:auto">
+									<div class="modal-body" id="MainMenu4" style="overflow-y: auto;">
 										<div class="col-md-3 list-group panel panel-default">
 											<div class="panel-heading">
 												<h4><i class="glyphicon glyphicon-user"></i>Developers</h4>
@@ -566,7 +566,7 @@
 												</div>
 												<div class="panel-body">
 													<div class="tab-content">
-														<div class="tab-pane active panel-body" id="recommendationMetricPane" style="border-bottom: 1px solid #ddd;">
+														<div class="tab-pane active panel-body" id="recommendationMetricPane" style="height: auto; border-bottom: 1px solid #ddd;">
 														<!--contenido de un panel-->
 														<div class="col-md-3 list-group panel panel-default" style="overflow-y: auto; height: 400px;">
 															<input class="col-md-3 form-control" placeholder="Filter metric" type="text" id="metricfilter" /> <br> <br>
@@ -583,6 +583,7 @@
 										</div>				
 										<div class="modal-footer">
 											<a href="#" class="btn" data-dismiss="modal">Close</a>
+											<button type="button" class="btn btn-primary">Assign</button>
 										</div>
 									</div>
 								</div>

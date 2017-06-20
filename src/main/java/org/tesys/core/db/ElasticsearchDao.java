@@ -283,7 +283,6 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
 	return elements;
     }
 
-	@Override
 	public void create(T object) {
 		try {
 		    client.POST(UriBuilder.fromPath(resource).toString(),
