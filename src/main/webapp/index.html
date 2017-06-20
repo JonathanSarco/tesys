@@ -520,7 +520,7 @@
 							<div class="panel-heading">
 								<h4><i class="glyphicon glyphicon-user"></i> Issues</h4>
 							</div>
-							<div class="panel-body" style=" width: 300px; overflow-y: auto; height: 420px;" id="developers-reco"></div>
+							<div class="panel-body" style=" width: 300px; overflow-y: auto; height: 420px;" id="issues-reco"></div>
 						</div>
 						<div class="control-group">
 							<div class="controls">
@@ -548,30 +548,53 @@
 					</div>
 						<!-- Modal -->
 						<div class="modal fade" id="modalDevelopers">
-						  	<div class="modal-dialog">
+						  	<div class="modal-dialog-lg">
 								<div class="modal-content"> 
-								  <!--  div class="modal-header"><button class="close" data-dismiss="modal">×</button></div>-->
-									<div class="modal-body" id="MainMenu4" style="height:600px">
-											<div class="col-md-4 list-group panel panel-default">
-												<div class="panel-heading">
-													<h4><i class="glyphicon glyphicon-user"></i>Developers</h4>
-												</div>
-												<div class="panel-body" style="overflow-y: auto; height: auto;" id="developers-predictions-recommendation"></div>
+									<div class="modal-body" id="MainMenu4" style="height:auto">
+										<div class="col-md-3 list-group panel panel-default">
+											<div class="panel-heading">
+												<h4><i class="glyphicon glyphicon-user"></i>Developers</h4>
 											</div>
-									<!--  /div> -->
+											<div class="panel-body" style="overflow-y: auto; height: 400px;" id="developers-predictions-recommendation"></div>
+										</div>
+										<div class="col-md-8">
+											<div class="panel" style="border: 0px solid transparent; border-radius: 0px; -webkit-box-shadow: 0 0px 0px rgba(0, 0, 0, .05);box-shadow: 0 0px 0px rgba(0, 0, 0, .05)">
+												<div class="panel-heading">	
+													<ul class="nav nav-tabs" id="recommendationTab">
+														<li class="active"><a href="#recommendationMetricPane" data-toggle="tab">Metrics</a></li>
+													</ul>
+												</div>
+												<div class="panel-body">
+													<div class="tab-content">
+														<div class="tab-pane active panel-body" id="recommendationMetricPane" style="border-bottom: 1px solid #ddd;">
+														<!--contenido de un panel-->
+														<div class="col-md-3 list-group panel panel-default" style="overflow-y: auto; height: 400px;">
+															<input class="col-md-3 form-control" placeholder="Filter metric" type="text" id="metricfilter" /> <br> <br>
+															<ul class="nav nav-stacked" id="metrics">
+																<!--li><a> Metric 1 </a></li-->
+															</ul>
+														</div>
+														<div id="recommendationMetricChart" class="panel panel-default" style="height: 400px;"></div>
+														</div>
+														<!--/contenido de un panel-->
+													</div>
+												</div>
+											</div>
+										</div>				
+										<div class="modal-footer">
+											<a href="#" class="btn" data-dismiss="modal">Close</a>
+										</div>
 									</div>
-									  <div class="modal-footer">
-									    <a href="#" class="btn" data-dismiss="modal">Close</a>
-									  </div>
+								</div>
 							</div>
 						</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<!-- Loading -->
-	<div id='ajax_loader' style="position: fixed; left: 20%; top: 10%; display: none;">
-   		<img src="css/loading/loading.gif"></img>
-	</div>
+				<!-- Loading -->
+				<div id='ajax_loader' style="position: fixed; left: 20%; top: 10%; display: none;">
+			   		<img src="css/loading/loading.gif"></img>
+				</div>
 </body>
 </html>
