@@ -335,9 +335,7 @@ define(
         devIssuesContainer.setAttribute('data-parent', '#MainMenu4');
         devIssuesContainer.setAttribute('href','#pred'+this.model.get('name'));
         devIssuesContainer.textContent = this.model.get('displayName');
-        alert('Model displayName'+this.model.get('displayName'));
         this.el.appendChild(devIssuesContainer); 
-        //});
       return this;
     }
     });
@@ -355,10 +353,9 @@ define(
     render: function(){
       this.$el.empty();
       var self = this;
-      //alert(this.collection.models.length);
       _(this.collection.models).each(function(item) { // in case collection is not empty
         self.appendItem(item);
-        alert('Paso por aca');
+        //alert('Paso por aca');
       }, this);
     },
 
@@ -370,7 +367,6 @@ define(
         }
       );
       this.$el.append(itemView.render().el);
-      //alert("Elemento developerrecoomendation"+itemView.render().el);
     }
   });
 
