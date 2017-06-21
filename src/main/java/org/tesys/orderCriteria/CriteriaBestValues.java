@@ -14,6 +14,7 @@ public class CriteriaBestValues extends CriteriaSelector{
 	
 		Set<String>keys=metricsWithValuesByDev.keySet();
 		Map<String,String>criteria=new HashMap<String, String>();
+		Map<String,String>bestCriteria=new HashMap<String, String>();
 
 		for(String k:keys){
 				// Se devuelve en precedence si se debe comparar por mayor o menor
@@ -22,9 +23,9 @@ public class CriteriaBestValues extends CriteriaSelector{
 				Map<String,Double> values=metricsWithValuesByDev.get(k);
 				if(precedence.equals("mayor")){
 					String developerHigher=new String();
+					double higher=(double) values.values().toArray()[0];
 					for(String dev: values.keySet()){
-						double higher=0.0;
-								if(values.get(dev)>higher){
+								if(values.get(dev)>=higher){
 									higher=values.get(dev);
 									developerHigher=dev;
 									}
@@ -37,8 +38,8 @@ public class CriteriaBestValues extends CriteriaSelector{
 					}
 				else{
 					String developerLowest=new String();
+					double lowest=(double) values.values().toArray()[0];
 					for(String dev: values.keySet()){
-						double lowest=100.0;
 							if(values.get(dev)<=lowest){
 									lowest=values.get(dev);
 									developerLowest=dev;
