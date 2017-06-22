@@ -101,17 +101,34 @@ define(
   var DeveloperPredictionCollection = Backbone.Collection.extend({
     model: DeveloperPrediction
   });
-
-  var IssueRecommendation = Backbone.RelationalModel.extend({
-    idAttribute: 'issueIdRecommendation'
-  });
-
-  var RecommendationCollection = Backbone.Collection.extend({
-    model: IssueRecommendation
-  });
-
   
-
+  /*--- DEVELOPER RECOMMENDATION ---*/
+  var IssueRecommendation = Backbone.RelationalModel.extend({
+	    idAttribute: 'issueIdRecommendation'
+	  });
+  
+  var RecommendationCollection = Backbone.Collection.extend({
+	    model: IssueRecommendation
+  });
+	  
+  var DeveloperRecommendation = Backbone.RelationalModel.extend({
+	    idAttribute: 'name',
+	    relations: [{
+	      type: Backbone.HasMany, 
+	      key: 'issues',
+	      relatedModel: IssueRecommendation,
+	      collectionType: RecommendationCollection,
+	      reverseRelation: {
+	        key: 'name',
+	        includeInJSON: 'id'
+	        // 'relatedModel' is automatically set to 'Zoo'; the 'relationType' to 'HasOne'.
+	      }
+	    }] 
+	  });
+  var DeveloperRecommendationCollection = Backbone.Collection.extend({
+	    model: DeveloperRecommendation
+	  });
+  
   return {
     Issue: Issue,
     IssueCollection: IssueCollection,
@@ -130,7 +147,9 @@ define(
     MetricPrediction:MetricPrediction,
 
     IssueRecommendation: IssueRecommendation,
-    RecommendationCollection: RecommendationCollection
+    RecommendationCollection: RecommendationCollection,
+    DeveloperRecommendation : DeveloperRecommendation,
+    DeveloperRecommendationCollection : DeveloperRecommendationCollection
 
   };
 

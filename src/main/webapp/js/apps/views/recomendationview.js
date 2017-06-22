@@ -338,6 +338,7 @@ define(
         devIssuesContainer.setAttribute('class', 'list-group-item list-group-item-success');
         devIssuesContainer.setAttribute('data-parent', '#MainMenu4');
         devIssuesContainer.setAttribute('href','#pred'+this.model.get('name'));
+        devIssuesContainer.setAttribute('issueId', this.model.attributes.issues.models[0].get('issueId'));
         devIssuesContainer.textContent = this.model.get('displayName');
         this.el.appendChild(devIssuesContainer); 
       return this;
@@ -351,8 +352,10 @@ define(
 			if(this.options.selectedDev.array.length>0){
 				this.options.selectedDev.array[0].el.style.backgroundColor = this.UNSELECTED_COLOR;
 				this.options.selectedDev.array = _.without(this.options.selectedDev.array, this.options.selectedDev.array[0]);
+				//issue
 			}
 			this.options.selectedDev.array.push(this); 
+			this.model.attributes.issues.models[0].get('issueId');
 		}
     }
     });

@@ -31,7 +31,7 @@ define(
 
     // Definicion de Modelos.
     var developers = new model.DeveloperCollection();
-    var issues = new model.IssuePredictionCollection();
+    var issues = new model.RecommendationCollection();
     var metrics = new model.MetricCollection() ;
     var skills = new model.MetricCollection() ;
     
@@ -292,7 +292,7 @@ define(
     // Modelo de las metricas
     var metricsRecommendationPredicted = new model.MetricCollection();
     // Modelo para la recomendacion.
-    var devRecom = new model.DeveloperPredictionCollection();
+    var devRecom = new model.DeveloperRecommendationCollection();
     var selectedDeveloper =  {array: []};
     var devRecomListView = new recomendationView.DeveloperRecommendationCollectionView(
       { 
