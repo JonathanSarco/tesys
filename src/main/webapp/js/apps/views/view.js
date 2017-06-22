@@ -407,7 +407,7 @@ define(
 
 				//constants definitions 
 				UNSELECTED_COLOR: "#dff0d8", 
-				SELECTED_COLOR: "#bec3c6", 
+				SELECTED_COLOR: "#90968e", 
 				//end constants definitions
 
 				events: {

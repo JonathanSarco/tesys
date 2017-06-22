@@ -31,7 +31,7 @@ define(
 
     // Definicion de Modelos.
     var developers = new model.DeveloperCollection();
-    var issues = new model.RecommendationCollection();
+    var issues = new model.IssuePredictionCollection();
     var metrics = new model.MetricCollection() ;
     var skills = new model.MetricCollection() ;
     
@@ -293,10 +293,12 @@ define(
     var metricsRecommendationPredicted = new model.MetricCollection();
     // Modelo para la recomendacion.
     var devRecom = new model.DeveloperPredictionCollection();
+    var selectedDeveloper =  {array: []};
     var devRecomListView = new recomendationView.DeveloperRecommendationCollectionView(
       { 
         el: $('#developers-predictions-recommendation'),
-        collection: devRecom
+        collection: devRecom,
+        selectedDev : selectedDeveloper
         //plotter: [predPlotter, new radar("predRadar")],
         //attrToPlot: ['metrics', 'skills']
       });
@@ -487,9 +489,38 @@ define(
       ); 
     });
   };
+  /*
+   * Botón de Asignar un developer a la nueva Issue
+   */
+  $('#assingDeveloperBtn').click(function(){
+	  alert("BuenaIssue");
+      var developer = $('#developers-predictions-recommendation');
+     /*  if (!isNaN(metricValue) && isFinite(metricValue)) {
+          var metricId = $('#recomendationMetricSelect2').val();
+          metricsValuesRecommendation[metricId] = metricValue;
+          alert(metricsValuesRecommendation);
+          //inserto o reemplazo la metrica en la vista
+          var metricList = $('#metricListRecommendation');
+          var metricListElement = $('#'+metricId, metricList) ;
+          if (metricListElement) {
+            metricListElement.remove();
+          }
+        var li = $('<li class="list-group-item" id="'+metricId+'">').text(metricId+"= "+metricValue) ;
+        metricList.append(li);
+        //Event listener para eliminar metrica si le hago doble click
+        li.on('dblclick', function(){
+          delete metricsValuesRecommendation[this.id] ;
+          $(this).remove();
+        });
+        console.log(metricsValuesRecommendation);
+      } else {
+        alert("Invalid Input");
+      }*/
+    });
   
   return { 
     'start': start 
   };
+  
   
 });

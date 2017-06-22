@@ -142,6 +142,7 @@ define(
      *   Este evento se dispara cuando se hace click sobre un issue.]
      */
     select: function() { 
+    	alert("seleccione un dev");
       this.isSelected = !this.isSelected;
       if(this.isSelected) {
         this.developerElement.style.backgroundColor = this.SELECTED_COLOR ;
@@ -322,11 +323,14 @@ define(
   /**
   * Pestaña de RECOMENDACION DE DESARROLLADORES
   **/
-
+  	var selectedDev =  {array: []};
     var DeveloperRecommendationView = Backbone.View.extend({
+    events: {
+    	'click': 'select'
+	},
     initialize: function(options){
       this.options = options || {};
-      _.bindAll(this, 'render');
+      _.bindAll(this, 'render', 'select');
     },
     render: function(){
         var self = this ;  
@@ -337,11 +341,23 @@ define(
         devIssuesContainer.textContent = this.model.get('displayName');
         this.el.appendChild(devIssuesContainer); 
       return this;
+    },
+    select: function(){
+    	if (this.isSelected == null || this.isSelected == 'undefined' || this.isSelected == false) {
+			this.isSelected = !this.isSelected;
+		}
+		if(this.isSelected) {
+			this.el.style.backgroundColor = this.SELECTED_COLOR ;
+			if(this.options.selectedDev.array.length>0){
+				this.options.selectedDev.array[0].el.style.backgroundColor = this.UNSELECTED_COLOR;
+				this.options.selectedDev.array = _.without(this.options.selectedDev.array, this.options.selectedDev.array[0]);
+			}
+			this.options.selectedDev.array.push(this); 
+		}
     }
     });
 
     var DeveloperRecommendationCollectionView = Backbone.View.extend({
-    
     initialize: function(options){
       this.options = options || {};
       // every function that uses 'this' as the current object should be in here
@@ -363,7 +379,8 @@ define(
       var itemView = new DeveloperRecommendationView(
         { model: item, 
           plotter: this.options.plotter,
-          attrToPlot: this.options.attrToPlot
+          attrToPlot: this.options.attrToPlot,
+          selectedDev: this.options.selectedDev
         }
       );
       this.$el.append(itemView.render().el);
