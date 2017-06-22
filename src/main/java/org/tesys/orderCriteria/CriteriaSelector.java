@@ -17,7 +17,7 @@ public abstract class CriteriaSelector {
 	//Establece si la metrica es mejor por mayor o por menor
 	protected Hashtable<String,String> bestMetrics= new Hashtable<String, String>(); 
 	
-	public void completeHash(List<MetricPrediction> metrics){
+	public void completeHash(){
 		
 			//SonarQube
 			bestMetrics.put("complexity", "mayor");
@@ -73,24 +73,29 @@ public abstract class CriteriaSelector {
 	//Devuelve el nombre de la metrica por el cual ese desarrollador es mejor y si se debe ordenar por mayor o menor
 	public Map<String,String> getMetricsToOrder( Developer[] developers, Developer chosenDeveloper, CriteriaSelector criterion, Case newCase){
 		
+		this.completeHash();
+		
 		//Se obtiene en allKeys todas los nombres(keys) de las metricas estimadas por todos los desarrolladores
 		List<String>allKeys=new LinkedList<>();
 		for(Developer d:developers){
+			//Se supone que tiene una sola issue, que es la nueva aun no asignada
 			for(Issue issue:d.getIssues()){
-					Map<String,Double> metrics=issue.getMetrics();
-					Set<String> keys = metrics.keySet();
-					for(String k:keys){
-						if(!allKeys.contains(k))
-							allKeys.add(k);
+					if(issue.getMetrics()!=null){
+						Map<String,Double> metrics=issue.getMetrics();
+						Set<String> keys = metrics.keySet();
+						for(String k:keys){
+							if(!allKeys.contains(k))
+								allKeys.add(k);
+						}
 					}
 			}
 		}
 		
 		Map<String,Map<String,Double>> metricsWithValuesByDev=new HashMap<String, Map<String,Double>>();
-		Map<String,Double>ValuesByDev=new HashMap<String,Double>(); 
 
 		//Se arma un map metricsWithValuesByDev que va a tener por cada metrica, un conjunto de valores estimados por cada desarrollador
 		for(String k:allKeys){
+			Map<String,Double>ValuesByDev=new HashMap<String,Double>(); 
 			for(Developer developer:developers){
 				for( Issue issue :developer.getIssues()){
 						if(issue.getMetrics().containsKey(k)){

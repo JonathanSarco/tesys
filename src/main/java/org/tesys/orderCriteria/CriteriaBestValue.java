@@ -21,9 +21,9 @@ public class CriteriaBestValue extends CriteriaSelector{
 			Map<String,Double> values=metricsWithValuesByDev.get(k);
 			if(precedence.equals("mayor")){
 				String developerHigher=new String();
+				double higher=(double) values.values().toArray()[0];
 				for(String dev: values.keySet()){
-					double higher=0.0;
-							if(values.get(dev)>higher){
+							if(values.get(dev)>=higher){
 								higher=values.get(dev);
 								developerHigher=dev;
 								}
@@ -36,8 +36,8 @@ public class CriteriaBestValue extends CriteriaSelector{
 				}
 			else{
 				String developerLowest=new String();
+				double lowest=(double) values.values().toArray()[0];
 				for(String dev: values.keySet()){
-					double lowest=9999999999.0;
 						if(values.get(dev)<=lowest){
 								lowest=values.get(dev);
 								developerLowest=dev;
@@ -60,10 +60,13 @@ public class CriteriaBestValue extends CriteriaSelector{
 					if (pos==cont){
 						bestCriteria.put(k,bestMetrics.get(k));
 					}
-					pos++;
+					cont++;
 				}
+			return bestCriteria;
 			}
-
-		return bestCriteria;
+		else
+		{
+			return criteria;
+		}		
 	}
 }	
