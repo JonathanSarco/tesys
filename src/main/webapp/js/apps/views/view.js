@@ -464,6 +464,7 @@ define(
 							this.options.selectedIssues.array = _.without(this.options.selectedIssues.array, this.options.selectedIssues.array[0]);
 						}
 						this.options.selectedIssues.array.push(this);
+						issuesViewsToPlot.array.push(this);
 						this.plot(); 
 					} /*else {
 						selectedIssues.array = _.without(selectedIssues.array, this);
@@ -487,7 +488,7 @@ define(
 				adapt: function(attributeToAdapt){
 					if (attributeToAdapt == 'metrics'){
 						return this.model.get('metrics');
-					} else if (attributeToAdapt == 'skills') {
+					}/* else if (attributeToAdapt == 'skills') {
 						var skills = {} ;
 
 						// convert skills to simple array
@@ -496,7 +497,7 @@ define(
 						});
 						return skills;
 					}
-
+					*/
 				},
 
 				/**
@@ -550,6 +551,8 @@ define(
 				      var aux = new IssueRecommendationView(
 				        { model: item, 
 				          selectedIssues: this.options.selectedIssues,
+				          plotter: this.options.plotter,
+				          attrToPlot: this.options.attrToPlot
 				        }
 				      );
 				      this.$el.append(aux.render().el);
