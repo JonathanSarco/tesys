@@ -30,6 +30,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Case  {
+	
+	String idCase;
 
 	Date timestamp;
 	// *** Problema ***
@@ -207,5 +209,13 @@ public class Case  {
 
 	public void setPrecedence(String precedence) {
 		this.precedence = precedence;
+	}
+	
+	public String getIdCase() {
+		return idCase;
+	}
+	
+	public void setIdCase(String idCase) {
+		this.idCase = idCase;
 	}
 }

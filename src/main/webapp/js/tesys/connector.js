@@ -236,6 +236,25 @@ define(["jquery"], function($) {
     });
     	alert("LLego a la recomendacion");
   }
+    function allocateDeveloperIssue(selectedDeveloper, issueFromDevSelected){
+        $.ajax({
+          type: 'POST',
+          url: location.origin+apiPath+'updateOrderCriteria/'+selectedDeveloper+'/'+issueFromDevSelected,
+          dataType: 'json', // data type of response
+          contentType: "application/json; charset=utf-8",
+          error: function(jqXHR, textStatus, errorThrown) {
+            alert("Error en el response de "+apiPath+"updateOrderCriteria");
+            console.log(jqXHR, textStatus, errorThrown);
+          },
+          success: function(data) {
+        	  alert("success "+data);
+        	  callback(data);
+              $("#ajax_loader").hide();
+          }
+
+        });
+        	alert("LLego a la asignación");
+    }
 
   return {    
     getAnalysis: getAnalysis,
@@ -249,6 +268,7 @@ define(["jquery"], function($) {
     storeMetric: storeMetric,
     getPredictions: getPredictions,
     //Recomendacion
-    getDevRecommendationbyIssue: getDevRecommendationbyIssue
+    getDevRecommendationbyIssue: getDevRecommendationbyIssue,
+    allocateDeveloperIssue:allocateDeveloperIssue
   };
 });

@@ -778,7 +778,7 @@ public class Controller {
 
 		dbCases = CaseBasedReasoning.getRecommendation(label,skill, sprint, unasignedIssue, metricsRecommendation, skills);
 		if(dbCases != null){
-			dao.create(dbCases);
+			dao.create(dbCases.getIdCase(), dbCases);
 		}
 
 		List<Developer> developersCase = Arrays.asList(dbCases.getIssuesWithDevelopersRecommended());
@@ -793,11 +793,10 @@ public class Controller {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/updateOrderCriteria/{selectedDeveloper}/{issue}/{recommendedDevelopers}")
+	@Path("/updateOrderCriteria/{selectedDeveloper}/{issue}")
 	public Response updateOrderCriteria(	
 			@PathParam("selectedDeveloper") String selectedDeveloper,
-			@PathParam("issue") String issue,
-			@QueryParam("recommendedDevelopers") List<String> recommendedDevelopers){
+			@PathParam("issue") String issue){
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 		/*
 		 * Busco el caso por IsuueID
@@ -817,13 +816,19 @@ public class Controller {
 		/*
 		 * Llamar al metodo de gabi
 		 */
+		Case modifCase = CaseBasedReasoning.setOrderCriteriaNewCase(selectedDev, similarIssueCase );
+		
+
+		ElasticsearchDao<Case> dao;
+		try {
+			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);			
+		} catch (Exception e) {
+			return response.build();
+		}
 		/*
 		 * Metodo para hacer el update del caso
-		 */
-		//Map<String,String> criteria = new HashMap<String,String>();
-		//criteria.put("complexity", "mayor");
-		//dbCases.setOrderCriteria(criteria);
-		//dao.update(Integer.toString(dbCases.getIdCase()), dbCases);
+		 */		
+		dao.update(modifCase.getIdCase(), modifCase);
 		return response.build();
 	}
 }
