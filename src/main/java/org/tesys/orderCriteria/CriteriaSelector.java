@@ -98,7 +98,7 @@ public abstract class CriteriaSelector {
 			Map<String,Double>ValuesByDev=new HashMap<String,Double>(); 
 			for(Developer developer:developers){
 				for( Issue issue :developer.getIssues()){
-						if(issue.getMetrics().containsKey(k)){
+						if(issue.getMetrics()!=null && issue.getMetrics().containsKey(k)){
 							Map<String,Double> metrics=issue.getMetrics();
 							Double value=metrics.get(k);
 							ValuesByDev.put(developer.getDisplayName(),value);

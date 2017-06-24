@@ -204,6 +204,9 @@ public class CaseBasedReasoning {
 			 * - Si fue malo elimino al desarrollador seleccionado de los similares. 
 			 */
 			if(!developerWithNewIssue.isEmpty() && developerWithNewIssue.size()>0 &&!similarCases.isEmpty() && similarCases.size() > 0){
+				Developer deveoperComplete[] = new Developer[developerWithNewIssue.size()];
+				deveoperComplete = developerWithNewIssue.toArray(deveoperComplete);
+				newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
 				adaptNewCase(similarCases, newCase);
 			}
 			else{
@@ -225,7 +228,7 @@ public class CaseBasedReasoning {
 			return newCase;	
 		}
 		else{
-			return null;
+			return newCase;
 		}
 	
 }
