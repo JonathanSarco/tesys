@@ -173,20 +173,61 @@ public class CaseBasedReasoning {
 			similarDev.setIssues(unasignedIssues);
 			developerWithNewIssue.add(similarDev);
 		}
+	
+		/*Se guardan los desarrolladores similares del nuevo caso( si existen)*/
 		
-		Developer deveoperComplete[] = new Developer[developerWithNewIssue.size()];
-		deveoperComplete = developerWithNewIssue.toArray(deveoperComplete);
-		newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
-		/*
-		 *  * Adicionalmente se modifica la lista de desarrolladores similares según la clasificación del caso
-		 * - Si fue bueno agrego el desarrollador seleccionado al caso nuevo si es q no esta entre los desarrolladores similares
-		 * - Si fue malo elimino al desarrollador seleccionado de los similares. 
-		 */
-		if(!similarCases.isEmpty() && similarCases.size() > 0){
-			adaptNewCase(similarCases, newCase);
+		/*Si no existen desarrolladores similares en la base de datos, se guarda en el nuevo caso los desarrolladores de un caso similar que sea buena recomendacion*/
+		/*Si no hay ningun caso que sea buena recomendacion, se devuelve el primer caso que encuentre*/
+		if(developerWithNewIssue.isEmpty() && developerWithNewIssue.size()==0 && !similarCases.isEmpty() && similarCases.size()>0 ){
+			boolean found=false;
+			Case similarCaseGood=null;
+			for(int i=0;i<similarCases.size() && !found;i++){
+				if(similarCases.get(i).isGoodRecommendation()){
+					similarCaseGood=similarCases.get(i);
+					found=true;
+				}
+			}
+			if(similarCaseGood != null){
+				newCase.setIssuesWithDevelopersRecommended(similarCaseGood.getIssuesWithDevelopersRecommended());
+
+			}
+			else{
+				//Elijo el primero, ya que cualquiera es una mala recomendacion
+				Case similarCaseBad=similarCases.get(0);
+				newCase.setIssuesWithDevelopersRecommended(similarCaseBad.getIssuesWithDevelopersRecommended());
+			}
 		}
-		newCase.orderDeveloper(similarCases);
-	return newCase;	
+		else{
+			/*
+			 *  * Adicionalmente se modifica la lista de desarrolladores similares según la clasificación del caso
+			 * - Si fue bueno agrego el desarrollador seleccionado al caso nuevo si es q no esta entre los desarrolladores similares
+			 * - Si fue malo elimino al desarrollador seleccionado de los similares. 
+			 */
+			if(!developerWithNewIssue.isEmpty() && developerWithNewIssue.size()>0 &&!similarCases.isEmpty() && similarCases.size() > 0){
+				adaptNewCase(similarCases, newCase);
+			}
+			else{
+				/*Si existen desarrolladores similares en la base de datos y no hay casos similares, los guardo en el nuevo caso*/
+				if(!developerWithNewIssue.isEmpty() && developerWithNewIssue.size()>0 && similarCases.isEmpty() && similarCases.size()==0){
+					Developer deveoperComplete[] = new Developer[developerWithNewIssue.size()];
+					deveoperComplete = developerWithNewIssue.toArray(deveoperComplete);
+					newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
+			}
+				else{
+					newCase.setIssuesWithDevelopersRecommended(null);
+				}
+		}
+	}		
+		
+		/*Devuelve desarrolladores similares ordenados por algun criterio(solo si existen)*/
+		if(newCase.getIssuesWithDevelopersRecommended()!=null){
+			newCase.orderDeveloper(similarCases);
+			return newCase;	
+		}
+		else{
+			return null;
+		}
+	
 }
 
 	private static Case adaptNewCase(List<Case> similarCases, Case newCase) {

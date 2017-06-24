@@ -117,6 +117,7 @@ public class Case  {
 	}
 
 	public  void setOrderCriteria(Map<String,String> criteria) {
+		
 		metric = criteria.keySet().toArray()[0].toString();
 		precedence = criteria.get(metric);
 	}

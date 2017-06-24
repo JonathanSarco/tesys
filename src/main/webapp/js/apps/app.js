@@ -27,6 +27,7 @@ define(
     
     // Definicion de objetos encargados de graficar sobre la UI (plotters)
     var metricsPlotter = new bar("metricChart");
+    var metricsRecommendationPlotter = new bar("recommendationMetricChart");
     var skillPlotter = new radar("skillChart");
 
     // Definicion de Modelos.
@@ -54,7 +55,9 @@ define(
     var recommendation = new view.IssueRecommendationCollectionView(
             { collection: issues,
               selectedIssues: issuesSelected, 
-              el: $('#issues-reco')
+              el: $('#issues-reco'),
+              plotter: metricsRecommendationPlotter,
+              attrToPlot: ['metrics']
             }
     );       
    
@@ -172,7 +175,15 @@ define(
        el: $('#recomendationsSkillSelector'), 
        selectedSkills:recommendationSelectedSkills
       });
-    
+    //Metricas para la recomendacion
+    var metricsRecommendationView = new view.MetricCollectionView(
+        {	collection: metricsRecommendation,
+            el: $('#metricsRecommendation'), 
+            metricsToPlot: metricsToPlot,
+            plotter: metricsRecommendationPlotter,
+            type: 'metrics'
+        });
+        
     /**
      * Elimina repetidos en un array
      * 
@@ -215,6 +226,7 @@ define(
       return metricSet ;
     }
 
+    
     /**
      * Dado un arreglo de metricas (contiene las key de las metricas)
      * y una colecion de metricas (una coleccion de backbone) crea una
@@ -228,7 +240,7 @@ define(
      * @return {Backbone.Collection of metrics} Coleccion resultado de la
      *   interseccion .
      */
-    function selectMetricsFromModel(metricCollection, metricArray){
+    function selectMetricsFromModel(metricCollection, metricArray) {
       var result = new model.MetricCollection() ; 
       for( var id in metricArray ) {
           result.push(metricCollection.get(metricArray[id])) ;
@@ -236,7 +248,8 @@ define(
       return result;
     }
 
-    var predictions = []; //todos los developer con las predicciones¿
+    var predictions = [];//todos los developer con las predicciones
+    
     function addPredictions (data) {
       console.log("estimation data "+data);
       if (predictions === undefined || predictions.length === 0) {
@@ -496,7 +509,12 @@ define(
       ); 
     });
   };
-  
+  //Boton graficar
+  $('#myTab a[href="#recommendationMetricPane"]').on('shown.bs.tab', function (e) {
+      console.log(metricsToPlot.array);
+      metricsRecommendationPlotter.build(metricsToPlot.array);
+      predPlotter.build();
+    });
   return { 
     'start': start 
   };
