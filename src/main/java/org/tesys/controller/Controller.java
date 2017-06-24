@@ -780,8 +780,10 @@ public class Controller {
 		if(dbCases != null){
 			dao.create(dbCases.getIdCase(), dbCases);
 		}
-
-		List<Developer> developersCase = Arrays.asList(dbCases.getIssuesWithDevelopersRecommended());
+		List<Developer> developersCase = new LinkedList<Developer>();
+		if(dbCases.getIssuesWithDevelopersRecommended() != null){
+			developersCase = Arrays.asList(dbCases.getIssuesWithDevelopersRecommended());
+		}
 		GenericEntity<List<Developer>> entity = new GenericEntity<List<Developer>>(
 				developersCase) {
 		};
