@@ -66,6 +66,7 @@ public abstract class CriteriaSelector {
 			bestMetrics.put("file_complexity_distribution", "mayor");
 			bestMetrics.put("function_complexity_distribution","mayor");
 			bestMetrics.put("sqale_debt_ratio","menor");
+			bestMetrics.put("info_violations","menor");
 	}
 
 		
@@ -90,6 +91,7 @@ public abstract class CriteriaSelector {
 					}
 			}
 		}
+		
 		
 		Map<String,Map<String,Double>> metricsWithValuesByDev=new HashMap<String, Map<String,Double>>();
 
