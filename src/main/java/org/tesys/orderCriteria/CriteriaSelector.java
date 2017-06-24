@@ -71,7 +71,7 @@ public abstract class CriteriaSelector {
 		
 	
 	//Devuelve el nombre de la metrica por el cual ese desarrollador es mejor y si se debe ordenar por mayor o menor
-	public Map<String,String> getMetricsToOrder( Developer[] developers, Developer chosenDeveloper, CriteriaSelector criterion, Case newCase){
+	public Map<String,String> getMetricsToOrder( Developer[] developers, Developer chosenDeveloper, CriteriaSelector criterion){
 		
 		this.completeHash();
 		

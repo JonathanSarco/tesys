@@ -323,7 +323,8 @@ define(
   /**
   * Pestaña de RECOMENDACION DE DESARROLLADORES
   **/
-  	var selectedDev =  {array: []};
+  //	var selectedDev =  {array: []};
+  //	var selectedIssues =  {array: []};
     var DeveloperRecommendationView = Backbone.View.extend({
     events: {
     	'click': 'select'
@@ -352,10 +353,10 @@ define(
 			if(this.options.selectedDev.array.length>0){
 				this.options.selectedDev.array[0].el.style.backgroundColor = this.UNSELECTED_COLOR;
 				this.options.selectedDev.array = _.without(this.options.selectedDev.array, this.options.selectedDev.array[0]);
-				//issue
+				this.options.selectedIssues.array = _.without(this.options.selectedIssues.array, this.options.selectedIssues.array[0]);
 			}
 			this.options.selectedDev.array.push(this); 
-			this.model.attributes.issues.models[0].get('issueId');
+			this.options.selectedIssues.array.push(this.model.attributes.issues);
 		}
     }
     });
@@ -383,7 +384,8 @@ define(
         { model: item, 
           plotter: this.options.plotter,
           attrToPlot: this.options.attrToPlot,
-          selectedDev: this.options.selectedDev
+          selectedDev: this.options.selectedDev,
+          selectedIssues : this.options.selectedIssues
         }
       );
       this.$el.append(itemView.render().el);

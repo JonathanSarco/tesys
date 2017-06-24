@@ -85,6 +85,7 @@ public class CaseBasedReasoning {
 		Case newCase = new Case();
 		newCase.setIssue(newIssue);
 		newCase.settimestamp();
+		newCase.setIdCase(newCase.gettimestamp().toString());
 		
 		//Obtengo los casos similares de la base
 		SearchCaseByIssueAndSkillsQuery dnq = new SearchCaseByIssueAndSkillsQuery(newIssue.getLabels(), newIssue.getSkills());
@@ -277,13 +278,14 @@ private static List<Developer> getAllSimilarDevelopers(List<SimilarIssue> simila
 }
 
 //Para setear el criterio de orden a los nuevos casos, ver donde lo llamo
-public void setOrderCriteriaNewCase(Developer chosenDeveloper, Case newCase){
+public static Case setOrderCriteriaNewCase(Developer chosenDeveloper, Case newCase){
 	//Por pantalla quizas no voy a tener MetricPrediction, lo que si voy a tener son todos los desarrolladores similares
 	//le paso todos los desarrolladores similares, y por cada uno puedo obtener un vector de  private List<Issue> issues, y cada issue
 	//tiene un Map<String, Double> measures, debo buscar la issue correspondiente al nuevo caso, pq es la no asignada aun;
 	CriteriaSelector criterion=new CriteriaBestValue();
-	Map<String,String> orderCriteria=criterion.getMetricsToOrder(newCase.getIssuesWithDevelopersRecommended(),chosenDeveloper, criterion,newCase);
+	Map<String,String> orderCriteria=criterion.getMetricsToOrder(newCase.getIssuesWithDevelopersRecommended(),chosenDeveloper, criterion);
 	newCase.setOrderCriteria(orderCriteria);
+	return newCase;
 }
 
 }

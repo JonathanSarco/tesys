@@ -294,13 +294,13 @@ define(
     // Modelo para la recomendacion.
     var devRecom = new model.DeveloperRecommendationCollection();
     var selectedDeveloper =  {array: []};
+    var issueFromDevSelected = {array: []};
     var devRecomListView = new recomendationView.DeveloperRecommendationCollectionView(
       { 
         el: $('#developers-predictions-recommendation'),
         collection: devRecom,
-        selectedDev : selectedDeveloper
-        //plotter: [predPlotter, new radar("predRadar")],
-        //attrToPlot: ['metrics', 'skills']
+        selectedDev : selectedDeveloper,
+        selectedIssues : issueFromDevSelected 
       });
 
     //Metricas de recomendacion
@@ -381,7 +381,14 @@ define(
 	          //alert("String metricas: " + metrics);
 	          tesys.getDevRecommendationbyIssue(0.5, 0.5,metrics,issuesSelected.array[0].model.get('issueId'), recommendationSelectedSkills.array,  addPredictionsRecommendations);
 	        }
-	 });
+	 });  
+    /*
+     * Botón de Asignar un developer a la nueva Issue
+     */
+    $('#assingDeveloperBtn').click(function(){
+  	 // $("#ajax_loader").show();
+  	  tesys.allocateDeveloperIssue(selectedDeveloper.array[0].model.get("name"), issueFromDevSelected.array[0].models[0].get("issueId"));  
+    });
 
       /**
       * Fin de pestaña de RECOMENDACIONES
@@ -489,34 +496,6 @@ define(
       ); 
     });
   };
-  /*
-   * Botón de Asignar un developer a la nueva Issue
-   */
-  $('#assingDeveloperBtn').click(function(){
-	  alert("BuenaIssue");
-      var developer = $('#developers-predictions-recommendation');
-     /*  if (!isNaN(metricValue) && isFinite(metricValue)) {
-          var metricId = $('#recomendationMetricSelect2').val();
-          metricsValuesRecommendation[metricId] = metricValue;
-          alert(metricsValuesRecommendation);
-          //inserto o reemplazo la metrica en la vista
-          var metricList = $('#metricListRecommendation');
-          var metricListElement = $('#'+metricId, metricList) ;
-          if (metricListElement) {
-            metricListElement.remove();
-          }
-        var li = $('<li class="list-group-item" id="'+metricId+'">').text(metricId+"= "+metricValue) ;
-        metricList.append(li);
-        //Event listener para eliminar metrica si le hago doble click
-        li.on('dblclick', function(){
-          delete metricsValuesRecommendation[this.id] ;
-          $(this).remove();
-        });
-        console.log(metricsValuesRecommendation);
-      } else {
-        alert("Invalid Input");
-      }*/
-    });
   
   return { 
     'start': start 
