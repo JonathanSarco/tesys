@@ -464,8 +464,8 @@ define(
 							this.options.selectedIssues.array = _.without(this.options.selectedIssues.array, this.options.selectedIssues.array[0]);
 						}
 						this.options.selectedIssues.array.push(this);
-						issuesViewsToPlot.array.push(this);
-						this.plot(); 
+						//issuesViewsToPlot.array.push(this);
+						//this.plot(); 
 					} /*else {
 						selectedIssues.array = _.without(selectedIssues.array, this);
 						this.el.style.backgroundColor = this.UNSELECTED_COLOR ;
@@ -558,6 +558,150 @@ define(
 				      this.$el.append(aux.render().el);
 				    }
 				  });
+			
+			var IssueRecommendationCollectionView = Backbone.View.extend({
+				  //  el: $('#metrics'), // el attaches to existing element
+				    initialize: function(options){
+				      this.options = options || {};
+				      // every function that uses 'this' as the current object should be in here
+				      _.bindAll(this, 'render', 'appendItem');
+
+				      //Event subscription
+				      this.collection.on({'reset': this.render});
+				      
+				      this.render();
+				    },
+				    
+				    render: function(){
+				      var self = this;
+				      _(this.collection.models).each(function(item){ // in case collection is not empty
+				        self.appendItem(item);
+				      });
+				      return this;
+				    },
+				    
+				    appendItem: function(item){
+				      var aux = new IssueRecommendationView(
+				        { model: item, 
+				          selectedIssues: this.options.selectedIssues,
+				          plotter: this.options.plotter,
+				          attrToPlot: this.options.attrToPlot
+				        }
+				      );
+				      this.$el.append(aux.render().el);
+				    }
+				  });
+			
+			
+			// Pruebo la vista aca para ver si grafica
+		    var DeveloperRecommendationView = Backbone.View.extend({
+		        events: {
+		        	'click': 'select'
+		    	},
+		        initialize: function(options){
+		          this.options = options || {};
+		          _.bindAll(this, 'render', 'select', 'plot', 'tag', 'adapt'); 
+		        },
+		        
+		        render: function(){
+		            var self = this ;  
+		            var devIssuesContainer = document.createElement("a");
+		            devIssuesContainer.setAttribute('class', 'list-group-item list-group-item-success');
+		            devIssuesContainer.setAttribute('data-parent', '#MainMenu4');
+		            devIssuesContainer.setAttribute('href','#pred'+this.model.get('name'));
+		            devIssuesContainer.setAttribute('issueId', this.model.attributes.issues.models[0].get('issueId'));
+		            devIssuesContainer.textContent = this.model.get('displayName');
+		            this.el.appendChild(devIssuesContainer); 
+		          return this;
+		        },
+		        select: function(){
+		        	issuesViewsToPlot.array = [];
+		        	if (this.isSelected == null || this.isSelected == 'undefined' || this.isSelected == false) {
+		    			this.isSelected = !this.isSelected;
+		    		}
+		    		if(this.isSelected) {
+		    			this.el.style.backgroundColor = this.SELECTED_COLOR ;
+		    			if(this.options.selectedDev.array.length>0){
+		    				this.options.selectedDev.array[0].el.style.backgroundColor = this.UNSELECTED_COLOR;
+		    				this.options.selectedDev.array = _.without(this.options.selectedDev.array, this.options.selectedDev.array[0]);
+		    				this.options.selectedIssues.array = _.without(this.options.selectedIssues.array, this.options.selectedIssues.array[0]);
+		    			}
+		    			this.options.selectedDev.array.push(this); 
+		    			this.options.selectedIssues.array.push(this.model.attributes.issues);
+		    			//Agrego la metrica para graficar.
+		    			//this.model.attributes.issues.models[0].attributes.metrics dsp punto y el nombre a graficar
+		    			issuesViewsToPlot.array.push(this);
+		    			this.plot();
+		    		}
+		        },
+		        
+				tag: function(){
+					return this.model.attributes.name + "::" + this.model.attributes.issues.models[0].get('issueId');
+				},
+				
+				adapt: function(attributeToAdapt){
+					if (attributeToAdapt == 'metrics'){
+						return this.model.attributes.issues.models[0].attributes.metrics;
+					}
+				},
+
+				/**
+				 * [plot Dibuja el gráfico del issue dentro del conjunto de plotters]
+				 */
+				plot: function(){
+					//Ploting metrics
+					var self = this;
+					$(this.options.attrToPlot).each(function(i, attr){
+						if (self.options.plotter){
+							var toPlot = self.adapt(attr) ;
+							if (!_.isEmpty(toPlot)){
+								self.options.plotter[i].addGraph(self.tag(), toPlot);
+							}
+						}
+					});
+				},
+
+				plotSingle: function(plotter, attr) {
+					if (plotter) {
+						var toPlot = this.adapt(attr) ;
+						if (!_.isEmpty(toPlot)){
+							plotter.addGraph(this.tag(), toPlot);
+						}
+					}
+				}
+		    });
+		    
+		    var DeveloperRecommendationCollectionView = Backbone.View.extend({
+		        initialize: function(options){
+		          this.options = options || {};
+		          // every function that uses 'this' as the current object should be in here
+		          _.bindAll(this, 'render', 'appendItem');
+		          this.collection.on({'reset': this.render});
+		          this.render();
+		        },
+
+		        render: function(){
+		          this.$el.empty();
+		          var self = this;
+		          _(this.collection.models).each(function(item) { // in case collection is not empty
+		            self.appendItem(item);
+		            //alert('Paso por aca');
+		          }, this);
+		        },
+
+		        appendItem: function(item){
+		          var itemView = new DeveloperRecommendationView(
+		            { model: item, 
+		              plotter: this.options.plotter,
+		              attrToPlot: this.options.attrToPlot,
+		              selectedDev: this.options.selectedDev,
+		              selectedIssues : this.options.selectedIssues
+		            }
+		          );
+		          this.$el.append(itemView.render().el);
+		        }
+		      });
+			
 
 			return {
 				IssueView: IssueView,
@@ -569,6 +713,9 @@ define(
 				DeveloperSelectView: DeveloperSelectView,
 				issuesViewsToPlot: issuesViewsToPlot,
 				IssueRecommendationView: IssueRecommendationView,
-				IssueRecommendationCollectionView: IssueRecommendationCollectionView
+				IssueRecommendationCollectionView: IssueRecommendationCollectionView,
+				//Developers modal
+				DeveloperRecommendationView: DeveloperRecommendationView,
+				DeveloperRecommendationCollectionView: DeveloperRecommendationCollectionView
 			};
 		});

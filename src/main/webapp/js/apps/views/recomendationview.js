@@ -320,79 +320,6 @@ define(
     }
   });
 
-  /**
-  * Pestaña de RECOMENDACION DE DESARROLLADORES
-  **/
-  //	var selectedDev =  {array: []};
-  //	var selectedIssues =  {array: []};
-    var DeveloperRecommendationView = Backbone.View.extend({
-    events: {
-    	'click': 'select'
-	},
-    initialize: function(options){
-      this.options = options || {};
-      _.bindAll(this, 'render', 'select');
-    },
-    render: function(){
-        var self = this ;  
-        var devIssuesContainer = document.createElement("a");
-        devIssuesContainer.setAttribute('class', 'list-group-item list-group-item-success');
-        devIssuesContainer.setAttribute('data-parent', '#MainMenu4');
-        devIssuesContainer.setAttribute('href','#pred'+this.model.get('name'));
-        devIssuesContainer.setAttribute('issueId', this.model.attributes.issues.models[0].get('issueId'));
-        devIssuesContainer.textContent = this.model.get('displayName');
-        this.el.appendChild(devIssuesContainer); 
-      return this;
-    },
-    select: function(){
-    	if (this.isSelected == null || this.isSelected == 'undefined' || this.isSelected == false) {
-			this.isSelected = !this.isSelected;
-		}
-		if(this.isSelected) {
-			this.el.style.backgroundColor = this.SELECTED_COLOR ;
-			if(this.options.selectedDev.array.length>0){
-				this.options.selectedDev.array[0].el.style.backgroundColor = this.UNSELECTED_COLOR;
-				this.options.selectedDev.array = _.without(this.options.selectedDev.array, this.options.selectedDev.array[0]);
-				this.options.selectedIssues.array = _.without(this.options.selectedIssues.array, this.options.selectedIssues.array[0]);
-			}
-			this.options.selectedDev.array.push(this); 
-			this.options.selectedIssues.array.push(this.model.attributes.issues);
-		}
-    }
-    });
-
-    var DeveloperRecommendationCollectionView = Backbone.View.extend({
-    initialize: function(options){
-      this.options = options || {};
-      // every function that uses 'this' as the current object should be in here
-      _.bindAll(this, 'render', 'appendItem');
-      this.collection.on({'reset': this.render});
-      this.render();
-    },
-
-    render: function(){
-      this.$el.empty();
-      var self = this;
-      _(this.collection.models).each(function(item) { // in case collection is not empty
-        self.appendItem(item);
-        //alert('Paso por aca');
-      }, this);
-    },
-
-    appendItem: function(item){
-      var itemView = new DeveloperRecommendationView(
-        { model: item, 
-          plotter: this.options.plotter,
-          attrToPlot: this.options.attrToPlot,
-          selectedDev: this.options.selectedDev,
-          selectedIssues : this.options.selectedIssues
-        }
-      );
-      this.$el.append(itemView.render().el);
-    }
-  });
-
-
   return {
     SkillCollectionView: SkillCollectionView,
     issuesViewsToPlot: issuesViewsToPlot,
@@ -400,8 +327,5 @@ define(
     DeveloperPredictionCollectionView: DeveloperPredictionCollectionView,
     MetricPredictionView: MetricPredictionView,
     MetricPredictionCollectionView: MetricPredictionCollectionView,
-    // Recomendacion
-    DeveloperRecommendationView: DeveloperRecommendationView,
-    DeveloperRecommendationCollectionView: DeveloperRecommendationCollectionView 
   };
 });

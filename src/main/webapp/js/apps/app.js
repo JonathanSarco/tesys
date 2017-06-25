@@ -308,12 +308,14 @@ define(
     var devRecom = new model.DeveloperRecommendationCollection();
     var selectedDeveloper =  {array: []};
     var issueFromDevSelected = {array: []};
-    var devRecomListView = new recomendationView.DeveloperRecommendationCollectionView(
+    var devRecomListView = new view.DeveloperRecommendationCollectionView(
       { 
         el: $('#developers-predictions-recommendation'),
         collection: devRecom,
         selectedDev : selectedDeveloper,
-        selectedIssues : issueFromDevSelected 
+        selectedIssues : issueFromDevSelected,
+        plotter: metricsRecommendationPlotter,
+        attrToPlot: ['metrics']
       });
 
     //Metricas de recomendacion
