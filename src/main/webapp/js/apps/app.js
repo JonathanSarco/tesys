@@ -307,13 +307,11 @@ define(
     // Modelo para la recomendacion.
     var devRecom = new model.DeveloperRecommendationCollection();
     var selectedDeveloper =  {array: []};
-    var issueFromDevSelected = {array: []};
     var devRecomListView = new view.DeveloperRecommendationCollectionView(
       { 
         el: $('#developers-predictions-recommendation'),
         collection: devRecom,
         selectedDev : selectedDeveloper,
-        selectedIssues : issueFromDevSelected,
         plotter: metricsRecommendationPlotter,
         attrToPlot: ['metrics']
       });
@@ -326,7 +324,6 @@ define(
        if (!isNaN(metricValue) && isFinite(metricValue)) {
           var metricId = $('#recomendationMetricSelect2').val();
           metricsValuesRecommendation[metricId] = metricValue;
-          alert(metricsValuesRecommendation);
           //inserto o reemplazo la metrica en la vista
           var metricList = $('#metricListRecommendation');
           var metricListElement = $('#'+metricId, metricList) ;
@@ -342,7 +339,7 @@ define(
         });
         console.log(metricsValuesRecommendation);
       } else {
-        alert("Invalid Input");
+        alert("Inserte una metrica valida");
       }
     });
 
@@ -402,7 +399,7 @@ define(
      */
     $('#assingDeveloperBtn').click(function(){
   	 // $("#ajax_loader").show();
-  	  tesys.allocateDeveloperIssue(selectedDeveloper.array[0].model.get("name"), issueFromDevSelected.array[0].models[0].get("issueId"));  
+  	  tesys.allocateDeveloperIssue(selectedDeveloper.array[0].model.get("name"), selectedDeveloper.array[0].model.attributes.issues.models[0].get('issueId'));  
     });
 
       /**

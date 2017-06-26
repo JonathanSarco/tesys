@@ -167,7 +167,7 @@ define(
 					devNameContainer.textContent = this.model.get('displayName');
 					devNameContainer.setAttribute('class', 'list-group-item list-group-item-success');
 					devNameContainer.setAttribute('data-parent', '#MainMenu');
-					devNameContainer.setAttribute('data-parent', '#MainMenu3');
+					//devNameContainer.setAttribute('data-parent', '#MainMenu3');
 					devNameContainer.setAttribute('data-toggle', 'collapse');
 					devNameContainer.setAttribute('href','#'+this.model.get('name'));
 
@@ -464,45 +464,15 @@ define(
 							this.options.selectedIssues.array = _.without(this.options.selectedIssues.array, this.options.selectedIssues.array[0]);
 						}
 						this.options.selectedIssues.array.push(this);
-						//issuesViewsToPlot.array.push(this);
-						//this.plot(); 
-					} /*else {
-						selectedIssues.array = _.without(selectedIssues.array, this);
-						this.el.style.backgroundColor = this.UNSELECTED_COLOR ;
-						var self = this;
-						_(this.options.plotter).each(function(p){
-							p.removeGraph(self.tag());
-						});*/
-					//}
+					}
 				},
 
-				/**
-				 * [adapt convierte un atributo del modelo en un arreglo, para poder ser
-				 * graficado en un formato estandar]
-				 * @param  {[type]} attributeToAdapt [el atributo puede ser 'metrics' o 
-				 * 'skills']
-				 * @return {[JSON of metricKey:metricValue]}                  
-				 * [es el formato estandar con el cual se le pasaran los valores a graficar
-				 * al plotter]
-				 */
 				adapt: function(attributeToAdapt){
 					if (attributeToAdapt == 'metrics'){
 						return this.model.get('metrics');
-					}/* else if (attributeToAdapt == 'skills') {
-						var skills = {} ;
-
-						// convert skills to simple array
-						_(this.model.get('skills')).each(function(skill){
-							skills[skill.skillName] = skill.skillWeight;
-						});
-						return skills;
 					}
-					*/
 				},
 
-				/**
-				 * [plot Dibuja el gráfico del issue dentro del conjunto de plotters]
-				 */
 				plot: function(){
 					//Ploting metrics
 					var self = this;
@@ -593,45 +563,48 @@ define(
 				  });
 			
 			
-			// Pruebo la vista aca para ver si grafica
 		    var DeveloperRecommendationView = Backbone.View.extend({
-		        events: {
+		        
+				UNSELECTED_COLOR: "#dff0d8", 
+				SELECTED_COLOR: "#90968e", 
+				
+		    	events: {
 		        	'click': 'select'
 		    	},
+		    	
 		        initialize: function(options){
 		          this.options = options || {};
 		          _.bindAll(this, 'render', 'select', 'plot', 'tag', 'adapt'); 
+		          this.isSelected = false;
 		        },
 		        
 		        render: function(){
 		            var self = this ;  
 		            var devIssuesContainer = document.createElement("a");
 		            devIssuesContainer.setAttribute('class', 'list-group-item list-group-item-success');
-		            devIssuesContainer.setAttribute('data-parent', '#MainMenu4');
+		            devIssuesContainer.setAttribute('data-parent', '#MainMenu5');
 		            devIssuesContainer.setAttribute('href','#pred'+this.model.get('name'));
 		            devIssuesContainer.setAttribute('issueId', this.model.attributes.issues.models[0].get('issueId'));
 		            devIssuesContainer.textContent = this.model.get('displayName');
 		            this.el.appendChild(devIssuesContainer); 
 		          return this;
 		        },
+		        
 		        select: function(){
-		        	issuesViewsToPlot.array = [];
-		        	if (this.isSelected == null || this.isSelected == 'undefined' || this.isSelected == false) {
-		    			this.isSelected = !this.isSelected;
-		    		}
+		        	//issuesViewsToPlot.array = [];
+		    		this.isSelected = !this.isSelected;
 		    		if(this.isSelected) {
 		    			this.el.style.backgroundColor = this.SELECTED_COLOR ;
-		    			if(this.options.selectedDev.array.length>0){
-		    				this.options.selectedDev.array[0].el.style.backgroundColor = this.UNSELECTED_COLOR;
-		    				this.options.selectedDev.array = _.without(this.options.selectedDev.array, this.options.selectedDev.array[0]);
-		    				this.options.selectedIssues.array = _.without(this.options.selectedIssues.array, this.options.selectedIssues.array[0]);
-		    			}
-		    			this.options.selectedDev.array.push(this); 
-		    			this.options.selectedIssues.array.push(this.model.attributes.issues);
-		    			//Agrego la metrica para graficar.
-		    			//this.model.attributes.issues.models[0].attributes.metrics dsp punto y el nombre a graficar
+		    			this.options.selectedDev.array.push(this);
 		    			issuesViewsToPlot.array.push(this);
 		    			this.plot();
+		    		} else {
+		    			//this.options.selectedDev.array[0].el.style.backgroundColor = this.UNSELECTED_COLOR;
+		    			//this.options.selectedDev.array = _.without(this.options.selectedDev.array, this.options.selectedDev.array[0]);
+		    			issuesViewsToPlot.array = _.without(issuesViewsToPlot.array, this);
+						this.el.style.backgroundColor = this.UNSELECTED_COLOR ;
+						var self = this;
+						this.options.plotter.removeGraph(self.tag());
 		    		}
 		        },
 		        
@@ -655,7 +628,7 @@ define(
 						if (self.options.plotter){
 							var toPlot = self.adapt(attr) ;
 							if (!_.isEmpty(toPlot)){
-								self.options.plotter[i].addGraph(self.tag(), toPlot);
+								self.options.plotter.addGraph(self.tag(), toPlot);
 							}
 						}
 					});
@@ -694,8 +667,7 @@ define(
 		            { model: item, 
 		              plotter: this.options.plotter,
 		              attrToPlot: this.options.attrToPlot,
-		              selectedDev: this.options.selectedDev,
-		              selectedIssues : this.options.selectedIssues
+		              selectedDev: this.options.selectedDev
 		            }
 		          );
 		          this.$el.append(itemView.render().el);
