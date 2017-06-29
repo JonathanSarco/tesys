@@ -586,7 +586,7 @@ define(
 		            devIssuesContainer.setAttribute('href','#pred'+this.model.get('name'));
 		            devIssuesContainer.setAttribute('issueId', this.model.attributes.issues.models[0].get('issueId'));
 		            devIssuesContainer.textContent = this.model.get('displayName');
-		            this.el.appendChild(devIssuesContainer); 
+		            this.el.appendChild(devIssuesContainer);
 		          return this;
 		        },
 		        
@@ -599,10 +599,10 @@ define(
 		    			issuesViewsToPlot.array.push(this);
 		    			this.plot();
 		    		} else {
-		    			//this.options.selectedDev.array[0].el.style.backgroundColor = this.UNSELECTED_COLOR;
-		    			//this.options.selectedDev.array = _.without(this.options.selectedDev.array, this.options.selectedDev.array[0]);
+		    			//Elimino developers de la lista de developers y metricas
+		    			this.options.selectedDev.array = _.without(this.options.selectedDev.array, this);
 		    			issuesViewsToPlot.array = _.without(issuesViewsToPlot.array, this);
-						this.el.style.backgroundColor = this.UNSELECTED_COLOR ;
+						this.el.style.backgroundColor = this.UNSELECTED_COLOR;
 						var self = this;
 						this.options.plotter.removeGraph(self.tag());
 		    		}
