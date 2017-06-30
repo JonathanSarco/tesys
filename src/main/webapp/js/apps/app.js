@@ -348,6 +348,7 @@ define(
 
     function addPredictionsRecommendations (data) {
       //console.log("dentro de la funcion, dta "+data);
+    	predictionsRecommendation = []
       if (predictionsRecommendation === undefined || predictionsRecommendation.length === 0) {
         predictionsRecommendation = data ;
       } else {
