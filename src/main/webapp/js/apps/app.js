@@ -401,7 +401,7 @@ define(
   	 // $("#ajax_loader").show();
   	  if (selectedDeveloper.array.length != 0)
     	if (selectedDeveloper.array.length == 1) {
-    	tesys.allocateDeveloperIssue(selectedDeveloper.array[0].model.get("name"), selectedDeveloper.array[0].model.attributes.issues.models[0].get('issueId'));
+    		tesys.allocateDeveloperIssue(selectedDeveloper.array[0].model.get("name"), selectedDeveloper.array[0].model.attributes.issues.models[0].get('issueId'));
   	  } else {
   		  alert("Debe seleccionar solo un desarrollador a asignar");
   	  }

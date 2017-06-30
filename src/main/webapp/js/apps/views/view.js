@@ -580,18 +580,15 @@ define(
 		        
 		        render: function(){
 		            var self = this ;  
-		            var devIssuesContainer = document.createElement("a");
-		            devIssuesContainer.setAttribute('class', 'list-group-item list-group-item-success');
-		            devIssuesContainer.setAttribute('data-parent', '#MainMenu5');
-		            devIssuesContainer.setAttribute('href','#pred'+this.model.get('name'));
-		            devIssuesContainer.setAttribute('issueId', this.model.attributes.issues.models[0].get('issueId'));
-		            devIssuesContainer.textContent = this.model.get('displayName');
-		            this.el.appendChild(devIssuesContainer);
+		            this.el.setAttribute('class', 'list-group-item list-group-item-success');
+		            this.el.setAttribute('data-parent', '#MainMenu5');
+		            this.el.setAttribute('href','#pred'+this.model.get('name'));
+		            this.el.setAttribute('issueId', this.model.attributes.issues.models[0].get('issueId'));
+		            this.el.textContent = this.model.get('displayName');
 		          return this;
 		        },
 		        
 		        select: function(){
-		        	//issuesViewsToPlot.array = [];
 		    		this.isSelected = !this.isSelected;
 		    		if(this.isSelected) {
 		    			this.el.style.backgroundColor = this.SELECTED_COLOR ;
