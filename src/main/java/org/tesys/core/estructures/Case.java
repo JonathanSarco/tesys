@@ -62,6 +62,8 @@ public class Case  {
 	// *** Fin Criterio ***
 
 	boolean goodRecommendation;
+	String _id;
+
 
 
 	public Case(){
@@ -191,5 +193,11 @@ public class Case  {
 	
 	public void setIdCase(String idCase) {
 		this.idCase = idCase;
+	}
+	public String get_id() {
+		return _id;
+	}
+	public void set_id(String _id) {
+		this._id = _id;
 	}
 }
