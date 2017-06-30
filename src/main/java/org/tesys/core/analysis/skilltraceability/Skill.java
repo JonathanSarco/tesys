@@ -13,6 +13,8 @@ public class Skill {
 	
 	public String skillName;
 	public Integer skillWeight;
+	String _id;
+
 
 	public Skill() {
 		//empty
@@ -69,6 +71,14 @@ public class Skill {
 		} else if (!skillName.equals(other.skillName))
 			return false;
 		return true;
+	}
+
+	public String get_id() {
+		return _id;
+	}
+
+	public void set_id(String _id) {
+		this._id = _id;
 	}
 
 }

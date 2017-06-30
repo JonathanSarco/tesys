@@ -62,8 +62,10 @@ public class Case  {
 	// *** Fin Criterio ***
 
 	boolean goodRecommendation;
+	String _id;
 
 	//Double value;
+
 
 
 	public Case(){
@@ -117,9 +119,10 @@ public class Case  {
 	}
 
 	public  void setOrderCriteria(Map<String,String> criteria) {
-		
-		metric = criteria.keySet().toArray()[0].toString();
-		precedence = criteria.get(metric);
+		if(criteria != null && criteria.size()>0){
+			metric = criteria.keySet().toArray()[0].toString();
+			precedence = criteria.get(metric);
+		}
 	}
 
 	public void setInverseOrderCriteria(Map<String, String> criteria) {
@@ -218,5 +221,11 @@ public class Case  {
 	
 	public void setIdCase(String idCase) {
 		this.idCase = idCase;
+	}
+	public String get_id() {
+		return _id;
+	}
+	public void set_id(String _id) {
+		this._id = _id;
 	}
 }
