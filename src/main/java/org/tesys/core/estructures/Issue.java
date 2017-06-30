@@ -19,8 +19,12 @@ public class Issue {
     private String user;
     private String issueType;
     private String[] labels;
+    private String _id;
 
-    Map<String, Double> measures;
+
+	
+
+	Map<String, Double> measures;
     List<Puntuacion> puntuaciones;
     List<Skill> skills;
 
@@ -113,6 +117,12 @@ public class Issue {
 	public void setLabels(String[] labels) {
 		this.labels = labels;
 	}
-    
+	public String get_id() {
+		return _id;
+	}
+
+	public void set_id(String _id) {
+		this._id = _id;
+	}
     
 }
