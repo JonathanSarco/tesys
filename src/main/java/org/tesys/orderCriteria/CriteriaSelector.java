@@ -17,64 +17,62 @@ public abstract class CriteriaSelector {
 	//Establece si la metrica es mejor por mayor o por menor
 	protected Hashtable<String,String> bestMetrics= new Hashtable<String, String>(); 
 	
-	public void completeHash(){
+	public CriteriaSelector(){
+		//SonarQube
+		bestMetrics.put("complexity", "mayor");
+		bestMetrics.put("class_complexity","mayor");
+		bestMetrics.put("function_complexity", "mayor");
+		bestMetrics.put("file_complexity","mayor");
 		
-			//SonarQube
-			bestMetrics.put("complexity", "mayor");
-			bestMetrics.put("class_complexity","mayor");
-			bestMetrics.put("function_complexity", "mayor");
-			bestMetrics.put("file_complexity","mayor");
-			
-			bestMetrics.put("comment_lines_density","menor");  
-			bestMetrics.put("comment_lines","menor"); 
-			bestMetrics.put("public_documented_api_density","mayor");
-			bestMetrics.put("public_undocumented_api","menor");
+		bestMetrics.put("comment_lines_density","menor");  
+		bestMetrics.put("comment_lines","menor"); 
+		bestMetrics.put("public_documented_api_density","mayor");
+		bestMetrics.put("public_undocumented_api","menor");
 
-			bestMetrics.put("duplicated_blocks","menor");
-			bestMetrics.put("duplicated_files","menor");
-			bestMetrics.put("duplicated_lines","menor");
-			bestMetrics.put("duplicated_lines_density","menor");
+		bestMetrics.put("duplicated_blocks","menor");
+		bestMetrics.put("duplicated_files","menor");
+		bestMetrics.put("duplicated_lines","menor");
+		bestMetrics.put("duplicated_lines_density","menor");
 
-			bestMetrics.put("violations", "mayor");
-			bestMetrics.put("critical_violations", "mayor");
-			bestMetrics.put("minor_violations","");
-			bestMetrics.put("major_violations","");
-			bestMetrics.put("blocker_violations","mayor");
+		bestMetrics.put("violations", "mayor");
+		bestMetrics.put("critical_violations", "mayor");
+		bestMetrics.put("minor_violations","mayor");
+		bestMetrics.put("major_violations","mayor");
+		bestMetrics.put("blocker_violations","mayor");
 
-			bestMetrics.put("open_issues", "");
-			bestMetrics.put("reopened_issues","");
-			bestMetrics.put("confirmed_issues","mayor");
-			bestMetrics.put("false_positive_issues","menor");
-			bestMetrics.put("sqale_index","menor");
-			
-			bestMetrics.put("accessors", "mayor");
-			bestMetrics.put("classes","mayor");
-			bestMetrics.put("directories","mayor");
-			bestMetrics.put("files","mayor");
-			bestMetrics.put("lines","");
-			bestMetrics.put("ncloc","menor");
-			bestMetrics.put("functions","mayor");
-			bestMetrics.put("statements","mayor");
-			bestMetrics.put("public_api","mayor");
+		bestMetrics.put("open_issues", "mayor");
+		bestMetrics.put("reopened_issues","menor");
+		bestMetrics.put("confirmed_issues","mayor");
+		bestMetrics.put("false_positive_issues","menor");
+		bestMetrics.put("sqale_index","menor");
+		
+		bestMetrics.put("accessors", "mayor");
+		bestMetrics.put("classes","mayor");
+		bestMetrics.put("directories","mayor");
+		bestMetrics.put("files","mayor");
+		bestMetrics.put("lines","menor");
+		bestMetrics.put("ncloc","menor");
+		bestMetrics.put("functions","mayor");
+		bestMetrics.put("statements","mayor");
+		bestMetrics.put("public_api","mayor");
 
-			// Jira
-			bestMetrics.put("progress", "menor");
-			bestMetrics.put("estimated","menor");
+		// Jira
+		bestMetrics.put("progress", "menor");
+		bestMetrics.put("estimated","menor");
 
-			//Git?
-			bestMetrics.put("complexity_in_functions","mayor");
-			bestMetrics.put("file_complexity_distribution", "mayor");
-			bestMetrics.put("function_complexity_distribution","mayor");
-			bestMetrics.put("sqale_debt_ratio","menor");
-			bestMetrics.put("info_violations","menor");
+		//Git?
+		bestMetrics.put("complexity_in_functions","mayor");
+		bestMetrics.put("file_complexity_distribution", "mayor");
+		bestMetrics.put("function_complexity_distribution","mayor");
+		bestMetrics.put("sqale_debt_ratio","menor");
+		bestMetrics.put("info_violations","menor");
 	}
-
-		
+	
 	
 	//Devuelve el nombre de la metrica por el cual ese desarrollador es mejor y si se debe ordenar por mayor o menor
 	public Map<String,String> getMetricsToOrder( Developer[] developers, Developer chosenDeveloper, CriteriaSelector criterion){
 		
-		this.completeHash();
+		//this.completeHash();
 		
 		//Se obtiene en allKeys todas los nombres(keys) de las metricas estimadas por todos los desarrolladores
 		List<String>allKeys=new LinkedList<>();
@@ -117,6 +115,9 @@ public abstract class CriteriaSelector {
 						
 	}
 	
+	public Hashtable<String,String> getCriteria(){
+		return bestMetrics;
+	}
 
 	public abstract Map<String,String> obtenerValor(Developer chosenDeveloper, Map<String,Map<String,Double>> metricsWithValuesByDev);
 

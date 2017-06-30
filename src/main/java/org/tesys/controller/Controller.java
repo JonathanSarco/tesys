@@ -831,7 +831,8 @@ public class Controller {
 		 * Metodo para hacer el update del caso
 		 */	
 		modifCase.setPerformIssue(selectedDev);
-		dao.update(modifCase.getIdCase(), modifCase);
+		if(modifCase.getCriteria()!=null){
+		dao.update(modifCase.getIdCase(), modifCase);}
 		return response.build();
 	}
 }
