@@ -158,6 +158,7 @@ public class Case  {
 		}
 		else{
 			//Elijo el primero, ya que cualquiera es una mala recomendacion
+
 					Case similarCaseBad=similarCases.get(0);
 					Object[] metrics = similarCaseBad.getCriteria();
 					setCriteria(metrics);

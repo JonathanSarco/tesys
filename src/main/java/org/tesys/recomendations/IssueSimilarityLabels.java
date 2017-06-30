@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.tesys.core.db.ElasticsearchDao;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
 import org.tesys.core.estructures.SimilarIssue;
@@ -36,13 +37,13 @@ public class IssueSimilarityLabels {
 			SimilarIssue similarIssue = new SimilarIssue();
 			for (Issue i : li) {
 				int similarLabels = 0;
-				if(areSimilar(ip, i, similarLabels)){
+				if(!ip.getIssueId().equals(i.getIssueId()) && areSimilar(ip, i, similarLabels)){
 					similarIssue.setIssue(i);
 					similarIssue.setSimilarLabels(similarLabels);
 					similarIssues.add(similarIssue);
 					similarIssue.setDeveloper(d);
 					
-				}			
+				}
 			}	
 			
 		}

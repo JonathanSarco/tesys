@@ -269,10 +269,16 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
 	}
 
 	while (it.hasNext()) {
-	    JsonNode j = ((JsonNode) it.next()).get("_source");
+	    JsonNode j = ((JsonNode) it.next());
+	    JsonNode j1 = j.get("_source");
+	    
 
 	    try {
-	    	T elem = mapper.readValue(j.toString(), inferedClass);
+	    	String a = "}";
+	    	if(j.get("_id") != null && j1.toString().length()>2 && j.get("_id").toString().length()>9){
+	    		a = ", \"_id\": " + j.get("_id").toString() + " }";
+	    	}
+	    	T elem = mapper.readValue(j1.toString().substring(0, j1.toString().length()-1) + a , inferedClass);
 		elements.add(elem);
 	    } catch (Exception e) {
 		LOG.log(Level.SEVERE, e.toString());

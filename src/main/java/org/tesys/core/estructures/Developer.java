@@ -13,8 +13,12 @@ public class Developer implements Comparable {
     
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd,HH:00", timezone="ART")
     private Date timestamp;
+ 
+    private String _id;
 
-    private List<Issue> issues = new LinkedList<Issue>();
+
+
+	private List<Issue> issues = new LinkedList<Issue>();
 
     public Developer() {
 	// jackson
@@ -60,4 +64,14 @@ public class Developer implements Comparable {
         Developer developer = (Developer)dev; 
         return this.DisplayName.compareToIgnoreCase(developer.DisplayName);
     } 
+    
+	public String get_id() {
+		return _id;
+	}
+
+	public void set_id(String _id) {
+		this._id = _id;
+	}
+
+    
 }
