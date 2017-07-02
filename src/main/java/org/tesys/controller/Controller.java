@@ -37,6 +37,8 @@ import org.tesys.core.db.IssuesWithMetrics;
 import org.tesys.core.db.MetricDao;
 import org.tesys.core.db.SearchCaseByIssueAndSkillsQuery;
 import org.tesys.core.db.SearchCasesByIssueQuery;
+import org.tesys.core.db.SearchDeveloperByIssue;
+import org.tesys.core.db.SearchDeveloperByIssueTesys;
 import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
@@ -49,6 +51,7 @@ import org.tesys.core.project.scm.ScmPreCommitDataPOJO;
 import org.tesys.core.project.tracking.IssueTypePOJO;
 import org.tesys.correlations.Predictions;
 import org.tesys.developersRecomendations.CaseBasedReasoning;
+import org.tesys.recomendations.DeveloperWithOneAcumMetric;
 import org.tesys.recomendations.DevelopersCriteriaIssues;
 import org.tesys.recomendations.DevelopersShortedByMetric;
 import org.tesys.recomendations.DevelopersShortedBySkills;
@@ -762,12 +765,14 @@ public class Controller {
 		List<Long> versiones = avq.execute();
 		ElasticsearchDao<Case> dao;
 		ElasticsearchDao<Developer> daoIssue;
+		ElasticsearchDao<Developer> daoPrueba;
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 		Case dbCases = new Case();
 
 		try {
 			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
-			daoIssue = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);//devuelve la version mas actualizada de los analisis.
+			daoIssue = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);
+			daoPrueba = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS);//devuelve la version mas actualizada de los analisis.
 
 		} catch (Exception e) {
 			return response.build();
@@ -788,7 +793,8 @@ public class Controller {
 				developersCase) {
 		};
 		response.entity(entity);
-
+		List<String> keys = daoPrueba.readAllKeys();
+		keys.size();
 		return response.build();
 	}
 
@@ -823,7 +829,7 @@ public class Controller {
 
 		ElasticsearchDao<Case> dao;
 		try {
-			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);			
+			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);	
 		} catch (Exception e) {
 			return response.build();
 		}
@@ -832,6 +838,16 @@ public class Controller {
 		 */	
 		modifCase.setPerformIssue(selectedDev);
 		dao.update(modifCase.getIdCase(), modifCase);
+		//SearchDeveloperByIssueTesys searchDevByIssue = new SearchDeveloperByIssueTesys(issue);
+		//Developer deveoperWithNewIssue = searchDevByIssue.execute();
+	//	List<Issue> issues = new LinkedList<Issue>();
+		//for(Issue i: deveoperWithNewIssue.getIssues()){
+		//	if(!i.getIssueId().equals(issue)){
+		//		issues.add(i);
+		//	}
+		//}
+		//deveoperWithNewIssue.setIssues(issues);
+		//falta update
 		return response.build();
 	}
 }
