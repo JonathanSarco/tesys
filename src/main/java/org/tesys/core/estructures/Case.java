@@ -57,14 +57,12 @@ public class Case  {
 	// *** Fin Resultado ***
 
 	// *** Criterio ***
-	String metric;
-	String precedence;
+	Object[] criteria;
+
 	// *** Fin Criterio ***
 
 	boolean goodRecommendation;
 	String _id;
-
-	//Double value;
 
 
 
@@ -111,40 +109,23 @@ public class Case  {
 		return timestamp;
 	}
 
-	public Map<String,String> getOrderCriteria() {
-		Map<String, String> criteria = new HashMap<String,String>();
-		if(metric != null && precedence != null)
-			criteria.put(metric, precedence);
-		return criteria;
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 	}
-
-	public  void setOrderCriteria(Map<String,String> criteria) {
-		if(criteria != null && criteria.size()>0){
-			metric = criteria.keySet().toArray()[0].toString();
-			precedence = criteria.get(metric);
-		}
+	public void setCriteria(Object[] deveoperComplete) {
+			this.criteria=deveoperComplete;
+			
 	}
-
-	public void setInverseOrderCriteria(Map<String, String> criteria) {
-		if(!criteria.isEmpty() && criteria != null){
-			// Invierte el orden de los desarrolladores
-			if(criteria.get(criteria.keySet().toArray()[0].toString()).equals("mayor")){
-				metric = criteria.keySet().toArray()[0].toString();
-				precedence =  "menor";
-			}
-			else{
-				metric = criteria.keySet().toArray()[0].toString();
-				precedence = "mayor";
-			}
-		}
-	}
-
 	public boolean isGoodRecommendation() {
 		return goodRecommendation;
 	}
 
 	public void setGoodRecommendation(boolean goodRecommendation) {
 		this.goodRecommendation = goodRecommendation;
+	}
+	
+	public boolean getGoodRecommendation() {
+		return goodRecommendation;
 	}
 
 	public void orderDeveloper(List<Case> similarCases) {
@@ -171,24 +152,24 @@ public class Case  {
 				found=true;
 			}
 		}
-
+		boolean invert=false;
 		//Si existe un caso similar que sea una buena recomendacion, obtengo el criterio por el cual ordeno, y sino ordeno al reves por ese criterio
 		if(similarCaseGood != null){
-			Map<String,String> orderCriteria = similarCaseGood.getOrderCriteria();
-			setOrderCriteria(orderCriteria);
-			//Establezco el criterio por el cual se va a ordenar
+			Object[] metrics=similarCaseGood.getCriteria();
+			setCriteria(metrics);
 		}
 		else{
 			//Elijo el primero, ya que cualquiera es una mala recomendacion
-			Case similarCaseBad=similarCases.get(0);
-			Map<String,String> orderCriteria = similarCaseBad.getOrderCriteria();
-			//Establezco el criterio por el cual se va a ordenar
-			setInverseOrderCriteria(orderCriteria);
-		}
+
+					Case similarCaseBad=similarCases.get(0);
+					Object[] metrics = similarCaseBad.getCriteria();
+					setCriteria(metrics);
+					invert=true;
+			}
 		List<Developer> developers = Arrays.asList(issuesWithDevelopersRecommended);	
 		//Ordeno por ese criterio (el primer String me indica la metrica, y el segundo si debo ordenar ascendente o descendente a los desarrolladores)
-		if(metric != null && precedence != null){
-			Collections.sort(developers, new OrderDevByValue(metric, precedence));	
+		if(this.getCriteria().length>0){
+			Collections.sort(developers, new OrderDevByValue(criteria,invert));	
 		}
 		else{
 			Collections.sort(developers, new OrderDevbyName()); 
@@ -196,25 +177,16 @@ public class Case  {
 		Developer deveoperComplete[] = new Developer[developers.size()];
 		deveoperComplete = (Developer[]) developers.toArray();
 		return deveoperComplete;
-
+		
 	}
 
-	public String getMetric() {
-		return metric;
-	}
-
-	public void setMetric(String metric) {
-		this.metric = metric;
-	}
-
-	public String getPrecedence() {
-		return precedence;
-	}
-
-	public void setPrecedence(String precedence) {
-		this.precedence = precedence;
-	}
 	
+	public Date getTimestamp() {
+		return timestamp;
+	}
+	public Object[] getCriteria() {
+		return criteria;
+	}
 	public String getIdCase() {
 		return idCase;
 	}

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -282,12 +283,11 @@ private static List<Developer> getAllSimilarDevelopers(List<SimilarIssue> simila
 
 //Para setear el criterio de orden a los nuevos casos, ver donde lo llamo
 public static Case setOrderCriteriaNewCase(Developer chosenDeveloper, Case newCase){
-	//Por pantalla quizas no voy a tener MetricPrediction, lo que si voy a tener son todos los desarrolladores similares
-	//le paso todos los desarrolladores similares, y por cada uno puedo obtener un vector de  private List<Issue> issues, y cada issue
-	//tiene un Map<String, Double> measures, debo buscar la issue correspondiente al nuevo caso, pq es la no asignada aun;
-	CriteriaSelector criterion=new CriteriaBestValue();
+
+	CriteriaSelector criterion=new CriteriaBestValues();
 	Map<String,String> orderCriteria=criterion.getMetricsToOrder(newCase.getIssuesWithDevelopersRecommended(),chosenDeveloper, criterion);
-	newCase.setOrderCriteria(orderCriteria);
+	Set<String>criteria= orderCriteria.keySet();
+	newCase.setCriteria(criteria.toArray());
 	return newCase;
 }
 

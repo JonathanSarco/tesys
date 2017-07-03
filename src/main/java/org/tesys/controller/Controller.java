@@ -848,6 +848,8 @@ public class Controller {
 		//}
 		//deveoperWithNewIssue.setIssues(issues);
 		//falta update
+		if(modifCase.getCriteria()!=null){
+		dao.update(modifCase.getIdCase(), modifCase);}
 		return response.build();
 	}
 }

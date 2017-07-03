@@ -17,18 +17,18 @@ public class prueba {
 		
 		Map<String,Double>ValuesByDev=new HashMap<String, Double>();
 		ValuesByDev.put("diego", 0.1);
-		ValuesByDev.put("pedro", 0.1);
+		ValuesByDev.put("pedro", 0.3);
 		ValuesByDev.put("pablo", 0.1);
 		metricsWithValuesByDev.put("complexity", ValuesByDev);
 		
 		ValuesByDev=new HashMap<String, Double>();
-		ValuesByDev.put("pablo", 0.5);
+		ValuesByDev.put("pablo", 0.1);
 		ValuesByDev.put("diego", 0.5);
 		ValuesByDev.put("juan", 0.5);
 		metricsWithValuesByDev.put("ncloc", ValuesByDev);
 		
 		CriteriaSelector c=new CriteriaBestValues();
-		c.completeHash();
+//		c.completeHash();
 		Map<String,String>criteria=c.obtenerValor(developerChosen, metricsWithValuesByDev);
 		System.out.println(criteria);
 	
