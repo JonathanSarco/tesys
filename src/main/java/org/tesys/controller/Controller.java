@@ -37,8 +37,6 @@ import org.tesys.core.db.IssuesWithMetrics;
 import org.tesys.core.db.MetricDao;
 import org.tesys.core.db.SearchCaseByIssueAndSkillsQuery;
 import org.tesys.core.db.SearchCasesByIssueQuery;
-import org.tesys.core.db.SearchDeveloperByIssue;
-import org.tesys.core.db.SearchDeveloperByIssueTesys;
 import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
