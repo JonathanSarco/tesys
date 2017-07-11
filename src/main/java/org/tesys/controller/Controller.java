@@ -37,6 +37,8 @@ import org.tesys.core.db.IssuesWithMetrics;
 import org.tesys.core.db.MetricDao;
 import org.tesys.core.db.SearchCaseByIssueAndSkillsQuery;
 import org.tesys.core.db.SearchCasesByIssueQuery;
+import org.tesys.core.db.SearchDeveloperByIssue;
+import org.tesys.core.db.SearchDeveloperByIssueNewIssues;
 import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
@@ -49,6 +51,7 @@ import org.tesys.core.project.scm.ScmPreCommitDataPOJO;
 import org.tesys.core.project.tracking.IssueTypePOJO;
 import org.tesys.correlations.Predictions;
 import org.tesys.developersRecomendations.CaseBasedReasoning;
+import org.tesys.recomendations.DeveloperWithOneAcumMetric;
 import org.tesys.recomendations.DevelopersCriteriaIssues;
 import org.tesys.recomendations.DevelopersShortedByMetric;
 import org.tesys.recomendations.DevelopersShortedBySkills;
@@ -757,9 +760,7 @@ public class Controller {
 			@PathParam("issue") String issue,
 			@QueryParam("s") List<String> skills) {
 
-		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
 		Map<String,Double> metricsRecommendation = this.convertToMap(metrics);
-		List<Long> versiones = avq.execute();
 		ElasticsearchDao<Case> dao;
 		ElasticsearchDao<Developer> daoIssue;
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
@@ -767,7 +768,7 @@ public class Controller {
 
 		try {
 			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
-			daoIssue = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);//devuelve la version mas actualizada de los analisis.
+			daoIssue = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);
 
 		} catch (Exception e) {
 			return response.build();
@@ -788,7 +789,6 @@ public class Controller {
 				developersCase) {
 		};
 		response.entity(entity);
-
 		return response.build();
 	}
 
@@ -822,8 +822,13 @@ public class Controller {
 		
 
 		ElasticsearchDao<Case> dao;
+		ElasticsearchDao<Developer> daoDevTesys;
+		ElasticsearchDao<Developer> daoDevUnasigned;
 		try {
-			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);			
+			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
+			daoDevTesys = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_DEVELOPERS);
+			daoDevUnasigned = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);
+			
 		} catch (Exception e) {
 			return response.build();
 		}
@@ -831,8 +836,44 @@ public class Controller {
 		 * Metodo para hacer el update del caso
 		 */	
 		modifCase.setPerformIssue(selectedDev);
+		/*
+		 * Busco los developers por issue
+		 * Elimino la issue de los developers y actualizo el desarrollador en los index eliminando la issue nueva
+		 * Si no existe en tesis la issue no pasa nda por no elimina ninguna issue. 
+		 */
+		SearchDeveloperByIssue searchDevByIssue = new SearchDeveloperByIssue(issue);
+		Developer deveoperWithNewIssueTesys = searchDevByIssue.execute();
+		deveoperWithNewIssueTesys = this.removeIssue(deveoperWithNewIssueTesys, issue);
+		daoDevTesys.update(deveoperWithNewIssueTesys.getName(), deveoperWithNewIssueTesys);
+		SearchDeveloperByIssueNewIssues serchDevByIssueUnasignedIssues = new SearchDeveloperByIssueNewIssues(issue);
+		Developer developerNewIssue = serchDevByIssueUnasignedIssues.execute();
+		developerNewIssue = this.removeIssue(developerNewIssue, issue);
+		daoDevUnasigned.update(developerNewIssue.getName(), developerNewIssue);
+		
+		String name = developerNewIssue.getName();
+		/*
+		 * Busco el developer por name, El developer Seleccionado para asignarle la tarea y agrego la issue al vector 
+		 * Actualizo el desarrollador en el index de analysis.
+		 */
+		/*
+		 * Se actualiza el caso con el Criterio y el desarrollador que va a hacer la issue nueva.
+		 */
 		if(modifCase.getCriteria()!=null){
-		dao.update(modifCase.getIdCase(), modifCase);}
+			dao.update(modifCase.getIdCase(), modifCase);
+		}
 		return response.build();
+	}
+
+
+
+	private Developer removeIssue(Developer deveoperWithNew, String newIssue) {
+		List<Issue> updateDev = new LinkedList<Issue>();
+		for(Issue i: deveoperWithNew.getIssues()){
+			if(!i.getIssueId().equals(newIssue)){
+				updateDev.add(i);
+			}
+		}
+		deveoperWithNew.setIssues(updateDev);
+		return deveoperWithNew;
 	}
 }
