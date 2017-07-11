@@ -228,8 +228,8 @@ define(["jquery"], function($) {
       },
       success: function(data) {
     	  alert("success "+data);
-    	  callback(data);
-          $("#ajax_loader").hide();
+     	  callback(data);
+          $("#loading-overlay").hide();
           $("#modalDevelopers").modal('show');
       }
 

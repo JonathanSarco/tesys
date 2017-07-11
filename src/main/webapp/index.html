@@ -14,10 +14,14 @@
 	
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
-  
+ 
+ <style type="text/css">
+			#loading-overlay { position: relative; top: 0; left: 0; right: 0; bottom: 0; background-color: #000; opacity: 0.7; }
+			</style>
 </head>
 <body id="body"> 
     <!-- Cambio nuevas versiones -->
+    <script src="https://cdn.rangetouch.com/1.0.5/rangetouch.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 	<script data-main="js/boot-index.js" src="js/libs/require.js"></script>
@@ -61,6 +65,8 @@
 					});
 
 		});
+		
+
     </script>
     
     
@@ -540,10 +546,15 @@
 						    </div>
 							<div> <select class="form-control" id="recomendationMetricSelect2"></select> </div>
 							<ul class="list-group" id="metricListRecommendation" style="overflow-y: auto; height: 300px;"></ul>
+							
 						</div>
 						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
 							<input class="col-md-4 form-control" placeholder="Filter metric" type="text" id="metricfilter"/> <br> <br>
 							<ul class="nav nav-stacked" id="recomendationsSkillSelector"></ul>
+						</div>
+						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
+							<label>Factor</label>
+							<input type="range" min="0" max="10">
 						</div>
 					</div>
 						<!-- Modal -->
@@ -594,8 +605,14 @@
 		</div>
 	</div>
 				<!-- Loading -->
-				<div id='ajax_loader' style="position: fixed; left: 20%; top: 10%; display: none;">
+
+				<div id="loading-overlay" style="display: none;">	<div id='ajax_loader' style="position: fixed; left: 20%; top: 10%;">
 			   		<img src="css/loading/loading.gif"></img>
-				</div>
+				</div></div>
+				
 </body>
 </html>
+
+
+	
+		

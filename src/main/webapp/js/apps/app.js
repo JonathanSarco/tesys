@@ -383,7 +383,8 @@ define(
 
     //Boton de recomendar
     $('#RecommendDeveloperbyIssue').click(function(){
-    	$("#ajax_loader").show();
+//    	$("#ajax_loader").show();
+    	$("#loading-overlay").show();  	
 	      var metrics = "";
 	      for (var m in metricsValuesRecommendation)
 	        metrics = metrics + m + ":" + metricsValuesRecommendation[m] + ", ";
