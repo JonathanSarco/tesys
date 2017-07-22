@@ -43,5 +43,10 @@ public interface GenericDao<T> {
      * @param object
      */
     void delete(String id);
+    
+    /**
+     * Remove an object using a query
+     */
+    void deleteByQuery(String query);
 
 }

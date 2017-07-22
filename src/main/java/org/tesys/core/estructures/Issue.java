@@ -19,7 +19,7 @@ public class Issue {
     private String user;
     private String issueType;
     private String[] labels;
-    private String _id;
+ //   private String _id;
 
 
 	
@@ -117,12 +117,12 @@ public class Issue {
 	public void setLabels(String[] labels) {
 		this.labels = labels;
 	}
-	public String get_id() {
-		return _id;
-	}
-
-	public void set_id(String _id) {
-		this._id = _id;
-	}
+//	public String get_id() {
+//		return _id;
+//	}
+//
+//	public void set_id(String _id) {
+//		this._id = _id;
+//	}
     
 }

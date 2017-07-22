@@ -31,6 +31,7 @@ import org.tesys.core.analysis.skilltraceability.SkillIndicator;
 import org.tesys.core.analysis.sonar.SonarAnalizer;
 import org.tesys.core.analysis.sonar.SonarAnalysisRequest;
 import org.tesys.core.db.AnalysisVersionsQuery;
+import org.tesys.core.db.DeleteDeveloperByName;
 import org.tesys.core.db.DisplayNameQuery;
 import org.tesys.core.db.ElasticsearchDao;
 import org.tesys.core.db.IssuesWithMetrics;
@@ -835,29 +836,39 @@ public class Controller {
 		/*
 		 * Metodo para hacer el update del caso
 		 */	
-		modifCase.setPerformIssue(selectedDev);
+		
 		/*
 		 * Busco los developers por issue
 		 * Elimino la issue de los developers y actualizo el desarrollador en los index eliminando la issue nueva
 		 * Si no existe en tesis la issue no pasa nda por no elimina ninguna issue. 
 		 */
-		SearchDeveloperByIssue searchDevByIssue = new SearchDeveloperByIssue(issue);
-		Developer deveoperWithNewIssueTesys = searchDevByIssue.execute();
-		deveoperWithNewIssueTesys = this.removeIssue(deveoperWithNewIssueTesys, issue);
-		daoDevTesys.update(deveoperWithNewIssueTesys.getName(), deveoperWithNewIssueTesys);
-		SearchDeveloperByIssueNewIssues serchDevByIssueUnasignedIssues = new SearchDeveloperByIssueNewIssues(issue);
-		Developer developerNewIssue = serchDevByIssueUnasignedIssues.execute();
-		developerNewIssue = this.removeIssue(developerNewIssue, issue);
-		daoDevUnasigned.update(developerNewIssue.getName(), developerNewIssue);
+		List<Developer> developers = daoDevTesys.readAll();
+		Developer selectedDevBase = new Developer();
+		for(Developer d: developers){
+			if(d != null && d.getName() != null && d.getName().equals(selectedDev.getName())){
+				selectedDevBase = d;
+			}
+		}
+		Developer d = daoDevTesys.read(selectedDevBase.getName());
+		selectedDevBase.getIssues().add(similarIssueCase.getIssue());
+		DeleteDeveloperByName deleteDev = new DeleteDeveloperByName(selectedDevBase.getName());
+		Developer erasedDev = deleteDev.execute();
+		if (erasedDev != null)
+			daoDevTesys.update(selectedDevBase.getName(), selectedDevBase);
+		//SearchDeveloperByIssueNewIssues serchDevByIssueUnasignedIssues = new SearchDeveloperByIssueNewIssues(issue);
 		
-		String name = developerNewIssue.getName();
-		/*
-		 * Busco el developer por name, El developer Seleccionado para asignarle la tarea y agrego la issue al vector 
+		modifCase.setPerformIssue(selectedDev);
+		/*Developer developerNewIssue = serchDevByIssueUnasignedIssues.execute();
+		developerNewIssue = this.removeIssue(developerNewIssue, issue);
+		daoDevUnasigned.update(developerNewIssue.getName(), developerNewIssue);*/
+		
+		 /* Busco el developer por name, El developer Seleccionado para asignarle la tarea y agrego la issue al vector 
 		 * Actualizo el desarrollador en el index de analysis.
 		 */
 		/*
 		 * Se actualiza el caso con el Criterio y el desarrollador que va a hacer la issue nueva.
 		 */
+
 		if(modifCase.getCriteria()!=null){
 			dao.update(modifCase.getIdCase(), modifCase);
 		}

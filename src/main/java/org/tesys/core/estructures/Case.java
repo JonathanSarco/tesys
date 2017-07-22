@@ -62,7 +62,7 @@ public class Case  {
 	// *** Fin Criterio ***
 
 	boolean goodRecommendation;
-	String _id;
+	//String _id;
 
 
 
@@ -168,7 +168,7 @@ public class Case  {
 			}
 		List<Developer> developers = Arrays.asList(issuesWithDevelopersRecommended);	
 		//Ordeno por ese criterio (el primer String me indica la metrica, y el segundo si debo ordenar ascendente o descendente a los desarrolladores)
-		if(this.getCriteria().length>0){
+		if(this.getCriteria() != null && this.getCriteria().length>0){
 			Collections.sort(developers, new OrderDevByValue(criteria,invert));	
 		}
 		else{
@@ -194,10 +194,10 @@ public class Case  {
 	public void setIdCase(String idCase) {
 		this.idCase = idCase;
 	}
-	public String get_id() {
-		return _id;
-	}
-	public void set_id(String _id) {
-		this._id = _id;
-	}
+//	public String get_id() {
+//		return _id;
+//	}
+//	public void set_id(String _id) {
+//		this._id = _id;
+//	}
 }

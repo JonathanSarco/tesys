@@ -14,7 +14,7 @@ public class Developer implements Comparable {
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd,HH:00", timezone="ART")
     private Date timestamp;
  
-    private String _id;
+    //private String _id;
 
 
 
@@ -65,13 +65,13 @@ public class Developer implements Comparable {
         return this.DisplayName.compareToIgnoreCase(developer.DisplayName);
     } 
     
-	public String get_id() {
-		return _id;
-	}
-
-	public void set_id(String _id) {
-		this._id = _id;
-	}
+//	public String get_id() {
+//		return _id;
+//	}
+//
+//	public void set_id(String _id) {
+//		this._id = _id;
+//	}
 
     
 }

@@ -127,7 +127,7 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
     @Override
     public void delete( String id ) {
         try {
-            client.DELETE( UriBuilder.fromPath( resource ).path( id ).toString() );
+            client.DELETE( UriBuilder.fromPath( resource ).path(id).toString() );
         } catch ( Exception e ) {
             LOG.log( Level.SEVERE, e.toString() );
         }
@@ -188,6 +188,14 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
 	} catch (Exception e) {
 	    LOG.log(Level.SEVERE, e.toString());
 	    return new ArrayList<T>();
+	}
+    }
+    
+    public void deleteByQuery(String query) {
+	try {
+	    client.DELETE(UriBuilder.fromPath(resource).path(query).toString());
+	} catch (Exception e) {
+	    LOG.log(Level.SEVERE, e.toString());
 	}
     }
 
@@ -260,7 +268,6 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
 	ObjectMapper mapper = new ObjectMapper();
 	Iterator<JsonNode> it = null;
 	List<T> elements = new ArrayList<T>();
-
 	try {
 	    it = arrayNode.elements();
 	} catch (Exception e) {
@@ -274,11 +281,11 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
 	    
 
 	    try {
-	    	String a = "}";
-	    	if(j.get("_id") != null && j1.toString().length()>2 && j.get("_id").toString().length()>9){
-	    		a = ", \"_id\": " + j.get("_id").toString() + " }";
-	    	}
-	    	T elem = mapper.readValue(j1.toString().substring(0, j1.toString().length()-1) + a , inferedClass);
+//	    	String a = "}";
+//	    	if(j.get("_id") != null && j1.toString().length()>2 && j.get("_id").toString().length()>9){
+//	    		a = ", \"_id\": " + j.get("_id").toString() + " }";
+//	    	}
+	    	T elem = mapper.readValue(j1.toString()/*.substring(0, j1.toString().length()-1) + a*/ , inferedClass);
 		elements.add(elem);
 	    } catch (Exception e) {
 		LOG.log(Level.SEVERE, e.toString());
