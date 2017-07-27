@@ -390,10 +390,10 @@ define(
 	        metrics = metrics + m + ":" + metricsValuesRecommendation[m] + ", ";
 	      metrics = metrics.substring(0,metrics.length-1);
 	      var minCorrelation = parseFloat($('#recommendationCorrelation').val());
+	      var factorMetric = parseFloat($('#rangeMetrics').val()/10);
+	      var factorSkill = parseFloat($('#rangeSkills').val()/10);
 	      if (minCorrelation <= 1.0) {  
-	          // Cambiar el 0.5 , 0.5 por una variable
-	          //alert("String metricas: " + metrics);
-	          tesys.getDevRecommendationbyIssue(0.5, 0.5,metrics,issuesSelected.array[0].model.get('issueId'), recommendationSelectedSkills.array,  addPredictionsRecommendations);
+	          tesys.getDevRecommendationbyIssue(factorMetric,factorSkill,metrics,issuesSelected.array[0].model.get('issueId'), recommendationSelectedSkills.array,  addPredictionsRecommendations);
 	        }
 	 });  
     /*
