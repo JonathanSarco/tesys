@@ -82,7 +82,11 @@
 		    });
 		});
     </script>
-
+	<!-- Loading -->
+	<div id="loading-overlay" style="display: none;">	<div id='ajax_loader' style="position: fixed; left: 20%; top: 10%;">
+		<img src="css/loading/loading.gif"></img>
+	</div></div>
+	
 	<div id="top-nav" class="navbar navbar-inverse navbar-static-top">
 		<div class="container">
 			<ul id="tabs" class="nav nav-pills nav-justified" data-tabs="tabs">
@@ -108,6 +112,11 @@
 				<li><a class="navbar-brand" href="#secDevelopersRecommendation" data-toggle="tab">
 						<span class="glyphicon glyphicon-user"></span> Developers Recommendations
 				</a></li>
+				<!-- Se agrega una nueva Pestaña para el Test Developers -->
+				<li><a class="navbar-brand" href="#secDevelopersTest" data-toggle="tab">
+						<span class="glyphicon glyphicon-align-center"></span> Developers Testing
+				</a></li>
+				
 			</ul>
 		</div>
 		<!-- /container -->
@@ -607,12 +616,36 @@
 				</div>
 			</div>
 		</div>
+		<!-- Pestaña para realizar los casos de Test -->
+		<div class="tab-pane" id="secDevelopersTest">
+			<!-- Main -->
+			<div class="container">
+					<div id="MainMenu3" class="col-md-6" style="width: auto; height: auto">
+						<div class="list-group panel panel-default">
+							<div class="panel-heading">
+								<h4><i class="glyphicon glyphicon-user"></i> Issues</h4>
+							</div>
+							<div id="issues-test" class="panel-body" style=" width: 300px; overflow-y: auto; height: 420px;"></div>
+						</div>
+					</div>
+				<div class="row">
+					<div class="row">
+						<div class="col-md-6 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
+						    <div class="input-group">
+						     <input type="text" class="form-control" placeholder="Metric Value"  id="testMetricInput">
+						      <span class="input-group-btn">
+						        <button class="btn btn-default" type="button" id="testInserMetrictBtn">Insert</button>
+						      </span>
+						    </div>
+							<div> <select class="form-control" id="testMetricSelect2"></select> </div>
+							<ul class="list-group" id="testMetricListRecommendation" style="overflow-y: auto; height: 300px;"></ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-				<!-- Loading -->
 
-				<div id="loading-overlay" style="display: none;">	<div id='ajax_loader' style="position: fixed; left: 20%; top: 10%;">
-			   		<img src="css/loading/loading.gif"></img>
-				</div></div>
 				
 </body>
 </html>

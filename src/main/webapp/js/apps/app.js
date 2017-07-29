@@ -33,6 +33,7 @@ define(
     // Definicion de Modelos.
     var developers = new model.DeveloperCollection();
     var issues = new model.RecommendationCollection();
+    var cbrIssues = new model.RecommendationCollection();
     var metrics = new model.MetricCollection() ;
     var skills = new model.MetricCollection() ;
     
@@ -110,6 +111,17 @@ define(
       { collection: metricsRecommendation,
         el: $('#recomendationMetric') 
       });
+    
+    //Issues en TEST
+    var cbrIssuesSelected = {array: []};
+    var cbrIssuesByDeveloperInCase = new view.IssueRecommendationCollectionView(
+            { collection: cbrIssues,
+              selectedIssues: cbrIssuesSelected, 
+              el: $('#issues-test'),
+              //plotter: metricsRecommendationPlotter,
+              //attrToPlot: ['metrics']
+            }
+    );  
     
     $('#estimationInsertBtn').click(function(){
       var metricValue = parseFloat($('#estimationMetricInput').val());
@@ -380,6 +392,44 @@ define(
         ).models
       );*/
     }
+    
+    /**
+     * Testing
+     * 
+     */
+    
+    //Vistas de la recomendacion. Seleccion de las metricas.
+    var recommendationMetricsView = new view.MetricSelectView({
+      collection: metricsRecommendation,
+      el: $('#testMetricSelect2')
+    })
+    
+    //Metricas de recomendacion
+    var testMetricsValues = {};
+    //Hacer lo mismo que el insert de estimacion pero para la pestaña de recomendacion
+    $('#testInserMetrictBtn').click(function(){
+      var metricValue = parseFloat($('#testMetricInput').val());
+       if (!isNaN(metricValue) && isFinite(metricValue)) {
+          var metricId = $('#testMetricSelect2').val();
+          testMetricsValues[metricId] = metricValue;
+          //inserto o reemplazo la metrica en la vista
+          var metricList = $('#testMetricListRecommendation');
+          var metricListElement = $('#'+metricId, metricList) ;
+          if (metricListElement) {
+            metricListElement.remove();
+          }
+        var li = $('<li class="list-group-item" id="'+metricId+'">').text(metricId+"= "+metricValue) ;
+        metricList.append(li);
+        //Event listener para eliminar metrica si le hago doble click
+        li.on('dblclick', function(){
+          delete metricsValuesRecommendation[this.id] ;
+          $(this).remove();
+        });
+        console.log(testMetricsValues);
+      } else {
+        alert("Inserte una metrica valida");
+      }
+    });
 
     //Boton de recomendar
     $('#RecommendDeveloperbyIssue').click(function(){
@@ -437,17 +487,15 @@ define(
       skills.reset(adaptedData);
     });
 
+    //Recomendacion
     tesys.getIssues(function(data){
       issues.reset(data);
-    })
+    });
     
-    //$('#myTab a[href="#metricPane"]').on('shown.bs.tab', function (e) {
-    //  predPlotter.build(metricsPredToPlot.array);
-    //  predPlotter.build();
-    //  $.each(recomendationView.issuesViewsToPlot.array, function(i, item){
-    //    item.plot();
-    //  });
-    //});
+    //Test
+    tesys.getCbrIssues(function(data){
+    	cbrIssues.reset(data);
+    });
     
     // On click tab for metrics then replot chart
     $('#myTab a[href="#metricPane"]').on('shown.bs.tab', function (e) {

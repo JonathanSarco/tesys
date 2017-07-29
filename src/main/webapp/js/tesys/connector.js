@@ -64,7 +64,24 @@ define(["jquery"], function($) {
     });
   }
   
+  /**
+   * Retorno las issues del CBR
+   */
 
+  function getCbrIssues(callback) {
+	    $.ajax({
+	      type: 'GET',
+	      url: location.origin+apiPath+'cbrIssues',
+	      dataType: "json", 
+	      error: function(jqXHR, textStatus, errorThrown) {
+	        alert("Error en el response de "+apiPath+" del CBR ISSUES");
+	        console.log(jqXHR, textStatus, errorThrown);
+	      },
+	      success: function (data) {
+	        callback(data);
+	      }
+	    });
+	  }
 
   /**
    * Obtiene las prediccines de los developers de la interfaz del tesys
@@ -269,6 +286,8 @@ define(["jquery"], function($) {
     getPredictions: getPredictions,
     //Recomendacion
     getDevRecommendationbyIssue: getDevRecommendationbyIssue,
-    allocateDeveloperIssue:allocateDeveloperIssue
+    allocateDeveloperIssue:allocateDeveloperIssue,
+    //Test
+    getCbrIssues: getCbrIssues
   };
 });

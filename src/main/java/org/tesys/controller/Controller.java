@@ -659,7 +659,7 @@ public class Controller {
 		try {
 			dao = new ElasticsearchDao<Developer>(
 					Developer.class, 
-					ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES ); //devuelve la version mas actualizada de los analisis.
+					ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES );
 		} catch (Exception e) {
 			return response.build();
 		}
@@ -674,36 +674,6 @@ public class Controller {
 		response.entity(entity);
 		return response.build();
 	}
-	/*
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/cbr/case")
-	public Response getDevRecommendationbyIssue()	{
-
-		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
-        List<Long> versiones = avq.execute();
-        ElasticsearchDao<Case> dao;
-        ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
-
-        try {
-            dao = new ElasticsearchDao<Case>(
-                    Case.class, 
-                    ElasticsearchDao.DEFAULT_RESOºURCE_CASE ); //devuelve la version mas actualizada de los analisis.
-        } catch (Exception e) {
-            return response.build();
-        }
-
-        List<Case> cases = dao.readAll();
-        if(cases.isEmpty()){
-        //	Case cdp = new Case("idIssuPrueba");
-        //	dao.create("caso de prueba", cdp);
-        }
-
-        response = Response.ok();
-
-        return response.build();
-	}
-	 */	
 
 	private Issue getIssue(List<Developer> developers, String issueId) {
 
@@ -863,4 +833,30 @@ public class Controller {
 		deveoperWithNew.setIssues(updateDev);
 		return deveoperWithNew;
 	}
+	
+	/**
+	 * Obtengo las Issues del CBR
+	 **/
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/cbrIssues")
+	public Response getAllCbrIssues() throws Exception	{
+		//AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
+		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
+		ElasticsearchDao<Case> dao = new ElasticsearchDao<Case>(Case.class, ElasticsearchDao.DEFAULT_RESOURCE_CASEQUERY );
+		List<Case> cases = dao.readAll();
+		List<Issue> issues = new ArrayList<Issue>();
+		//Por cada caso en el CBR, obtengo las issues asignadas para los desarrolladores
+		if (cases != null && cases.size() > 0) {
+			for (Case caso : cases)
+				issues.addAll(caso.getPerformIssue().getIssues());
+			GenericEntity<List<Issue>> entity = new GenericEntity<List<Issue>>(issues) {};
+			response = Response.ok();
+			response.entity(entity);
+			return response.build();
+		} else {
+			return null;
+		}
+	}
+	
 }
