@@ -71,8 +71,25 @@ public abstract class CriteriaSelector {
 	
 	//Devuelve el nombre de la metrica por el cual ese desarrollador es mejor y si se debe ordenar por mayor o menor
 	public Map<String,String> getMetricsToOrder( Developer[] developers, Developer chosenDeveloper, CriteriaSelector criterion){
-		
-		//this.completeHash();
+
+		//Normalización de valores entre 0 y 1
+		Normalize normalize=new Normalize();
+		Map<String,Double> normalizeMetrics=new HashMap<String, Double>();
+		for(Developer d:developers){
+			//Se supone que tiene una sola issue, que es la nueva aun no asignada
+			for(Issue issue:d.getIssues()){
+					if(issue.getMetrics()!=null){
+						normalizeMetrics=issue.getMetrics();
+						Double value=normalize.calculate(normalizeMetrics);
+						Set<String> keys = normalizeMetrics.keySet();
+						for(String k:keys){
+							normalizeMetrics.put(k, normalizeMetrics.get(k)/value);
+						}
+						issue.setMetrics(normalizeMetrics);
+					}
+			}
+		}
+			
 		
 		//Se obtiene en allKeys todas los nombres(keys) de las metricas estimadas por todos los desarrolladores
 		List<String>allKeys=new LinkedList<>();
@@ -88,9 +105,9 @@ public abstract class CriteriaSelector {
 						}
 					}
 			}
-		}
+		}		
 		
-		
+		//Preprocesamiento para obtener el mejor valor de metrica del desarrollador elegido
 		Map<String,Map<String,Double>> metricsWithValuesByDev=new HashMap<String, Map<String,Double>>();
 
 		//Se arma un map metricsWithValuesByDev que va a tener por cada metrica, un conjunto de valores estimados por cada desarrollador
@@ -98,21 +115,28 @@ public abstract class CriteriaSelector {
 			Map<String,Double>ValuesByDev=new HashMap<String,Double>(); 
 			for(Developer developer:developers){
 				for( Issue issue :developer.getIssues()){
-						if(issue.getMetrics()!=null && issue.getMetrics().containsKey(k)){
-							Map<String,Double> metrics=issue.getMetrics();
-							Double value=metrics.get(k);
-							ValuesByDev.put(developer.getDisplayName(),value);
-							metricsWithValuesByDev.put(k,ValuesByDev);						
+						if(issue.getMetrics()!=null /*&& issue.getMetrics().containsKey(k)*/){
+							if(issue.getMetrics().containsKey(k)){
+								Map<String,Double> metrics=issue.getMetrics();
+								Double value=metrics.get(k);
+								ValuesByDev.put(developer.getDisplayName(),value);
+								metricsWithValuesByDev.put(k,ValuesByDev);
+							}
+							//Si no tienen valor para esa métrica, se los coloca cero como valor para la metrica
+							//Solo se considera los valores 0 para la matriz de la entropia
+							else{
+								ValuesByDev.put(developer.getDisplayName(),0.0);
+								metricsWithValuesByDev.put(k,ValuesByDev);
+							}
 					}
 				}
 			}
 		}
-		
+
 		//Se obtiene en que metrica(por menor o por mayor segun corresponda), es mejor el desarrollador seleccionado
 		Map<String,String>criterios=criterion.obtenerValor(chosenDeveloper, metricsWithValuesByDev);			
-						
-		return criterios;
-						
+		
+		return criterios;						
 	}
 	
 	public Hashtable<String,String> getCriteria(){

@@ -25,7 +25,7 @@ public class CriteriaBestValues extends CriteriaSelector{
 					String developerHigher=new String();
 					double higher=(double) values.values().toArray()[0];
 					for(String dev: values.keySet()){
-								if(values.get(dev)>=higher){
+								if(values.get(dev)!=0.0 && values.get(dev)>=higher){
 									higher=values.get(dev);
 									developerHigher=dev;
 									}
@@ -40,7 +40,7 @@ public class CriteriaBestValues extends CriteriaSelector{
 					String developerLowest=new String();
 					double lowest=(double) values.values().toArray()[0];
 					for(String dev: values.keySet()){
-							if(values.get(dev)<=lowest){
+							if(values.get(dev)!=0.0 && values.get(dev)<=lowest){
 									lowest=values.get(dev);
 									developerLowest=dev;
 									}
