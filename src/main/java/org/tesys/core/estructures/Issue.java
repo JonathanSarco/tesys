@@ -15,14 +15,16 @@ import org.tesys.core.analysis.skilltraceability.Skill;
  */
 public class Issue {
 
-    private String issueId;
-    private String user;
-    private String issueType;
-    private String[] labels;
+	protected String issueId;
+	protected String user;
+	protected String issueType;
+	protected String[] labels;
  //   private String _id;
-
+	protected boolean isDeleted;
 
 	
+
+
 
 	Map<String, Double> measures;
     List<Puntuacion> puntuaciones;
@@ -117,12 +119,14 @@ public class Issue {
 	public void setLabels(String[] labels) {
 		this.labels = labels;
 	}
-//	public String get_id() {
-//		return _id;
-//	}
-//
-//	public void set_id(String _id) {
-//		this._id = _id;
-//	}
+	
+	//Prueba
+	public boolean getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
     
 }

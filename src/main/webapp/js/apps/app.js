@@ -117,7 +117,7 @@ define(
     var cbrIssuesByDeveloperInCase = new view.IssueRecommendationCollectionView(
             { collection: cbrIssues,
               selectedIssues: cbrIssuesSelected, 
-              el: $('#issues-test'),
+              el: $('#issues-test')
               //plotter: metricsRecommendationPlotter,
               //attrToPlot: ['metrics']
             }

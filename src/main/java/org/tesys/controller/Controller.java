@@ -46,6 +46,8 @@ import org.tesys.core.estructures.Issue;
 import org.tesys.core.estructures.Metric;
 import org.tesys.core.estructures.MetricFactory;
 import org.tesys.core.estructures.Puntuacion;
+import org.tesys.core.estructures.UnassignedDeveloper;
+import org.tesys.core.estructures.UnassignedIssue;
 import org.tesys.core.project.scm.SCMManager;
 import org.tesys.core.project.scm.ScmPostCommitDataPOJO;
 import org.tesys.core.project.scm.ScmPreCommitDataPOJO;
@@ -653,23 +655,27 @@ public class Controller {
 
 		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
 		List<Long> versiones = avq.execute();
-		ElasticsearchDao<Developer> dao;
+		ElasticsearchDao<UnassignedDeveloper> dao;
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 
 		try {
-			dao = new ElasticsearchDao<Developer>(
-					Developer.class, 
+			dao = new ElasticsearchDao<UnassignedDeveloper>(
+					UnassignedDeveloper.class, 
 					ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES );
 		} catch (Exception e) {
 			return response.build();
 		}
 
-		List<Developer> developers = dao.readAll();
-		List<Issue> issues = new ArrayList<Issue>();
+		List<UnassignedDeveloper> developers = dao.readAll();
+		List<UnassignedIssue> issues = new ArrayList<UnassignedIssue>();
 		for (Developer d: developers) {
-			issues.addAll(d.getIssues());
+			List<Issue> issuesByDev = d.getIssues();
+			for (Issue i : issuesByDev) {
+				UnassignedIssue clonar = new UnassignedIssue().clone(i);
+				issues.add(clonar);
+			}
 		}
-		GenericEntity<List<Issue>> entity = new GenericEntity<List<Issue>>(issues) {};
+		GenericEntity<List<UnassignedIssue>> entity = new GenericEntity<List<UnassignedIssue>>(issues) {};
 		response = Response.ok();
 		response.entity(entity);
 		return response.build();
@@ -719,6 +725,14 @@ public class Controller {
 		return m;
 	}
 
+	public List<Developer> convertToDevelopers (List<UnassignedDeveloper> devs) {
+		List<Developer> convert = new LinkedList<Developer>();
+		for (UnassignedDeveloper d : devs) {
+			convert.add(new UnassignedDeveloper().cloneToDeveloper(d));
+		}
+		return convert;
+	}
+	
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -733,19 +747,20 @@ public class Controller {
 
 		Map<String,Double> metricsRecommendation = this.convertToMap(metrics);
 		ElasticsearchDao<Case> dao;
-		ElasticsearchDao<Developer> daoIssue;
+		//Lista de desarrolladores de UnassignedIssues
+		ElasticsearchDao<UnassignedDeveloper> daoUnassignedIssue;
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 		Case dbCases = new Case();
 
 		try {
 			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
-			daoIssue = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);
+			daoUnassignedIssue = new ElasticsearchDao<UnassignedDeveloper>(UnassignedDeveloper.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);
 
 		} catch (Exception e) {
 			return response.build();
 		}
 
-		List<Developer> developers = daoIssue.readAll();
+		List<Developer> developers = convertToDevelopers(daoUnassignedIssue.readAll());
 		Issue unasignedIssue = getIssue(developers, issue);
 
 		dbCases = CaseBasedReasoning.getRecommendation(label,skill, sprint, unasignedIssue, metricsRecommendation, skills);
