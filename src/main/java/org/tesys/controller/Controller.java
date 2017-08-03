@@ -3,6 +3,7 @@ package org.tesys.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +32,6 @@ import org.tesys.core.analysis.skilltraceability.SkillIndicator;
 import org.tesys.core.analysis.sonar.SonarAnalizer;
 import org.tesys.core.analysis.sonar.SonarAnalysisRequest;
 import org.tesys.core.db.AnalysisVersionsQuery;
-import org.tesys.core.db.DeleteDeveloperByName;
 import org.tesys.core.db.DisplayNameQuery;
 import org.tesys.core.db.ElasticsearchDao;
 import org.tesys.core.db.IssuesWithMetrics;
@@ -668,13 +668,30 @@ public class Controller {
 		List<UnassignedDeveloper> developers = dao.readAll();
 		List<Issue> issues = new ArrayList<Issue>();
 		for (UnassignedDeveloper d: developers) {
-			issues.addAll(d.getIssues());
+			if(d.getUnassignedIssues() != ""){
+				issues.addAll(getIssuesNotInUnassigned(d.getUnassignedIssues(), d.getIssues()));
+			}
+			else{
+				issues.addAll(d.getIssues());
+			}
 		}
 		GenericEntity<List<Issue>> entity = new GenericEntity<List<Issue>>(issues) {};
 		response = Response.ok();
 		response.entity(entity);
 		return response.build();
 	}
+
+	private List<Issue> getIssuesNotInUnassigned(String unassignedIssues, List<Issue> issues) {
+		List<Issue>forList = new LinkedList<Issue>();
+		for(Issue i : issues){
+			if(unassignedIssues.indexOf(i.getIssueId()) == -1){
+				forList.add(i);
+			}
+		}
+		return forList;
+	}
+
+
 
 	private Issue getIssue(List<Developer> developers, String issueId) {
 
@@ -835,11 +852,17 @@ public class Controller {
 		 */
 		SearchDeveloperByIssueNewIssues searchDevIssue = new SearchDeveloperByIssueNewIssues(issue);
 		UnassignedDeveloper devUnassigned = searchDevIssue.execute();
-		for (Issue i : devUnassigned.getIssues()) {
-			if (i.getIssueId().equals(issue))
-				i.setIsDeleted(true);
+		if(devUnassigned.getUnassignedIssues() == ""){
+			devUnassigned.setUnassignedIssues(issue);
 		}
-		daoDevUnasigned.update(devUnassigned.getName(), devUnassigned);
+		else{
+			devUnassigned.setUnassignedIssues(devUnassigned.getUnassignedIssues() + ", " + issue );
+		}
+		List<UnassignedDeveloper> allUnassigned = daoDevUnasigned.readAll();
+		//daoDevUnasigned.delete("");
+		//daoDevUnasigned.delete(devUnassigned.getName());
+		//daoDevUnasigned.create(devUnassigned);
+		daoDevUnasigned.update(devUnassigned.getId(), devUnassigned);
 		return response.build();
 	}
 

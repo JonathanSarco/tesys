@@ -9,13 +9,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class UnassignedDeveloper {
 
 	private List<Issue> issues;
-	
+	private String id;
 	protected String name;
     protected String DisplayName;
     
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd,HH:00", timezone="ART")
     protected Date timestamp;
-	
+	String unassignedIssues;
+
 	public UnassignedDeveloper() {
 		//Jackson
 	}
@@ -77,5 +78,21 @@ public class UnassignedDeveloper {
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	public String getUnassignedIssues() {
+		return unassignedIssues;
+	}
+
+	public void setUnassignedIssues(String unassignedIssues) {
+		this.unassignedIssues = unassignedIssues;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }
