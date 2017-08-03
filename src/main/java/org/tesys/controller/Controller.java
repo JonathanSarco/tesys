@@ -47,7 +47,6 @@ import org.tesys.core.estructures.Metric;
 import org.tesys.core.estructures.MetricFactory;
 import org.tesys.core.estructures.Puntuacion;
 import org.tesys.core.estructures.UnassignedDeveloper;
-import org.tesys.core.estructures.UnassignedIssue;
 import org.tesys.core.project.scm.SCMManager;
 import org.tesys.core.project.scm.ScmPostCommitDataPOJO;
 import org.tesys.core.project.scm.ScmPreCommitDataPOJO;
@@ -667,15 +666,11 @@ public class Controller {
 		}
 
 		List<UnassignedDeveloper> developers = dao.readAll();
-		List<UnassignedIssue> issues = new ArrayList<UnassignedIssue>();
-		for (Developer d: developers) {
-			List<Issue> issuesByDev = d.getIssues();
-			for (Issue i : issuesByDev) {
-				UnassignedIssue clonar = new UnassignedIssue().clone(i);
-				issues.add(clonar);
-			}
+		List<Issue> issues = new ArrayList<Issue>();
+		for (UnassignedDeveloper d: developers) {
+			issues.addAll(d.getIssues());
 		}
-		GenericEntity<List<UnassignedIssue>> entity = new GenericEntity<List<UnassignedIssue>>(issues) {};
+		GenericEntity<List<Issue>> entity = new GenericEntity<List<Issue>>(issues) {};
 		response = Response.ok();
 		response.entity(entity);
 		return response.build();
@@ -747,7 +742,7 @@ public class Controller {
 
 		Map<String,Double> metricsRecommendation = this.convertToMap(metrics);
 		ElasticsearchDao<Case> dao;
-		//Lista de desarrolladores de UnassignedIssues
+		//Lista de desarrolladores de Issues
 		ElasticsearchDao<UnassignedDeveloper> daoUnassignedIssue;
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 		Case dbCases = new Case();
@@ -806,10 +801,10 @@ public class Controller {
 		
 
 		ElasticsearchDao<Case> dao;
-		ElasticsearchDao<Developer> daoDevUnasigned;
+		ElasticsearchDao<UnassignedDeveloper> daoDevUnasigned;
 		try {
 			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
-			daoDevUnasigned = new ElasticsearchDao<Developer>(Developer.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);
+			daoDevUnasigned = new ElasticsearchDao<UnassignedDeveloper>(UnassignedDeveloper.class, ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);
 			
 		} catch (Exception e) {
 			return response.build();
@@ -835,6 +830,16 @@ public class Controller {
 			dao.update(modifCase.getIdCase(), modifCase);
 		}
 		
+		/*
+		 * Una vez que modifica el caso, elimino de Unnasigned_Issue la elimina.
+		 */
+		SearchDeveloperByIssueNewIssues searchDevIssue = new SearchDeveloperByIssueNewIssues(issue);
+		UnassignedDeveloper devUnassigned = searchDevIssue.execute();
+		for (Issue i : devUnassigned.getIssues()) {
+			if (i.getIssueId().equals(issue))
+				i.setIsDeleted(true);
+		}
+		daoDevUnasigned.update(devUnassigned.getName(), devUnassigned);
 		return response.build();
 	}
 
@@ -863,8 +868,10 @@ public class Controller {
 		List<Issue> issues = new ArrayList<Issue>();
 		//Por cada caso en el CBR, obtengo las issues asignadas para los desarrolladores
 		if (cases != null && cases.size() > 0) {
-			for (Case caso : cases)
-				issues.addAll(caso.getPerformIssue().getIssues());
+			for (Case caso : cases) {
+				if (caso.getPerformIssue() != null)
+					issues.addAll(caso.getPerformIssue().getIssues());
+			}
 			GenericEntity<List<Issue>> entity = new GenericEntity<List<Issue>>(issues) {};
 			response = Response.ok();
 			response.entity(entity);

@@ -3,22 +3,21 @@ package org.tesys.core.db;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.tesys.core.estructures.UnassignedDeveloper;
 
-import org.tesys.core.estructures.Developer;
-
-public class SearchDeveloperByIssueNewIssues implements GenericQuery<Developer> {
+public class SearchDeveloperByIssueNewIssues implements GenericQuery<UnassignedDeveloper> {
 	private static final Logger LOG = Logger.getLogger(SearchDeveloperByIssueNewIssues.class.getName());
-	private ElasticsearchDao<Developer> dao;
+	private ElasticsearchDao<UnassignedDeveloper> dao;
 	String issueId;
 	
 	 public SearchDeveloperByIssueNewIssues(String issueId) {
-			this.dao = new ElasticsearchDao<Developer>(Developer.class,
+			this.dao = new ElasticsearchDao<UnassignedDeveloper>(UnassignedDeveloper.class,
 						ElasticsearchDao.DEFAULT_RESOURCE_UNASSIGNED_ISSUES);
 			this.issueId = issueId;
 	    }
 
 	@Override
-	public Developer execute() {
+	public UnassignedDeveloper execute() {
 		StringTokenizer tokens = new StringTokenizer(issueId, "-");
 		String query = "{ \"query\" : { \"query_string\": { \"default_field\": \"issueId\", \"query\": \"";
 		while(tokens.hasMoreTokens()){
