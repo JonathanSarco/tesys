@@ -428,13 +428,14 @@ define(
 					this.el.setAttribute('class', 'list-group-item list-group-item-success');
 					this.el.textContent = "" ;
 
-					if (this.model.get('metrics').ncloc) {
-						//Si el Issue tiene codigo (suponesmos que hay codigo si existe la metrica 'nlocs')
-						//Inserto in icono distintivo al issue
-						var codeIcon = document.createElement("i");
-						codeIcon.setAttribute('class', 'glyphicon glyphicon glyphicon-bookmark');
-						this.el.appendChild(codeIcon);
-					}
+					if (this.model.get('metrics') != null)
+						if (this.model.get('metrics').ncloc) {
+							//Si el Issue tiene codigo (suponesmos que hay codigo si existe la metrica 'nlocs')
+							//Inserto in icono distintivo al issue
+							var codeIcon = document.createElement("i");
+							codeIcon.setAttribute('class', 'glyphicon glyphicon glyphicon-bookmark');
+							this.el.appendChild(codeIcon);
+						}
 
 					//Debo insertar el texto, luego del icono del issue (si es que este fue creado)
 					this.el.appendChild(document.createTextNode(issueId)) ;
