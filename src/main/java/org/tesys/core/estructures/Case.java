@@ -57,7 +57,7 @@ public class Case  {
 	// *** Fin Resultado ***
 
 	// *** Criterio ***
-	Object[] criteria;
+	MetricWeight[] orderCriteria;
 
 	// *** Fin Criterio ***
 
@@ -112,8 +112,8 @@ public class Case  {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
-	public void setCriteria(Object[] deveoperComplete) {
-			this.criteria=deveoperComplete;
+	public void setCriteria(MetricWeight[] orderCriteria) {
+			this.orderCriteria = orderCriteria;
 			
 	}
 	public boolean isGoodRecommendation() {
@@ -137,11 +137,11 @@ public class Case  {
 			issuesWithDevelopersRecommended = deveoperComplete;
 		}
 		else{
-			orderDevelopersByCriteria(similarCases);
+			//orderDevelopersByCriteria(similarCases);
 		}
 
 	}
-	private Developer[] orderDevelopersByCriteria(List<Case> similarCases) {
+	/*private Developer[] orderDevelopersByCriteria(List<Case> similarCases) {
 
 		//Busca si alguno de los casos similares es una buena recomendancion
 		boolean found=false;
@@ -178,14 +178,14 @@ public class Case  {
 		deveoperComplete = (Developer[]) developers.toArray();
 		return deveoperComplete;
 		
-	}
+	}*/
 
 	
 	public Date getTimestamp() {
 		return timestamp;
 	}
-	public Object[] getCriteria() {
-		return criteria;
+	public MetricWeight[] getCriteria() {
+		return this.orderCriteria;
 	}
 	public String getIdCase() {
 		return idCase;
@@ -194,10 +194,21 @@ public class Case  {
 	public void setIdCase(String idCase) {
 		this.idCase = idCase;
 	}
-//	public String get_id() {
-//		return _id;
-//	}
-//	public void set_id(String _id) {
-//		this._id = _id;
-//	}
+	
+	public MetricWeight[] convertHashToVector(HashMap<String, Double> metricWeight){
+		List<MetricWeight> converted = new LinkedList<MetricWeight>();
+		Set<String> keys = metricWeight.keySet(); 
+		for(String s: keys){
+			MetricWeight weight = new MetricWeight();
+			weight.setMetricName(s);
+			weight.setWeight(metricWeight.get(s));
+			converted.add(weight);
+		}
+		
+		MetricWeight metricsOrder[] = new MetricWeight[converted.size()];
+		metricsOrder = converted.toArray(metricsOrder);
+		
+		return metricsOrder;
+	}
+
 }
