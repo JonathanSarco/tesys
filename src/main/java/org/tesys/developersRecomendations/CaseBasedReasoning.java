@@ -16,6 +16,8 @@ import java.util.Vector;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.tesys.OrderWeight.CalculateWeight;
+import org.tesys.OrderWeight.MatrixWeight;
 import org.tesys.core.analysis.skilltraceability.Skill;
 import org.tesys.core.db.AnalysisVersionsQuery;
 import org.tesys.core.db.ElasticsearchDao;
@@ -306,10 +308,11 @@ public class CaseBasedReasoning {
 	//Para setear el criterio de orden a los nuevos casos, ver donde lo llamo
 	public static Case setOrderCriteriaNewCase(Developer chosenDeveloper, Case newCase){
 
-		CriteriaSelector criterion=new CriteriaBestValues();
-		Map<String,String> orderCriteria=criterion.getMetricsToOrder(newCase.getIssuesWithDevelopersRecommended(),chosenDeveloper, criterion);
-		Set<String>criteria= orderCriteria.keySet();
-		newCase.setCriteria(criteria.toArray());
+//		Map<String,String> orderCriteria=criterion.getMetricsToOrder(newCase.getIssuesWithDevelopersRecommended(),chosenDeveloper, criterion);
+		MatrixWeight weights=new MatrixWeight();
+		Map<String,Double> pesos=weights.getMetricsToOrder(newCase, chosenDeveloper);
+//		Set<String>criteria= orderCriteria.keySet();
+//		newCase.setCriteria(pesos);
 		return newCase;
 	}
 }
