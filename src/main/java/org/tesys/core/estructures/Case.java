@@ -20,6 +20,7 @@ import org.tesys.correlations.DeveloperPrediction;
 import org.tesys.correlations.MetricPrediction;
 import org.tesys.orderCriteria.CriteriaBestValue;
 import org.tesys.orderCriteria.CriteriaSelector;
+import org.tesys.orderDeveloper.OrderByWeight;
 import org.tesys.orderDeveloper.OrderDevByValue;
 import org.tesys.orderDeveloper.OrderDevbyName;
 import org.tesys.util.MD5;
@@ -61,7 +62,7 @@ public class Case  {
 
 	// *** Fin Criterio ***
 
-	boolean goodRecommendation;
+	int goodRecommendation;
 	//String _id;
 
 
@@ -116,15 +117,11 @@ public class Case  {
 			this.orderCriteria = orderCriteria;
 			
 	}
-	public boolean isGoodRecommendation() {
-		return goodRecommendation;
-	}
-
-	public void setGoodRecommendation(boolean goodRecommendation) {
+	public void setGoodRecommendation(int goodRecommendation) {
 		this.goodRecommendation = goodRecommendation;
 	}
 	
-	public boolean getGoodRecommendation() {
+	public int getGoodRecommendation() {
 		return goodRecommendation;
 	}
 
@@ -209,6 +206,19 @@ public class Case  {
 		metricsOrder = converted.toArray(metricsOrder);
 		
 		return metricsOrder;
+	}
+	public void orderDeveloperByWeight(List<Case> similarCases) {
+		List<Developer>devBadRecommendation = new LinkedList<Developer>();
+		List<Developer> similarDev = new LinkedList<Developer>();
+		for(Case c: similarCases){
+			if(c.getGoodRecommendation() == 0){
+				similarDev = Arrays.asList(c.issuesWithDevelopersRecommended);
+				similarDev.remove(c.getPerformIssue());
+				devBadRecommendation.add(c.getPerformIssue());
+			}
+		}
+		Collections.sort(similarDev, new OrderByWeight(this.orderCriteria));
+		
 	}
 
 }

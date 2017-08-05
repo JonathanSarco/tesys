@@ -1,9 +1,9 @@
 package org.tesys.core.estructures;
 
-public class MetricWeight {
+public class MetricWeight implements Comparable {
 	
 	String metricName;
-	double weight;
+	Double weight;
 	
 	public String getMetricName() {
 		return metricName;
@@ -13,12 +13,18 @@ public class MetricWeight {
 		this.metricName = metricName;
 	}
 	
-	public double getWeight() {
+	public Double getWeight() {
 		return weight;
 	}
 	
-	public void setWeight(double weight) {
+	public void setWeight(Double weight) {
 		this.weight = weight;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		MetricWeight metric = (MetricWeight)o; 
+		return this.weight.compareTo(metric.getWeight());
 	}
 	
 }
