@@ -5,6 +5,9 @@ public class MetricWeight implements Comparable {
 	String metricName;
 	Double weight;
 	
+	public MetricWeight() {
+		
+	}
 	public String getMetricName() {
 		return metricName;
 	}

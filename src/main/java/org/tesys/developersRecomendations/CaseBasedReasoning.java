@@ -2,6 +2,7 @@ package org.tesys.developersRecomendations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -68,6 +69,7 @@ public class CaseBasedReasoning {
 		newCase.setIssue(newIssue);
 		newCase.settimestamp();
 		newCase.setIdCase(newCase.gettimestamp().toString());
+		newCase.setGoodRecommendation(-1);
 		
 		//Obtengo los casos similares de la base
 		SearchCaseByIssueAndSkillsQuery dnq = new SearchCaseByIssueAndSkillsQuery(newIssue.getLabels(), newIssue.getSkills());
@@ -101,14 +103,6 @@ public class CaseBasedReasoning {
 		//ver si nos quedamos con los que tengan mejor coeficiente
 		
 		similarDevelopers = getAllSimilarDevelopers(similarIssues);
-		for(Case c: similarCases){
-			if(c.getPerformIssue() != null){
-				Developer d = addDevOrIssue(c.getPerformIssue(), similarDevelopers);
-				if(d != null && !similarDevelopers.contains(d)){
-					similarDevelopers.add(d);
-				}
-			}
-		}
 		
 		/*
 		 *Recupero los desarrolladores similares de los casos teniendo en cuenta los desarrolladores de los casos similares 
@@ -187,30 +181,41 @@ public class CaseBasedReasoning {
 		return newCase;	
 	}
 
-	private static Developer addDevOrIssue(Developer performIssue, List<Developer> similarDevelopers) {
-		for(Developer d : similarDevelopers){
-			if(d.getName().equals(performIssue.getName())){
-				d.getIssues().addAll(performIssue.getIssues());
-				return d;
-			}
-		}
-		return performIssue;
-	}
-
 	private static List<Developer> addDevelopersInSimilarDevelopers(List<Developer> similarDevelopers, List<Case> similarCases) {
-		List<Developer>similarDevWithCases = new LinkedList<Developer>();
+		List<Developer>similarDevWithCases = similarDevelopers;
+		List<Developer>aux = new LinkedList<Developer>();
 		for(Case c: similarCases){
 			for(Developer d: c.getIssuesWithDevelopersRecommended()){
-				if(similarDevelopers.contains(d)){
-					Developer devAddIssue = getDeveloper(similarDevelopers, d, c);
-					List<Issue> newIssues = d.getIssues();
-					newIssues.addAll(devAddIssue.getIssues());
-					devAddIssue.setIssues(newIssues);
-					
+				if(containsDeveloper(similarDevWithCases, d)){
+					for(Developer dev: similarDevelopers){
+						if(dev.getName().equals(d.getName())){
+								Developer devAddIssue = getDeveloper(similarDevelopers, d, c);
+								List<Issue> newIssues = d.getIssues();
+								newIssues.addAll(devAddIssue.getIssues());
+								devAddIssue.setIssues(newIssues);
+								aux.add(devAddIssue);				
+						}
+					}
+				}
+				else{
+					if(c.getPerformIssue().getName().equals(d.getName())){
+						aux.add(c.getPerformIssue());
+					}
+					else{
+						aux.add(d);
+					}
 				}
 			}
 		}
-		return similarDevWithCases;
+		return aux;
+	}
+
+	private static boolean containsDeveloper(List<Developer> similarDevWithCases, Developer d) {
+		for(Developer dev: similarDevWithCases){
+			if(dev.getName().equals(d.getName()))
+				return true;
+		}
+		return false;
 	}
 
 	private static Developer getDeveloper(List<Developer> similarDevelopers, Developer d, Case c) {

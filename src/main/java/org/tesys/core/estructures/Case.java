@@ -58,7 +58,7 @@ public class Case  {
 	// *** Fin Resultado ***
 
 	// *** Criterio ***
-	MetricWeight[] orderCriteria;
+	MetricWeight[] metricWeight;
 
 	// *** Fin Criterio ***
 
@@ -113,8 +113,8 @@ public class Case  {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
-	public void setCriteria(MetricWeight[] orderCriteria) {
-			this.orderCriteria = orderCriteria;
+	public void setCriteria(MetricWeight[] metricWeight) {
+			this.metricWeight = metricWeight;
 			
 	}
 	public void setGoodRecommendation(int goodRecommendation) {
@@ -181,8 +181,8 @@ public class Case  {
 	public Date getTimestamp() {
 		return timestamp;
 	}
-	public MetricWeight[] getCriteria() {
-		return this.orderCriteria;
+	public MetricWeight[] getMetricWeight() {
+		return this.metricWeight;
 	}
 	public String getIdCase() {
 		return idCase;
@@ -218,18 +218,36 @@ public class Case  {
 				devBadRecommendation.add(c.getPerformIssue());
 			}
 		}
-		if(this.orderCriteria != null){
-			Collections.sort(similarDev, new OrderByWeight(this.orderCriteria));
+		/*
+		 * Busco el ultimo caso similar Agregado a CBR
+		 */
+		Case latestCase = new Case();
+		if(similarCases != null && !similarCases.isEmpty()){
+			latestCase = getLastCase(similarCases);
+		}
+		  
+		if(latestCase.getMetricWeight() != null){
+			Collections.sort(similarDev, new OrderByWeight(latestCase.getMetricWeight()));
 			similarDev.addAll(devBadRecommendation);
 		}
 		else{
-			//Collections.sort(similarDev, new OrderDevbyName()); 
 			 Collections.sort(similarDev);
 		}
 		Developer developerComplete[] = new Developer[similarDev.size()];
 		developerComplete = (Developer[]) similarDev.toArray();
 		this.issuesWithDevelopersRecommended = developerComplete; 
 		
+	}
+	private Case getLastCase(List<Case> similarCases) {
+		Case c = similarCases.get(0);
+		Date timeStamp = similarCases.get(0).gettimestamp();
+		for(Case ca : similarCases){
+			if(timeStamp.before(ca.getTimestamp())){
+				timeStamp = ca.getTimestamp();
+				c = ca;
+			}
+		}
+		return c;
 	}
 
 }

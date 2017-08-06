@@ -843,7 +843,7 @@ public class Controller {
 		 * Se actualiza el caso con el Criterio y el desarrollador que va a hacer la issue nueva.
 		 */
 
-		if(modifCase.getCriteria()!=null){
+		if(modifCase.getMetricWeight()!=null){
 			dao.update(modifCase.getIdCase(), modifCase);
 		}
 		

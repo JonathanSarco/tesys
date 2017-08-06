@@ -20,7 +20,6 @@ public class Issue {
 	protected String issueType;
 	protected String[] labels;
  //   private String _id;
-	protected boolean isDeleted;
 
 	
 
@@ -118,15 +117,6 @@ public class Issue {
 
 	public void setLabels(String[] labels) {
 		this.labels = labels;
-	}
-	
-	//Prueba
-	public boolean getIsDeleted() {
-		return isDeleted;
-	}
-
-	public void setIsDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
 	}
     
 }

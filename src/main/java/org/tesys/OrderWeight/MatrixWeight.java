@@ -88,6 +88,7 @@ public class MatrixWeight {
 				}				
 				
 				for(Case similarCase:similarCases){
+					if(similarCase.getGoodRecommendation()==1){
 					Developer developer=similarCase.getPerformIssue();
 					Developer[]developers= similarCase.getIssuesWithDevelopersRecommended();
 					if(developer != null){
@@ -97,6 +98,7 @@ public class MatrixWeight {
 								Map<String,Double>metrics=issues.get(0).getMetrics();
 								//matrix=new HashMap<Developer, Map<String,Double>>();
 								matrix.put(d, metrics);
+							 }
 							}
 						}
 					}	

@@ -29,13 +29,13 @@ public class OrderByWeight implements Comparator<Developer> {
 		double result;
 		for(MetricWeight m: metrics){
 			//if(o1.getIssues().get(0).getMetrics().get(m.getMetricName()) != null && o2.getIssues().get(0).getMetrics().get(m.getMetricName()) != null){
-				result = ((o2.getIssues().get(0).getMetrics().get(m) * this.bestMetrics.getBestMetrics().get(m)) - o1.getIssues().get(0).getMetrics().get(m) * this.bestMetrics.getBestMetrics().get(m));
+				result = (((o2.getIssues().get(0).getMetrics() == null ? 0 : o2.getIssues().get(0).getMetrics().get(m.getMetricName())) * this.bestMetrics.getBestMetrics().get(m.getMetricName())) - (o1.getIssues().get(0).getMetrics() == null ? 0 : o1.getIssues().get(0).getMetrics().get(m.getMetricName())) * this.bestMetrics.getBestMetrics().get(m.getMetricName()));
 				if(result != 0)
 					return (int)result;
 			//}
 		}
 		return 0;
 	}
-	
+
 	
 }
