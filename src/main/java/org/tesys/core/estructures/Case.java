@@ -192,7 +192,7 @@ public class Case  {
 		this.idCase = idCase;
 	}
 	
-	public MetricWeight[] convertHashToVector(HashMap<String, Double> metricWeight){
+	public MetricWeight[] convertHashToVector(Map<String, Double> metricWeight){
 		List<MetricWeight> converted = new LinkedList<MetricWeight>();
 		Set<String> keys = metricWeight.keySet(); 
 		for(String s: keys){
@@ -210,14 +210,25 @@ public class Case  {
 	public void orderDeveloperByWeight(List<Case> similarCases) {
 		List<Developer>devBadRecommendation = new LinkedList<Developer>();
 		List<Developer> similarDev = new LinkedList<Developer>();
+		similarDev = Arrays.asList(this.issuesWithDevelopersRecommended);
 		for(Case c: similarCases){
 			if(c.getGoodRecommendation() == 0){
-				similarDev = Arrays.asList(c.issuesWithDevelopersRecommended);
+				similarDev.addAll(Arrays.asList(c.issuesWithDevelopersRecommended));
 				similarDev.remove(c.getPerformIssue());
 				devBadRecommendation.add(c.getPerformIssue());
 			}
 		}
-		Collections.sort(similarDev, new OrderByWeight(this.orderCriteria));
+		if(this.orderCriteria != null){
+			Collections.sort(similarDev, new OrderByWeight(this.orderCriteria));
+			similarDev.addAll(devBadRecommendation);
+		}
+		else{
+			//Collections.sort(similarDev, new OrderDevbyName()); 
+			 Collections.sort(similarDev);
+		}
+		Developer developerComplete[] = new Developer[similarDev.size()];
+		developerComplete = (Developer[]) similarDev.toArray();
+		this.issuesWithDevelopersRecommended = developerComplete; 
 		
 	}
 

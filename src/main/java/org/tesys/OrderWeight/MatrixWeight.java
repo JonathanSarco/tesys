@@ -14,60 +14,63 @@ import org.tesys.core.estructures.Issue;
 import org.tesys.recomendations.SimilarCaseByIssueSkill;
 
 public class MatrixWeight {
+	
+	Hashtable<String,Integer> bestMetrics= new Hashtable<String, Integer>();
+	
+	public MatrixWeight(){
+		//SonarQube
+		bestMetrics.put("complexity",1);
+		bestMetrics.put("class_complexity",1);
+		bestMetrics.put("function_complexity",1);
+		bestMetrics.put("file_complexity",1);
+		
+		bestMetrics.put("comment_lines_density",-1);  
+		bestMetrics.put("comment_lines",-1); 
+		bestMetrics.put("public_documented_api_density",1);
+		bestMetrics.put("public_undocumented_api",-1);
+
+		bestMetrics.put("duplicated_blocks",-1);
+		bestMetrics.put("duplicated_files",-1);
+		bestMetrics.put("duplicated_lines",-1);
+		bestMetrics.put("duplicated_lines_density",-1);
+
+		bestMetrics.put("violations",1);
+		bestMetrics.put("critical_violations",1);
+		bestMetrics.put("minor_violations",1);
+		bestMetrics.put("major_violations",1);
+		bestMetrics.put("blocker_violations",1);
+
+		bestMetrics.put("open_issues",1);
+		bestMetrics.put("reopened_issues",-1);
+		bestMetrics.put("confirmed_issues",1);
+		bestMetrics.put("false_positive_issues",-1);
+		bestMetrics.put("sqale_index",-1);
+		
+		bestMetrics.put("accessors",1);
+		bestMetrics.put("classes",1);
+		bestMetrics.put("directories",1);
+		bestMetrics.put("files",1);
+		bestMetrics.put("lines",-1);
+		bestMetrics.put("ncloc",-1);
+		bestMetrics.put("functions",1);
+		bestMetrics.put("statements",1);
+		bestMetrics.put("public_api",1);
+
+		// Jira
+		bestMetrics.put("progress", -1);
+		bestMetrics.put("estimated",-1);
+
+		//Otras
+		bestMetrics.put("complexity_in_functions",-1);
+		bestMetrics.put("file_complexity_distribution",-1);
+		bestMetrics.put("function_complexity_distribution",-1);
+		bestMetrics.put("sqale_debt_ratio",-1);
+		bestMetrics.put("info_violations",-1);
+	}
 
 	public Map<String,Double> getMetricsToOrder(Case newCase, Developer chosenDeveloper) {
 		
 		Map<Developer, Map<String, Double>>matrix = new HashMap<Developer, Map<String,Double>>();
-		Hashtable<String,Integer> bestMetrics= new Hashtable<String, Integer>(); 
-		
-				//SonarQube
-				bestMetrics.put("complexity",1);
-				bestMetrics.put("class_complexity",1);
-				bestMetrics.put("function_complexity",1);
-				bestMetrics.put("file_complexity",1);
-				
-				bestMetrics.put("comment_lines_density",-1);  
-				bestMetrics.put("comment_lines",-1); 
-				bestMetrics.put("public_documented_api_density",1);
-				bestMetrics.put("public_undocumented_api",-1);
-
-				bestMetrics.put("duplicated_blocks",-1);
-				bestMetrics.put("duplicated_files",-1);
-				bestMetrics.put("duplicated_lines",-1);
-				bestMetrics.put("duplicated_lines_density",-1);
-
-				bestMetrics.put("violations",1);
-				bestMetrics.put("critical_violations",1);
-				bestMetrics.put("minor_violations",1);
-				bestMetrics.put("major_violations",1);
-				bestMetrics.put("blocker_violations",1);
-
-				bestMetrics.put("open_issues",1);
-				bestMetrics.put("reopened_issues",-1);
-				bestMetrics.put("confirmed_issues",1);
-				bestMetrics.put("false_positive_issues",-1);
-				bestMetrics.put("sqale_index",-1);
-				
-				bestMetrics.put("accessors",1);
-				bestMetrics.put("classes",1);
-				bestMetrics.put("directories",1);
-				bestMetrics.put("files",1);
-				bestMetrics.put("lines",-1);
-				bestMetrics.put("ncloc",-1);
-				bestMetrics.put("functions",1);
-				bestMetrics.put("statements",1);
-				bestMetrics.put("public_api",1);
-
-				// Jira
-				bestMetrics.put("progress", -1);
-				bestMetrics.put("estimated",-1);
-
-				//Otras
-				bestMetrics.put("complexity_in_functions",-1);
-				bestMetrics.put("file_complexity_distribution",-1);
-				bestMetrics.put("function_complexity_distribution",-1);
-				bestMetrics.put("sqale_debt_ratio",-1);
-				bestMetrics.put("info_violations",-1);
 				
 				//Obtengo los casos similares de la base
 				SearchCaseByIssueAndSkillsQuery dnq = new SearchCaseByIssueAndSkillsQuery(newCase.getIssue().getLabels(), newCase.getIssue().getSkills());
@@ -87,16 +90,37 @@ public class MatrixWeight {
 				for(Case similarCase:similarCases){
 					Developer developer=similarCase.getPerformIssue();
 					Developer[]developers= similarCase.getIssuesWithDevelopersRecommended();
-					for(Developer d :developers){
-						if(d.getName().equals(developer.getName())){
-							List<Issue>issues=d.getIssues();
-							Map<String,Double>metrics=issues.get(0).getMetrics();
-							matrix=new HashMap<Developer, Map<String,Double>>();
-							matrix.put(d, metrics);
+					if(developer != null){
+						for(Developer d :developers){
+							if(d.getName().equals(developer.getName())){
+								List<Issue>issues=d.getIssues();
+								Map<String,Double>metrics=issues.get(0).getMetrics();
+								//matrix=new HashMap<Developer, Map<String,Double>>();
+								matrix.put(d, metrics);
+							}
+						}
+					}	
+				}
+				
+				Set<Developer> keysSimilarCase = matrix.keySet();
+				if(keysSimilarCase.isEmpty()){
+					Map<String,Double>weights = new HashMap<String,Double>();
+					for(Developer d : newCase.getIssuesWithDevelopersRecommended()){
+						if(d.getName().equals(chosenDeveloper.getName())){
+							Map<String,Double>metrics = d.getIssues().get(0).getMetrics();
+							if(metrics!=null){
+								Set<String>keysEstimated = metrics.keySet();
+								for(String s: keysEstimated){
+									weights.put(s, 1.0);
+								}
+							}
 						}
 					}
+					return weights;
 				}
-							
+				
+				
+			
 				//Construcción de Matriz de Pesos
 				//Se obtiene en allKeys todas los nombres(keys) de las metricas estimadas por todos los desarrolladores
 				List<String>allKeys=new LinkedList<>();
@@ -139,9 +163,12 @@ public class MatrixWeight {
 						}
 					}
 				}
-				
-					CalculateWeight m=new CalculateWeight();
-					return m.calculate(metricsWithValuesByDev);
+				CalculateWeight m=new CalculateWeight();
+				return m.calculate(metricsWithValuesByDev);
 					
+	}
+	
+	public Hashtable<String, Integer> getBestMetrics(){
+		return this.bestMetrics;
 	}
 }

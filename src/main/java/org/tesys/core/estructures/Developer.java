@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-public class Developer implements Comparable {
+public class Developer implements Comparable{
     
     protected String name;
     protected String DisplayName;
@@ -55,9 +55,10 @@ public class Developer implements Comparable {
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
-    
-    public int compareTo(Object dev) {
-        Developer developer = (Developer)dev; 
-        return this.DisplayName.compareToIgnoreCase(developer.DisplayName);
-    } 
+
+	@Override
+	public int compareTo(Object o) {
+		Developer dev = (Developer)o;
+		return this.getDisplayName().compareTo(dev.getDisplayName());
+	} 
 }

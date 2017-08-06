@@ -2,47 +2,27 @@ package org.tesys.developersRecomendations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.tesys.OrderWeight.CalculateWeight;
 import org.tesys.OrderWeight.MatrixWeight;
 import org.tesys.core.analysis.skilltraceability.Skill;
-import org.tesys.core.db.AnalysisVersionsQuery;
-import org.tesys.core.db.ElasticsearchDao;
 import org.tesys.core.db.SearchCaseByIssueAndSkillsQuery;
 import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
-import org.tesys.core.estructures.Metric;
+import org.tesys.core.estructures.MetricWeight;
 import org.tesys.core.estructures.SimilarIssue;
-import org.tesys.core.estructures.metrictypes.NumericMetric;
-import org.tesys.core.estructures.metricvalue.Constant;
-import org.tesys.core.estructures.metricvalue.SimpleValue;
 import org.tesys.correlations.MetricPrediction;
 import org.tesys.correlations.DeveloperPrediction;
 import org.tesys.correlations.Predictions;
 import org.tesys.distanceFunctions.FunctionSelector;
 import org.tesys.distanceFunctions.ManhattanFunction;
 import org.tesys.recomendations.DevelopersShortedBySimilarLabelsAndSkills;
-import org.tesys.recomendations.IssueSimilarityLabels;
 import org.tesys.recomendations.SimilarCaseByIssueSkill;
-import org.tesys.orderCriteria.*;
-import org.tesys.orderDeveloper.OrderDevbyName;
-
-import com.atlassian.util.concurrent.Function;
-
 
 public class CaseBasedReasoning {
 
@@ -66,10 +46,10 @@ public class CaseBasedReasoning {
 		newIssue.setUser("");
 		newIssue.setMetrics(desiredmetrics);
 		
-		
 		/*
 		 * Agrego las Skills en la nueva tarea
 		 */
+		
 		List<Skill> desiredSkills = new LinkedList<Skill>();
 		for (String s : skills){
 			Skill newSkill = new Skill();
@@ -121,7 +101,6 @@ public class CaseBasedReasoning {
 		//ver si nos quedamos con los que tengan mejor coeficiente
 		
 		similarDevelopers = getAllSimilarDevelopers(similarIssues);
-		List<Developer> aux = similarDevelopers;
 		for(Case c: similarCases){
 			if(c.getPerformIssue() != null){
 				Developer d = addDevOrIssue(c.getPerformIssue(), similarDevelopers);
@@ -131,7 +110,13 @@ public class CaseBasedReasoning {
 			}
 		}
 		
-
+		/*
+		 *Recupero los desarrolladores similares de los casos teniendo en cuenta los desarrolladores de los casos similares 
+		 */
+		if(similarCases != null && similarCases.size() > 0){
+			similarDevelopers = addDevelopersInSimilarDevelopers(similarDevelopers, similarCases);
+		}
+		
 		/*
 		 * Recorro los desarrolladores similares para obtener la correlación entre las tareas del mismo
 		 */
@@ -190,62 +175,16 @@ public class CaseBasedReasoning {
 			developerWithNewIssue.add(similarDev);
 		}
 	
-		/*Se guardan los desarrolladores similares del nuevo caso( si existen)*/
-		
-		/*Si no existen desarrolladores similares en la base de datos, se guarda en el nuevo caso los desarrolladores de un caso similar que sea buena recomendacion*/
-		/*Si no hay ningun caso que sea buena recomendacion, se devuelve el primer caso que encuentre*/
-		if(developerWithNewIssue.isEmpty() && developerWithNewIssue.size()==0 && !similarCases.isEmpty() && similarCases.size()>0 ){
-			boolean found=false;
-			Case similarCaseGood=null;
-			for(int i=0;i<similarCases.size() && !found;i++){
-				if(similarCases.get(i).isGoodRecommendation()){
-					similarCaseGood=similarCases.get(i);
-					found=true;
-				}
-			}
-			if(similarCaseGood != null){
-				newCase.setIssuesWithDevelopersRecommended(similarCaseGood.getIssuesWithDevelopersRecommended());
-
-			}
-			else{
-				//Elijo el primero, ya que cualquiera es una mala recomendacion
-				Case similarCaseBad=similarCases.get(0);
-				newCase.setIssuesWithDevelopersRecommended(similarCaseBad.getIssuesWithDevelopersRecommended());
-			}
-		}
-		else{
-			/*
-			 *  * Adicionalmente se modifica la lista de desarrolladores similares según la clasificación del caso
-			 * - Si fue bueno agrego el desarrollador seleccionado al caso nuevo si es q no esta entre los desarrolladores similares
-			 * - Si fue malo elimino al desarrollador seleccionado de los similares. 
-			 */
-			if(!developerWithNewIssue.isEmpty() && developerWithNewIssue.size()>0 &&!similarCases.isEmpty() && similarCases.size() > 0){
-				Developer deveoperComplete[] = new Developer[developerWithNewIssue.size()];
-				deveoperComplete = developerWithNewIssue.toArray(deveoperComplete);
-				newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
-				adaptNewCase(similarCases, newCase);
-			}
-			else{
-				/*Si existen desarrolladores similares en la base de datos y no hay casos similares, los guardo en el nuevo caso*/
-				if(!developerWithNewIssue.isEmpty() && developerWithNewIssue.size()>0 && similarCases.isEmpty() && similarCases.size()==0){
-					Developer deveoperComplete[] = new Developer[developerWithNewIssue.size()];
-					deveoperComplete = developerWithNewIssue.toArray(deveoperComplete);
-					newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
-			}
-				else{
-					newCase.setIssuesWithDevelopersRecommended(null);
-				}
-		}
-	}		
+		/*Se guardan los desarrolladores similares del nuevo caso*/
+		Developer deveoperComplete[] = new Developer[developerWithNewIssue.size()];
+		deveoperComplete = developerWithNewIssue.toArray(deveoperComplete);
+		newCase.setIssuesWithDevelopersRecommended(deveoperComplete);	
 		
 		/*Devuelve desarrolladores similares ordenados por algun criterio(solo si existen)*/
-		if(newCase.getIssuesWithDevelopersRecommended()!=null){
-			newCase.orderDeveloper(similarCases);
-			return newCase;	
+		if(newCase.getIssuesWithDevelopersRecommended() != null && newCase.getIssuesWithDevelopersRecommended().length > 0){
+			newCase.orderDeveloperByWeight(similarCases);
 		}
-		else{
-			return newCase;
-		}	
+		return newCase;	
 	}
 
 	private static Developer addDevOrIssue(Developer performIssue, List<Developer> similarDevelopers) {
@@ -258,29 +197,32 @@ public class CaseBasedReasoning {
 		return performIssue;
 	}
 
-	private static Case adaptNewCase(List<Case> similarCases, Case newCase) {
-		List<Developer> developers = Arrays.asList(newCase.getIssuesWithDevelopersRecommended());
+	private static List<Developer> addDevelopersInSimilarDevelopers(List<Developer> similarDevelopers, List<Case> similarCases) {
+		List<Developer>similarDevWithCases = new LinkedList<Developer>();
 		for(Case c: similarCases){
-			if(c.getPerformIssue() != null){	
-				if(c.isGoodRecommendation()){
-					boolean existsDeveloper = false;
-					if(!developers.contains(c.getPerformIssue())){
-						Developer developer = c.getPerformIssue();
-						developer.setIssues(developers.get(0).getIssues());
-						developers.add(developer);
-					}			
-				}
-				else{
-					if(developers.contains(c.getPerformIssue())){
-						developers.remove(c.getPerformIssue());
-					}		
+			for(Developer d: c.getIssuesWithDevelopersRecommended()){
+				if(similarDevelopers.contains(d)){
+					Developer devAddIssue = getDeveloper(similarDevelopers, d, c);
+					List<Issue> newIssues = d.getIssues();
+					newIssues.addAll(devAddIssue.getIssues());
+					devAddIssue.setIssues(newIssues);
+					
 				}
 			}
 		}
-		Developer deveoperComplete[] = new Developer[developers.size()];
-		deveoperComplete = (Developer[]) developers.toArray();
-		newCase.setIssuesWithDevelopersRecommended(deveoperComplete);
-		return newCase;
+		return similarDevWithCases;
+	}
+
+	private static Developer getDeveloper(List<Developer> similarDevelopers, Developer d, Case c) {
+		for(Developer dev :similarDevelopers){
+			if(dev.getName().equals(d.getName())){
+				if(c.getPerformIssue().getName().equals(d.getName()) && c.getGoodRecommendation() != -1){
+					return c.getPerformIssue();
+				}
+				return dev;
+			}
+		}
+		return null;
 	}
 
 	private List<String> getDevSkillsForIssue(Developer d) {
@@ -311,6 +253,13 @@ public class CaseBasedReasoning {
 //		Map<String,String> orderCriteria=criterion.getMetricsToOrder(newCase.getIssuesWithDevelopersRecommended(),chosenDeveloper, criterion);
 		MatrixWeight weights=new MatrixWeight();
 		Map<String,Double> pesos=weights.getMetricsToOrder(newCase, chosenDeveloper);
+		MetricWeight[] metric = newCase.convertHashToVector(pesos);
+		List<MetricWeight> metricOrdered = Arrays.asList(metric);
+		Collections.sort(metricOrdered);
+		MetricWeight metricOrderedArray[] = new MetricWeight[metricOrdered.size()];
+		metricOrderedArray = (MetricWeight[]) metricOrdered.toArray();
+		newCase.setCriteria(metricOrderedArray);
+		
 //		Set<String>criteria= orderCriteria.keySet();
 //		newCase.setCriteria(pesos);
 		return newCase;
