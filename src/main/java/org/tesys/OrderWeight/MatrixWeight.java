@@ -90,14 +90,16 @@ public class MatrixWeight {
 				//Construye matriz con los desarrrolladores asignados de los casos similares
 				for(Case similarCase:similarCases){
 					//Aca falta el if de si es una buena recomendacion el caso
-					if(similarCase.getPerformIssue() != null){
-						for(Developer d :similarCase.getIssuesWithDevelopersRecommended()){
-							if(d.getName().equals(similarCase.getPerformIssue().getName())){
-								List<Issue>issues=d.getIssues();
-								Map<String,Double>metrics=issues.get(0).getMetrics();
-								matrix.put(d, metrics);
-							 }
-							}
+					if(similarCase.getGoodRecommendation()==1){
+						if(similarCase.getPerformIssue() != null){
+							for(Developer d :similarCase.getIssuesWithDevelopersRecommended()){
+								if(d.getName().equals(similarCase.getPerformIssue().getName())){
+									List<Issue>issues=d.getIssues();
+									Map<String,Double>metrics=issues.get(0).getMetrics();
+									matrix.put(d, metrics);
+										}
+									}
+								}
 					}	
 				}
 				
