@@ -12,7 +12,7 @@ public class CalculateWeight {
 		
 		Map<String,Double>pesosColumnas=new HashMap<String, Double>(); 
 		Set<String>keys=metricsWithValuesByDev.keySet();		
-		Double sumEntropiaCol=sumEntropiaCol(metricsWithValuesByDev);
+		Double sumEntropiaCol=sumInvEntropiaCol(metricsWithValuesByDev);
 		
 		for(String k:keys){
 			Double InvEntropiaCol=InvEntropiaCol(k,metricsWithValuesByDev);
@@ -24,7 +24,7 @@ public class CalculateWeight {
 	}
 
 	//Sumatoria de la Entropia Inversa de todas las columnas
-	private Double sumEntropiaCol(Map<String, Map<String, Double>> metricsWithValuesByDev) {
+	private Double sumInvEntropiaCol(Map<String, Map<String, Double>> metricsWithValuesByDev) {
 		Set<String>keys=metricsWithValuesByDev.keySet();
 		Double suma=0.0;
 		for(String k:keys){
