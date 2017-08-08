@@ -221,7 +221,8 @@ public class CaseBasedReasoning {
 	private static Developer getDeveloper(List<Developer> similarDevelopers, Developer d, Case c) {
 		for(Developer dev :similarDevelopers){
 			if(dev.getName().equals(d.getName())){
-				if(c.getPerformIssue().getName().equals(d.getName()) && c.getGoodRecommendation() != -1){
+				//ACA ROMPE
+				if((c.getPerformIssue()!=null && c.getPerformIssue().getName().equals(d.getName())) && (c.getGoodRecommendation() != -1)){
 					return c.getPerformIssue();
 				}
 				return dev;

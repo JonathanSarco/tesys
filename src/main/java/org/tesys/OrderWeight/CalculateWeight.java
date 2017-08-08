@@ -45,7 +45,8 @@ public class CalculateWeight {
 			double higher=(double) values.values().toArray()[0];
 			for(String dev: values.keySet()){
 							higher=values.get(dev);
-							entropia+=-(higher*Math.log(higher));
+							//El math.log(higher) da NAN para valores negativos VER
+							entropia+=higher*Math.log(higher);
 							}
 			entropiaCol=entropia/Math.log(values.size());
 			invEntropiaCol=1-entropiaCol;
