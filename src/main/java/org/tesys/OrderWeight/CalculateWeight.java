@@ -11,47 +11,56 @@ public class CalculateWeight {
 	public  Map<String,Double> calculate(Map<String, Map<String, Double>> metricsWithValuesByDev) {
 		
 		Map<String,Double>pesosColumnas=new HashMap<String, Double>(); 
-		Set<String>keys=metricsWithValuesByDev.keySet();		
-		Double sumEntropiaCol=sumInvEntropiaCol(metricsWithValuesByDev);
+		Set<String>metrics=metricsWithValuesByDev.keySet();		
+		//Sumatoria de todas las columnas de (1-Entropia)
+		Double sumDifEntropiaCol=sumDifEntropiaCol(metricsWithValuesByDev);
 		
-		for(String k:keys){
-			Double InvEntropiaCol=InvEntropiaCol(k,metricsWithValuesByDev);
+		for(String m:metrics){
+			//Obtiene de cada columna (1- Entropia)
+			Double DifEntropiaCol=DifEntropiaCol(m,metricsWithValuesByDev);
 			//Peso de cada columna
-			Double pesoCol=(InvEntropiaCol/sumEntropiaCol);
-			pesosColumnas.put(k,pesoCol);
+			Double pesoCol=(DifEntropiaCol/sumDifEntropiaCol);
+			pesosColumnas.put(m,pesoCol);
 		}		
 		return pesosColumnas;
 	}
 
-	//Sumatoria de la Entropia Inversa de todas las columnas
-	private Double sumInvEntropiaCol(Map<String, Map<String, Double>> metricsWithValuesByDev) {
-		Set<String>keys=metricsWithValuesByDev.keySet();
+	//Sumatoria de todas las columnas de (1-Entropia)
+	private Double sumDifEntropiaCol(Map<String, Map<String, Double>> metricsWithValuesByDev) {
+		Set<String>metrics=metricsWithValuesByDev.keySet();
 		Double suma=0.0;
-		for(String k:keys){
-			Double InvEntropiaCol=InvEntropiaCol(k, metricsWithValuesByDev);
+		for(String m:metrics){
+			Double InvEntropiaCol=DifEntropiaCol(m, metricsWithValuesByDev);
 			suma=suma+InvEntropiaCol;
 			}
 		
 		return suma;
 	}
 
-	//Entropia Inversa de cada columna
-	private Double InvEntropiaCol(String k, Map<String, Map<String, Double>> metricsWithValuesByDev) {
+	//Obtiene de cada columna (1- Entropia)
+	private Double DifEntropiaCol(String k, Map<String, Map<String, Double>> metricsWithValuesByDev) {
 		Double entropia=0.0;
 		Double entropiaCol=0.0;
-		Double invEntropiaCol=0.0;
+		Double difEntropiaCol=0.0;
 
 			Map<String,Double> values=metricsWithValuesByDev.get(k);
-			double higher=(double) values.values().toArray()[0];
 			for(String dev: values.keySet()){
-							higher=values.get(dev);
-							//El math.log(higher) da NAN para valores negativos VER
-							entropia+=higher*Math.log(higher);
-							}
-			entropiaCol=entropia/Math.log(values.size());
-			invEntropiaCol=1-entropiaCol;
+							if(values.get(dev)!=0.0){
+								//El math.log(higher) da NAN para valores negativos VER
+								//Se eleva valor al cuadrado, para salvar los nros negativos
+								entropia+=(Math.pow(values.get(dev),2))*(Math.log(Math.pow(values.get(dev),2)));
+								}
+							else{
+								entropia+=Math.pow(values.get(dev),2);
+								}
+				}
+			if(values.size()>1)
+				entropiaCol=entropia/Math.log(values.size());
+			else
+				entropiaCol=0.0;
+			difEntropiaCol=1-entropiaCol;
 			
-			return invEntropiaCol;
+			return difEntropiaCol;
 	}
 	
 }

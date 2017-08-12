@@ -11,6 +11,7 @@ import org.tesys.core.db.SearchCaseByIssueAndSkillsQuery;
 import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
+import org.tesys.orderCriteria.Normalize;
 import org.tesys.recomendations.SimilarCaseByIssueSkill;
 
 public class MatrixWeight {
@@ -89,8 +90,7 @@ public class MatrixWeight {
 				
 				//Construye matriz con los desarrrolladores asignados de los casos similares
 				for(Case similarCase:similarCases){
-					//Aca falta el if de si es una buena recomendacion el caso
-					if(similarCase.getGoodRecommendation()==1){
+//					if(similarCase.getGoodRecommendation()==1){
 						if(similarCase.getPerformIssue() != null){
 							for(Developer d :similarCase.getIssuesWithDevelopersRecommended()){
 								if(d.getName().equals(similarCase.getPerformIssue().getName())){
@@ -99,7 +99,7 @@ public class MatrixWeight {
 									matrix.put(d, metrics);
 										}
 									}
-								}
+//								}
 					}	
 				}
 				
@@ -141,16 +141,18 @@ public class MatrixWeight {
 				}
 				
 				Map<String,Map<String,Double>> metricsWithValuesByDev=new HashMap<String, Map<String,Double>>();
+				Map<String,Map<String,Double>> metricsWithValuesByDevNormalized=new HashMap<String, Map<String,Double>>();
+				Normalize normalize=new Normalize();
 
 				//Se arma un map metricsWithValuesByDev que va a tener por cada metrica, un conjunto de valores estimados por cada desarrollador
 				for(String k:allKeys){
 					Map<String,Double>ValuesByDev=new HashMap<String,Double>(); 
 					for(Developer developer:matrix.keySet()){
 						for( Issue issue :developer.getIssues()){
-								if(issue.getMetrics()!=null /*&& issue.getMetrics().containsKey(k)*/){
+								if(issue.getMetrics()!=null){
 									if(issue.getMetrics().containsKey(k)){
 										Map<String,Double> metrics=issue.getMetrics();
-										Double value=metrics.get(k)*bestMetrics.get(k);
+										Double value=metrics.get(k);
 										ValuesByDev.put(developer.getName(),value);
 										metricsWithValuesByDev.put(k,ValuesByDev);
 									}
@@ -163,9 +165,14 @@ public class MatrixWeight {
 							}
 						}
 					}
+					//Normalizacion de los valores de la matriz
+					Map<String,Double> ValuesByDevNormalized = normalize.calculateNorm(ValuesByDev);
+					metricsWithValuesByDevNormalized.put(k,ValuesByDevNormalized);
 				}
+								
+					
 				CalculateWeight m=new CalculateWeight();
-				return m.calculate(metricsWithValuesByDev);
+				return m.calculate(metricsWithValuesByDevNormalized);
 					
 	}
 	
