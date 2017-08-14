@@ -121,6 +121,7 @@ public class MatrixWeight {
 					return weights;
 				}
 				
+				matrix.put(chosenDeveloper, chosenDeveloper.getIssues().get(0).getMetrics());
 						
 				/*Construcción de Matriz de Pesos*/
 				

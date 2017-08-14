@@ -46,12 +46,10 @@ public class CalculateWeight {
 			Map<String,Double> values=metricsWithValuesByDev.get(k);
 			for(String dev: values.keySet()){
 							if(values.get(dev)!=0.0){
-								//El math.log(higher) da NAN para valores negativos VER
-								//Se eleva valor al cuadrado, para salvar los nros negativos
-								entropia+=(Math.pow(values.get(dev),2))*(Math.log(Math.pow(values.get(dev),2)));
+								entropia+=(values.get(dev))*(Math.log((values.get(dev))));
 								}
 							else{
-								entropia+=Math.pow(values.get(dev),2);
+								entropia+=values.get(dev);
 								}
 				}
 			if(values.size()>1)
