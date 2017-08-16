@@ -56,9 +56,10 @@ public class Predictions {
 						for (Issue issue : l) {
 							if( issue.getUser().equals(userKey) && metrics.get(i).equals(metricKey) ) { 
 								List<String> isk = new LinkedList<String>();
-								for (Skill sk : issue.getSkills()) {
-									isk.add(sk.skillName);
-								}
+								if (issue.getSkills() != null)
+									for (Skill sk : issue.getSkills()) {
+										isk.add(sk.skillName);
+									}
 
 							//	if( isk.containsAll(skills) ) {
 									pearson1.add(issue.getMetrics().get(metrics.get(i)));

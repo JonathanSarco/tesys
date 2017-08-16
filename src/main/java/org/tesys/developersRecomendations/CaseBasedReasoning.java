@@ -122,7 +122,7 @@ public class CaseBasedReasoning {
 			String key = metricsKeys.next();
 		    Double valueKey = desiredmetrics.get(key);
 			//*** Issue se completa con las metricas estimadas y luego se agrega al developer ***
-		    developerPredictions = predictions.getPredictions(key, valueKey, correlationVariation, sprint, skills);
+		    developerPredictions = predictions.getPredictions(key, valueKey, correlationVariation, -1, skills);
 		}
 		List<Developer> developerWithNewIssue = new LinkedList<Developer>();
 		similarDevelopersPredictions=new LinkedList<DeveloperPrediction>();
