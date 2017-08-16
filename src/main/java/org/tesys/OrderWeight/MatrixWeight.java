@@ -11,6 +11,7 @@ import org.tesys.core.db.SearchCaseByIssueAndSkillsQuery;
 import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
+import org.tesys.orderCriteria.Normalize;
 import org.tesys.recomendations.SimilarCaseByIssueSkill;
 
 public class MatrixWeight {
@@ -72,7 +73,7 @@ public class MatrixWeight {
 		
 		Map<Developer, Map<String, Double>>matrix = new HashMap<Developer, Map<String,Double>>();
 				
-				//Obtengo los casos similares de la base
+				//Obtengo los casos de la base
 				SearchCaseByIssueAndSkillsQuery dnq = new SearchCaseByIssueAndSkillsQuery(newCase.getIssue().getLabels(), newCase.getIssue().getSkills());
 				List<Case> cases = dnq.execute();
 								
@@ -87,23 +88,22 @@ public class MatrixWeight {
 					}
 				}				
 				
+				//Construye matriz con los desarrrolladores asignados de los casos similares
 				for(Case similarCase:similarCases){
-					if(similarCase.getGoodRecommendation()==1){
-					Developer developer=similarCase.getPerformIssue();
-					Developer[]developers= similarCase.getIssuesWithDevelopersRecommended();
-					if(developer != null){
-						for(Developer d :developers){
-							if(d.getName().equals(developer.getName())){
-								List<Issue>issues=d.getIssues();
-								Map<String,Double>metrics=issues.get(0).getMetrics();
-								//matrix=new HashMap<Developer, Map<String,Double>>();
-								matrix.put(d, metrics);
-							 }
-							}
-						}
+//					if(similarCase.getGoodRecommendation()==1){
+						if(similarCase.getPerformIssue() != null){
+							for(Developer d :similarCase.getIssuesWithDevelopersRecommended()){
+								if(d.getName().equals(similarCase.getPerformIssue().getName())){
+									List<Issue>issues=d.getIssues();
+									Map<String,Double>metrics=issues.get(0).getMetrics();
+									matrix.put(d, metrics);
+										}
+									}
+//								}
 					}	
 				}
 				
+				//Si no hay casos similares, devuelve pesos con valor 1
 				Set<Developer> keysSimilarCase = matrix.keySet();
 				if(keysSimilarCase.isEmpty()){
 					Map<String,Double>weights = new HashMap<String,Double>();
@@ -121,10 +121,11 @@ public class MatrixWeight {
 					return weights;
 				}
 				
+				matrix.put(chosenDeveloper, chosenDeveloper.getIssues().get(0).getMetrics());
+						
+				/*Construcción de Matriz de Pesos*/
 				
-			
-				//Construcción de Matriz de Pesos
-				//Se obtiene en allKeys todas los nombres(keys) de las metricas estimadas por todos los desarrolladores
+				//Se obtiene en allKeys todas los nombres(keys) de las metricas estimadas por todos los desarrolladores asignados de los casos similares
 				List<String>allKeys=new LinkedList<>();
 				for(Developer d:matrix.keySet()){
 					//Se supone que tiene una sola issue, que es la nueva aun no asignada
@@ -140,33 +141,39 @@ public class MatrixWeight {
 					}
 				}
 				
-				//Preprocesamiento para obtener el mejor valor de metrica del desarrollador elegido
 				Map<String,Map<String,Double>> metricsWithValuesByDev=new HashMap<String, Map<String,Double>>();
+				Map<String,Map<String,Double>> metricsWithValuesByDevNormalized=new HashMap<String, Map<String,Double>>();
+				Normalize normalize=new Normalize();
 
 				//Se arma un map metricsWithValuesByDev que va a tener por cada metrica, un conjunto de valores estimados por cada desarrollador
 				for(String k:allKeys){
 					Map<String,Double>ValuesByDev=new HashMap<String,Double>(); 
 					for(Developer developer:matrix.keySet()){
 						for( Issue issue :developer.getIssues()){
-								if(issue.getMetrics()!=null /*&& issue.getMetrics().containsKey(k)*/){
+								if(issue.getMetrics()!=null){
 									if(issue.getMetrics().containsKey(k)){
 										Map<String,Double> metrics=issue.getMetrics();
-										Double value=metrics.get(k)*bestMetrics.get(k);
+										Double value=metrics.get(k);
 										ValuesByDev.put(developer.getName(),value);
 										metricsWithValuesByDev.put(k,ValuesByDev);
 									}
-									//Si no tienen valor para esa métrica, se los coloca cero como valor para la metrica
+									//Si no tienen valor para esa métrica, se les coloca cero como valor para la metrica
 									//Solo se considera los valores 0 para la matriz de la entropia
 									else{
-										ValuesByDev.put(developer.getDisplayName(),0.0);
+										ValuesByDev.put(developer.getName(),0.0);
 										metricsWithValuesByDev.put(k,ValuesByDev);
 									}
 							}
 						}
 					}
+					//Normalizacion de los valores de la matriz
+					Map<String,Double> ValuesByDevNormalized = normalize.calculateNorm(ValuesByDev);
+					metricsWithValuesByDevNormalized.put(k,ValuesByDevNormalized);
 				}
+								
+					
 				CalculateWeight m=new CalculateWeight();
-				return m.calculate(metricsWithValuesByDev);
+				return m.calculate(metricsWithValuesByDevNormalized);
 					
 	}
 	

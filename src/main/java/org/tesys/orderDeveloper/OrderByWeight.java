@@ -28,11 +28,11 @@ public class OrderByWeight implements Comparator<Developer> {
 		List<MetricWeight> metrics = Arrays.asList(weightMetrics);
 		double result;
 		for(MetricWeight m: metrics){
-			//if(o1.getIssues().get(0).getMetrics().get(m.getMetricName()) != null && o2.getIssues().get(0).getMetrics().get(m.getMetricName()) != null){
+			if(o1.getIssues().get(0).getMetrics() != null && o2.getIssues().get(0).getMetrics() != null && o1.getIssues().get(0).getMetrics().get(m.getMetricName()) != null && o2.getIssues().get(0).getMetrics().get(m.getMetricName()) != null){
 				result = (((o2.getIssues().get(0).getMetrics() == null ? 0 : o2.getIssues().get(0).getMetrics().get(m.getMetricName())) * this.bestMetrics.getBestMetrics().get(m.getMetricName())) - (o1.getIssues().get(0).getMetrics() == null ? 0 : o1.getIssues().get(0).getMetrics().get(m.getMetricName())) * this.bestMetrics.getBestMetrics().get(m.getMetricName()));
 				if(result != 0)
 					return (int)result;
-			//}
+			}
 		}
 		return 0;
 	}
