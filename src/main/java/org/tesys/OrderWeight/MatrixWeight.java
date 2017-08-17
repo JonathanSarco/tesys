@@ -121,6 +121,7 @@ public class MatrixWeight {
 					return weights;
 				}
 				
+				//Se agrega a la matriz el desarrollador asignado con sus métricas estimadas
 				matrix.put(chosenDeveloper, chosenDeveloper.getIssues().get(0).getMetrics());
 						
 				/*Construcción de Matriz de Pesos*/
@@ -128,7 +129,6 @@ public class MatrixWeight {
 				//Se obtiene en allKeys todas los nombres(keys) de las metricas estimadas por todos los desarrolladores asignados de los casos similares
 				List<String>allKeys=new LinkedList<>();
 				for(Developer d:matrix.keySet()){
-					//Se supone que tiene una sola issue, que es la nueva aun no asignada
 					for(Issue issue:d.getIssues()){
 							if(issue.getMetrics()!=null){
 								Map<String,Double> metrics=issue.getMetrics();
@@ -145,7 +145,7 @@ public class MatrixWeight {
 				Map<String,Map<String,Double>> metricsWithValuesByDevNormalized=new HashMap<String, Map<String,Double>>();
 				Normalize normalize=new Normalize();
 
-				//Se arma un map metricsWithValuesByDev que va a tener por cada metrica, un conjunto de valores estimados por cada desarrollador
+				//Se arma un map metricsWithValuesByDev que va a tener por cada metrica, un conjunto de valores estimados para cada desarrollador asignado en los casos similares
 				for(String k:allKeys){
 					Map<String,Double>ValuesByDev=new HashMap<String,Double>(); 
 					for(Developer developer:matrix.keySet()){
