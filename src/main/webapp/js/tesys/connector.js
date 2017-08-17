@@ -253,6 +253,24 @@ define(["jquery"], function($) {
     });
     	alert("LLego a la recomendacion");
   }
+  function putRealMetricsToNewIssues(metrics, issuesSelected, callback) {
+        $.ajax({
+          type: 'PUT',
+          url: location.origin+apiPath+'updateRealMetrics/'+issuesSelected +'/'+ metrics,
+          dataType: 'json', // data type of response
+          contentType: "application/json; charset=utf-8",
+          error: function(jqXHR, textStatus, errorThrown) {
+            alert("Error en el response de "+apiPath+"updateRealMetrics");
+            console.log(jqXHR, textStatus, errorThrown);
+          },
+          success: function(data) {
+        	  alert("success "+data);
+         	  callback(data);
+          }
+
+        });
+       alert("LLego al update");
+    }
     function allocateDeveloperIssue(selectedDeveloper, issueFromDevSelected){
         $.ajax({
           type: 'POST',
