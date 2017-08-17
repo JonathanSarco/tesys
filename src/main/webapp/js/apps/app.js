@@ -468,7 +468,7 @@ define(
      * Tab de Carga de Resultados 
      **/
     //Boton de recomendar
-    $('#"PutRealMetrics"').click(function(){	
+   /* $('#"PutRealMetrics"').click(function(){	
 	      var metrics = "";
 	      for (var m in metricsValuesRecommendation)
 	        metrics = metrics + m + ":" + metricsValuesRecommendation[m] + ", ";
@@ -476,7 +476,7 @@ define(
 	      tesys.putRealMetricsToNewIssues(metrics, issuesSelected.array[0].model.get('issueId'), addPredictionsRecommendations)
 	      //getDevRecommendationbyIssue(factorMetric,factorSkill,metrics,issuesSelected.array[0].model.get('issueId'), recommendationSelectedSkills.array,  addPredictionsRecommendations);
 	        
-	 }); 
+	 }); */
     /**
      * Fin Tab Resultados
      */

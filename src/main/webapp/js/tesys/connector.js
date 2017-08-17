@@ -253,7 +253,7 @@ define(["jquery"], function($) {
     });
     	alert("LLego a la recomendacion");
   }
-  function putRealMetricsToNewIssues(metrics, issuesSelected, callback) {
+ /** function putRealMetricsToNewIssues(metrics, issuesSelected, callback) {
         $.ajax({
           type: 'PUT',
           url: location.origin+apiPath+'updateRealMetrics/'+issuesSelected +'/'+ metrics,
@@ -270,7 +270,7 @@ define(["jquery"], function($) {
 
         });
        alert("LLego al update");
-    }
+    }*/
     function allocateDeveloperIssue(selectedDeveloper, issueFromDevSelected){
         $.ajax({
           type: 'POST',
