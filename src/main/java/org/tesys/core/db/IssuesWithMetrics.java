@@ -37,7 +37,7 @@ public class IssuesWithMetrics implements GenericQuery<List<Issue>>  {
 		String query = "{\"size\" : 500,\"query\" : {\"constant_score\" : {\"filter\" : {\"exists\" : {\"field\" : \"lines\"}} } } }";
 		try {
 			if (sprint == -1)
-				return dao.search("{\"size\" : 500,\"query\" : {\"bool\":{\"must\": { \"match_all\":{ } } } } }");
+				return dao.search("{\"query\" : {\"bool\":{\"must\": { \"match_all\":{ } } } } }");
 			else
 				return dao.search(query);
 		} catch (Exception e) {
