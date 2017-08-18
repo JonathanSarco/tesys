@@ -865,7 +865,20 @@ public class Controller {
 		daoDevUnasigned.update(devUnassigned.getId(), devUnassigned);
 		return response.build();
 	}
-
+	
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/updateRealMetrics/{issuesSelected}/{metrics}")
+	public Response updateRealMetrics(	
+			@PathParam("issuesSelected") String issue,
+			@PathParam("metrics") String metrics){
+		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
+	
+		return response.build();
+	}
+	
+	
 	private Developer removeIssue(Developer deveoperWithNew, String newIssue) {
 		List<Issue> updateDev = new LinkedList<Issue>();
 		for(Issue i: deveoperWithNew.getIssues()){

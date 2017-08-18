@@ -468,15 +468,13 @@ define(
      * Tab de Carga de Resultados 
      **/
     //Boton de recomendar
-   /* $('#"PutRealMetrics"').click(function(){	
+    $('#putRealMetrics').click(function(){	
 	      var metrics = "";
-	      for (var m in metricsValuesRecommendation)
-	        metrics = metrics + m + ":" + metricsValuesRecommendation[m] + ", ";
-	      metrics = metrics.substring(0,metrics.length-1);
-	      tesys.putRealMetricsToNewIssues(metrics, issuesSelected.array[0].model.get('issueId'), addPredictionsRecommendations)
-	      //getDevRecommendationbyIssue(factorMetric,factorSkill,metrics,issuesSelected.array[0].model.get('issueId'), recommendationSelectedSkills.array,  addPredictionsRecommendations);
-	        
-	 }); */
+	      for (var m in testMetricsValues)
+	        metrics = metrics + m + ":" + testMetricsValues[m] + ", ";
+	      metrics = metrics.substring(0,metrics.length-2);
+	      tesys.putRealMetricsToNewIssues(metrics, cbrIssuesSelected.array[0].model.get('issueId'));	   
+	 }); 
     /**
      * Fin Tab Resultados
      */
