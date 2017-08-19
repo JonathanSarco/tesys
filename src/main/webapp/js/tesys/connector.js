@@ -255,7 +255,7 @@ define(["jquery"], function($) {
   }
  function putRealMetricsToNewIssues(metrics, issuesSelected) {
         $.ajax({
-          type: 'PUT',
+          type: 'POST',
           url: location.origin+apiPath+'updateRealMetrics/'+issuesSelected +'/'+ metrics,
           dataType: 'json', // data type of response
           contentType: "application/json; charset=utf-8",
@@ -265,6 +265,7 @@ define(["jquery"], function($) {
           },
           success: function(data) {
         	  alert("success "+data);
+
           }
 
         });
@@ -305,6 +306,7 @@ define(["jquery"], function($) {
     getDevRecommendationbyIssue: getDevRecommendationbyIssue,
     allocateDeveloperIssue:allocateDeveloperIssue,
     //Test
-    getCbrIssues: getCbrIssues
+    getCbrIssues: getCbrIssues,
+    putRealMetricsToNewIssues:putRealMetricsToNewIssues
   };
 });

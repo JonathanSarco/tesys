@@ -59,7 +59,7 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
     public static final String DEFAULT_RESOURCE_CASE = "/cbr/case";
     public static final String DEFAULT_RESOURCE_CASEQUERY = "/cbr";
     public static final String DEFAULT_RESOURCE_UNASSIGNED_ISSUES = "/unassigned_issues/issues";
-    public static final String DEFAULT_RESOURCE_ESTIMATION_ISSUE = "/estimation";
+    public static final String DEFAULT_RESOURCE_ESTIMATION_ISSUE = "/estimation/issues";
 
 
     public static final String ES_URL = "http://localhost:9200/";

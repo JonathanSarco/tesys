@@ -875,6 +875,33 @@ public class Controller {
 			@PathParam("metrics") String metrics){
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 	
+		/*
+		 * Busco el caso por IsuueID
+		 */
+
+		SearchCasesByIssueQuery dnq = new SearchCasesByIssueQuery(issue);
+		Case similarIssueCase = dnq.execute();
+
+		/*
+		 * Se le asignan las metricas reales al desarrollador asignado
+		 */
+		Map<String,Double> metricsRecommendation = this.convertToMap(metrics);
+		similarIssueCase.getPerformIssue().getIssues().get(0).setMetrics(metricsRecommendation);
+	
+		/*
+		 * Metodo para hacer el update del caso
+		 */
+		
+		ElasticsearchDao<Case> dao;
+		try {
+			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
+			
+		} catch (Exception e) {
+			return response.build();
+		}
+		
+		dao.update(similarIssueCase.getIdCase(), similarIssueCase);
+		
 		return response.build();
 	}
 	
