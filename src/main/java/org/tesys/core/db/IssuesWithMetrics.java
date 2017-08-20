@@ -27,25 +27,17 @@ public class IssuesWithMetrics implements GenericQuery<List<Issue>>  {
 			this.dao = new ElasticsearchDao<Issue>(Issue.class,
 					ElasticsearchDao.DEFAULT_RESOURCE_SPRINT2);
 		}
-
 	}
-	
 	
 	@Override
 	public List<Issue> execute() {
 		//TODO el 500 habria que sacarlo con un getSize del elasticsearcdAO
-		String query = "{\"size\" : 500,\"query\" : {\"constant_score\" : {\"filter\" : {\"exists\" : {\"field\" : \"lines\"}} } } }";
+		String query = "{\"size\" : 10000,\"query\" : {\"constant_score\" : {\"filter\" : {\"exists\" : {\"field\" : \"lines\"}} } } }";
 		try {
-			if (sprint == -1)
-				return dao.search("{ \"size\": 10000, \"query\" : { \"match_all\":{ } } }");
-			else
-				return dao.search(query);
+			return dao.search(query);
 		} catch (Exception e) {
 			System.out.println("error");
 		}
 		return null;
 	}
-	
-	
-
 }

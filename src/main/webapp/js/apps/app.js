@@ -446,16 +446,18 @@ define(
 	          tesys.getDevRecommendationbyIssue(factorMetric,factorSkill,metrics,issuesSelected.array[0].model.get('issueId'), recommendationSelectedSkills.array,  addPredictionsRecommendations);
 	        }
 	 });  
+    
     /*
      * Botón de Asignar un developer a la nueva Issue
      */
+    
     $('#assingDeveloperBtn').click(function(){
   	 // $("#ajax_loader").show();
   	  if (selectedDeveloper.array.length != 0)
     	if (selectedDeveloper.array.length == 1) {
     		tesys.allocateDeveloperIssue(selectedDeveloper.array[0].model.get("name"), selectedDeveloper.array[0].model.attributes.issues.models[0].get('issueId'));
   	  } else {
-  		  alert("Debe seleccionar solo un desarrollador a asignar");
+  		  alert("Debe seleccionar solo un desarrollador para asignar");
   	  }
   		  
     });
@@ -467,17 +469,27 @@ define(
     /**
      * Tab de Carga de Resultados 
      **/
+   
     //Boton de recomendar
     $('#putRealMetrics').click(function(){	
-	      var metrics = "";
-	      for (var m in testMetricsValues)
-	        metrics = metrics + m + ":" + testMetricsValues[m] + ", ";
-	      metrics = metrics.substring(0,metrics.length-2);
-	      tesys.putRealMetricsToNewIssues(metrics, cbrIssuesSelected.array[0].model.get('issueId'));	   
+    	var metrics = "";
+    	for (var m in testMetricsValues)
+    		metrics = metrics + m + ":" + testMetricsValues[m] + ", ";
+    	metrics = metrics.substring(0,metrics.length-2);
+    	//Verifico que haya seleccionada una issue y luego si inserto una metrica
+    	if (cbrIssuesSelected.array.length > 0)
+    		if (metrics.length > 0)
+    			tesys.putRealMetricsToNewIssues(metrics, cbrIssuesSelected.array[0].model.get('issueId'));
+    		else
+    			alert ("Debe insertar una metrica");
+    	else
+    		alert ("Debe seleccionar una Issue para cargar las metricas")
 	 }); 
+    
     /**
      * Fin Tab Resultados
      */
+    
     // Extraccion de los datos desde Tesys al modelo de la UI
     tesys.getAnalysis(function(data){
       developers.reset(data);
