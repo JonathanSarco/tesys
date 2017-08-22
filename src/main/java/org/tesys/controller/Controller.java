@@ -835,7 +835,7 @@ public class Controller {
 		 * Elimino la issue de los developers y actualizo el desarrollador en los index eliminando la issue nueva
 		 * Si no existe en tesis la issue no pasa nda por no elimina ninguna issue. 
 		 */
-	
+		selectedDev.getIssues().get(0).setUser(selectedDeveloper);
 		modifCase.setPerformIssue(selectedDev);
 		
 		/* Busco el developer por name, El developer Seleccionado para asignarle la tarea y agrego la issue al vector 
@@ -893,14 +893,21 @@ public class Controller {
 		 */
 		
 		ElasticsearchDao<Case> dao;
+		ElasticsearchDao<Issue> daoEstimation;
 		try {
 			dao = new ElasticsearchDao<Case>(Case.class,ElasticsearchDao.DEFAULT_RESOURCE_CASE);
+			daoEstimation = new ElasticsearchDao<Issue>(Issue.class, ElasticsearchDao.DEFAULT_RESOURCE_ESTIMATION_ISSUE);
 			
 		} catch (Exception e) {
 			return response.build();
 		}
+		/*
+		 * Cálculo del Error Cuadrático Medico 
+		 */
 		
+		similarIssueCase.setErrorCuadraticoMedio(similarIssueCase.calculateMSEError());
 		dao.update(similarIssueCase.getIdCase(), similarIssueCase);
+		daoEstimation.update(similarIssueCase.getPerformIssue().getIssues().get(0).getIssueId(), similarIssueCase.getPerformIssue().getIssues().get(0));
 		
 		return response.build();
 	}

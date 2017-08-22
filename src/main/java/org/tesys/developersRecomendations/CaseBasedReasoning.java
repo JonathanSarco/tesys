@@ -198,7 +198,7 @@ public class CaseBasedReasoning {
 					}
 				}
 				else{
-					if(c.getPerformIssue().getName().equals(d.getName())){
+					if(c.getPerformIssue() != null && c.getPerformIssue().getName().equals(d.getName())){
 						aux.add(c.getPerformIssue());
 					}
 					else{

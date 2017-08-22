@@ -2,10 +2,8 @@ package org.tesys.core.estructures;
 
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,15 +13,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.tesys.core.analysis.skilltraceability.Skill;
-import org.tesys.correlations.DeveloperPrediction;
-import org.tesys.correlations.MetricPrediction;
-import org.tesys.orderCriteria.CriteriaBestValue;
-import org.tesys.orderCriteria.CriteriaSelector;
 import org.tesys.orderDeveloper.OrderByWeight;
-import org.tesys.orderDeveloper.OrderDevByValue;
 import org.tesys.orderDeveloper.OrderDevbyName;
-import org.tesys.util.MD5;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -64,8 +55,8 @@ public class Case  {
 
 	int goodRecommendation;
 	//String _id;
-
-
+	
+	double errorCuadraticoMedio;
 
 	public Case(){
 		// for jason
@@ -76,7 +67,7 @@ public class Case  {
 	}
 	public Case(Issue idIssue, Date idCase) {
 		super();
-		this.issue = issue;
+		this.issue = idIssue;
 		this.timestamp = idCase;
 	}
 
@@ -249,5 +240,44 @@ public class Case  {
 		}
 		return c;
 	}
-
+	public double getErrorCuadraticoMedio() {
+		return errorCuadraticoMedio;
+	}
+	public void setErrorCuadraticoMedio(double errorCuadraticoMedio) {
+		this.errorCuadraticoMedio = errorCuadraticoMedio;
+	}
+	public double calculateMSEError() {
+		double error= 0;
+		double cantidad = 0;
+		double promedio = 0;
+		/*
+		 * Busco el developer que llevo a cabo la issue para el cual cargo las metricas
+		 */
+		Developer devEstimatedMetrics = new Developer();
+		for(Developer d : this.issuesWithDevelopersRecommended){
+			if(d.getName().equals(this.performIssue.getName())){
+				devEstimatedMetrics = d;
+			}
+		}
+		
+		Map<String, Double> realMetrics = this.performIssue.getIssues().get(0).getMetrics();
+		Map<String, Double> estimatedMetrics = devEstimatedMetrics.getIssues().get(0).getMetrics();
+				
+		Set<String> keysReal = realMetrics.keySet();
+		Set<String> keysEstimated = estimatedMetrics.keySet();
+		
+		for(String m: keysReal){
+			if(keysEstimated != null && keysEstimated.contains(m)){
+				promedio += realMetrics.get(m);
+				error +=  Math.pow((realMetrics.get(m) - estimatedMetrics.get(m)), 2);
+				cantidad++;
+			}		}
+		if(cantidad>1){
+			promedio = promedio / cantidad;
+			error = Math.sqrt(error/cantidad);
+			return (error);
+		}
+		else 
+			return -1;
+	}
 }
