@@ -90,7 +90,7 @@ public class MatrixWeight {
 				
 				//Construye matriz con los desarrrolladores asignados de los casos similares
 				for(Case similarCase:similarCases){
-//					if(similarCase.getGoodRecommendation()==1){
+					if(similarCase.getGoodRecommendation()!=0){
 						if(similarCase.getPerformIssue() != null){
 							for(Developer d :similarCase.getIssuesWithDevelopersRecommended()){
 								if(d.getName().equals(similarCase.getPerformIssue().getName())){
@@ -99,7 +99,7 @@ public class MatrixWeight {
 									matrix.put(d, metrics);
 										}
 									}
-//								}
+								}
 					}	
 				}
 				
