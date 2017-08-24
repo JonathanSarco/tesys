@@ -906,6 +906,14 @@ public class Controller {
 		 */
 		
 		similarIssueCase.setErrorCuadraticoMedio(similarIssueCase.calculateMSEError());
+		if(similarIssueCase.getErrorCuadraticoMedio() != -1 && similarIssueCase.getErrorCuadraticoMedio() < 0.6)
+			similarIssueCase.setGoodRecommendation(1);
+		else{
+			if(similarIssueCase.getErrorCuadraticoMedio() != -1)
+				similarIssueCase.setGoodRecommendation(0);
+			else
+				similarIssueCase.setGoodRecommendation(-1);
+		}
 		dao.update(similarIssueCase.getIdCase(), similarIssueCase);
 		daoEstimation.update(similarIssueCase.getPerformIssue().getIssues().get(0).getIssueId(), similarIssueCase.getPerformIssue().getIssues().get(0));
 		
