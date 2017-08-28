@@ -54,9 +54,10 @@ public class Case  {
 	// *** Fin Criterio ***
 
 	int goodRecommendation;
-	//String _id;
 	
 	double errorCuadraticoMedio;
+	
+	double porcentajeErrorRelativoPromedio;
 
 	public Case(){
 		// for jason
@@ -276,6 +277,44 @@ public class Case  {
 			promedio = promedio / cantidad;
 			error = Math.sqrt(error/cantidad);
 			return (error);
+		}
+		else 
+			return -1;
+	}
+	
+	public void setPorcentajeErrorRelativoPromedio(double valor){
+		this.porcentajeErrorRelativoPromedio = valor;
+	}
+	
+	public double getPorcentajeErrorRelativoPromedio(){
+		return this.porcentajeErrorRelativoPromedio;
+	}
+	public double calculateERP() {
+		double error= 0;
+		double cantidad = 0;
+		/*
+		 * Busco el developer que llevo a cabo la issue para el cual cargo las metricas
+		 */
+		Developer devEstimatedMetrics = new Developer();
+		for(Developer d : this.issuesWithDevelopersRecommended){
+			if(d.getName().equals(this.performIssue.getName())){
+				devEstimatedMetrics = d;
+			}
+		}
+		
+		Map<String, Double> realMetrics = this.performIssue.getIssues().get(0).getMetrics();
+		Map<String, Double> estimatedMetrics = devEstimatedMetrics.getIssues().get(0).getMetrics();
+				
+		Set<String> keysReal = realMetrics.keySet();
+		Set<String> keysEstimated = estimatedMetrics.keySet();
+		
+		for(String m: keysReal){
+			if(keysEstimated != null && keysEstimated.contains(m)){
+				error += Math.abs(estimatedMetrics.get(m) - realMetrics.get(m))/Math.abs(estimatedMetrics.get(m))*100;
+				cantidad++;
+			}		}
+		if(cantidad>1){
+			return (error/cantidad);
 		}
 		else 
 			return -1;

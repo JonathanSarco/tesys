@@ -906,6 +906,7 @@ public class Controller {
 		 */
 		
 		similarIssueCase.setErrorCuadraticoMedio(similarIssueCase.calculateMSEError());
+		similarIssueCase.setPorcentajeErrorRelativoPromedio(similarIssueCase.calculateERP());
 		if(similarIssueCase.getErrorCuadraticoMedio() != -1 && similarIssueCase.getErrorCuadraticoMedio() < 0.6)
 			similarIssueCase.setGoodRecommendation(1);
 		else{
