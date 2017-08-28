@@ -882,6 +882,19 @@ public class Controller {
 		SearchCasesByIssueQuery dnq = new SearchCasesByIssueQuery(issue);
 		Case similarIssueCase = dnq.execute();
 
+		/**
+		 * Obtengo la Issue con las metricas estimadas del caso.
+		 * Tambien obtengo la Issue con metricas reales. 
+		 */
+		Developer devEstimatedMetrics = new Developer();
+		for(Developer d : similarIssueCase.getIssuesWithDevelopersRecommended()){
+			if(d.getName().equals(similarIssueCase.getPerformIssue().getName())){
+				devEstimatedMetrics = d;
+			}
+		}
+		Issue realMetrics = similarIssueCase.getPerformIssue().getIssues().get(0);
+		Issue estimatedMetrics = devEstimatedMetrics.getIssues().get(0);
+		
 		/*
 		 * Se le asignan las metricas reales al desarrollador asignado
 		 */
@@ -916,6 +929,16 @@ public class Controller {
 		}
 		dao.update(similarIssueCase.getIdCase(), similarIssueCase);
 		daoEstimation.update(similarIssueCase.getPerformIssue().getIssues().get(0).getIssueId(), similarIssueCase.getPerformIssue().getIssues().get(0));
+		
+		/**
+		 * Genero el vector de Issues con la Issue estimada y real, respectivamente para luego retornarlo
+		 */
+		List<Issue> issues = new LinkedList<Issue>();
+		issues.add(estimatedMetrics);
+		issues.add(realMetrics);
+		GenericEntity<List<Issue>> entity = new GenericEntity<List<Issue>>(issues) {};
+		response = Response.ok();
+		response.entity(entity);
 		
 		return response.build();
 	}

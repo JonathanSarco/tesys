@@ -125,6 +125,7 @@ define(
 	      }
 	    }] 
 	  });
+  
   var DeveloperRecommendationCollection = Backbone.Collection.extend({
 	    model: DeveloperRecommendation
 	  });

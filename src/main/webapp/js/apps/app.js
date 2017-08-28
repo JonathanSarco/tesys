@@ -27,8 +27,10 @@ define(
     
     // Definicion de objetos encargados de graficar sobre la UI (plotters)
     var metricsPlotter = new bar("metricChart");
-    var metricsRecommendationPlotter = new bar("recommendationMetricChart");
     var skillPlotter = new radar("skillChart");
+    var metricsRecommendationPlotter = new bar("recommendationMetricChart");
+    var metricsTestPlotter1 = new bar("testMetricChart1");
+    var metricsTestPlotter2 = new bar("testMetricChart2");
 
     // Definicion de Modelos.
     var developers = new model.DeveloperCollection();
@@ -36,6 +38,7 @@ define(
     var cbrIssues = new model.RecommendationCollection();
     var metrics = new model.MetricCollection() ;
     var skills = new model.MetricCollection() ;
+    
     
     /**
     * Modelo de Recomendacion
@@ -118,8 +121,8 @@ define(
             { collection: cbrIssues,
               selectedIssues: cbrIssuesSelected, 
               el: $('#issues-test')
-              //plotter: metricsRecommendationPlotter,
-              //attrToPlot: ['metrics']
+            //  plotter: metricsTestPlotter,
+            //  attrToPlot: ['metrics']
             }
     );  
     
@@ -187,6 +190,7 @@ define(
        el: $('#recomendationsSkillSelector'), 
        selectedSkills:recommendationSelectedSkills
       });
+    
     //Metricas para la recomendacion
     var metricsRecommendationView = new view.MetricCollectionView(
         {	collection: metricsRecommendation,
@@ -195,7 +199,8 @@ define(
             plotter: metricsRecommendationPlotter,
             type: 'metrics'
         });
-        
+     
+    
     /**
      * Elimina repetidos en un array
      * 
@@ -384,7 +389,7 @@ define(
       }
       console.log("Recomendacion "+predictionsRecommendation);
       devRecom.reset(predictionsRecommendation);
-    /*  
+   /*   
       metricsRecommendationPredicted.reset(
           selectMetricsFromModel(
           metricsRecommendation, 
@@ -397,7 +402,6 @@ define(
      * Testing
      * 
      */
-    
     //Vistas de la recomendacion. Seleccion de las metricas.
     var recommendationMetricsView = new view.MetricSelectView({
       collection: metricsRecommendation,
@@ -406,7 +410,6 @@ define(
     
     //Metricas de recomendacion
     var testMetricsValues = {};
-    //Hacer lo mismo que el insert de estimacion pero para la pestaña de recomendacion
     $('#testInserMetrictBtn').click(function(){
       var metricValue = parseFloat($('#testMetricInput').val());
        if (!isNaN(metricValue) && isFinite(metricValue)) {
@@ -434,7 +437,6 @@ define(
     //Boton de recomendar
     $('#RecommendDeveloperbyIssue').click(function(){
 //    	$("#ajax_loader").show();
-    	$("#loading-overlay").show();  	
 	      var metrics = "";
 	      for (var m in metricsValuesRecommendation)
 	        metrics = metrics + m + ":" + metricsValuesRecommendation[m] + ", ";
@@ -479,13 +481,59 @@ define(
     	//Verifico que haya seleccionada una issue y luego si inserto una metrica
     	if (cbrIssuesSelected.array.length > 0)
     		if (metrics.length > 0)
-    			tesys.putRealMetricsToNewIssues(metrics, cbrIssuesSelected.array[0].model.get('issueId'));
+    			tesys.putRealMetricsToNewIssues(metrics, cbrIssuesSelected.array[0].model.get('issueId'),estimatedAndRealMetricsCallback);
     		else
     			alert ("Debe insertar una metrica");
     	else
     		alert ("Debe seleccionar una Issue para cargar las metricas")
 	 }); 
     
+    var realMetrics = {array: []};;
+    var estimatedMetrics = {array: []};;
+    var testIssues = new model.IssueCollection();
+    var realMetricsSelected =  {array: []};
+    var metricsTestModel1 = new model.MetricCollection();
+    
+    var metricsToPlotTest1 = { array:[] };
+    var metricsToPlotTest2 = { array:[] };
+    
+    
+    function estimatedAndRealMetricsCallback (data) {
+    	estimatedMetrics.array = data[0];
+    	realMetrics.array = data[1];
+    }
+    
+    //Metricas para la pantalla de Test
+    var testMetricsView1 = new view.metricsTestView({ 
+	        estimatedMetrics : estimatedMetrics,
+	        plotter: metricsTestPlotter1,
+	        attrToPlot: ['metrics']
+	      });
+    
+    var metricsTestView1 = new view.MetricCollectionTestView(
+            { collection: metricsTestModel1, 
+              el: $('#testMetricsRecommendation'), 
+              metricsToPlot: metricsToPlotTest1,
+              plotter: metricsTestPlotter1,
+              type: 'metrics'
+            }
+      );
+    
+    var testMetricsView2 = new view.metricsTestView({ 
+	        estimatedMetrics : realMetrics,
+	        plotter: metricsTestPlotter2,
+	        attrToPlot: ['metrics']
+	      });
+
+    var metricsTestView2 = new view.MetricCollectionTestView(
+            { collection: metricsTestModel1, 
+              el: $('#testMetricsRecommendation'), 
+              metricsToPlot: metricsToPlotTest2,
+              plotter: metricsTestPlotter2,
+              type: 'metrics'
+            }
+      );
+
     /**
      * Fin Tab Resultados
      */
@@ -500,6 +548,7 @@ define(
       metrics.reset(data);
       //Metricas de la recomendacion 
       metricsRecommendation.reset(data);
+      metricsTestModel1.reset(data);
     });
 
 
@@ -521,6 +570,7 @@ define(
     tesys.getCbrIssues(function(data){
     	cbrIssues.reset(data);
     });
+  
     
     // On click tab for metrics then replot chart
     $('#myTab a[href="#metricPane"]').on('shown.bs.tab', function (e) {
@@ -595,9 +645,15 @@ define(
       metricsRecommendationPlotter.build(metricsToPlot.array);
       predPlotter.build();
     });
+  
+  $('#myTab a[href="#testMetricPane"]').on('shown.bs.tab', function (e) {
+      console.log(metricsToPlot.array);
+      metricsTestPlotter1.build(metricsToPlotTest1.array);
+      metricsTestPlotter2.build(metricsToPlotTest2.array);
+      predPlotter.build();
+    });
+  
   return { 
     'start': start 
   };
-  
-  
 });

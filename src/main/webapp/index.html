@@ -15,15 +15,13 @@
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
  
- <style type="text/css">
-			#loading-overlay { position: relative; top: 0; left: 0; right: 0; bottom: 0; background-color: #000; opacity: 0.7; }
-			</style>
 </head>
 <body id="body"> 
     <!-- Cambio nuevas versiones -->
     <script src="https://cdn.rangetouch.com/1.0.5/rangetouch.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 	<script data-main="js/boot-index.js" src="js/libs/require.js"></script>
 	<script type="text/javascript" src="js/libs/tablesorter/jquery.tablesorter.js"></script>
 	<script>
@@ -82,6 +80,7 @@
 		    });
 		});
     </script>
+    
 	<!-- Loading -->
 	<div id="loading-overlay" style="display: none;">	<div id='ajax_loader' style="position: fixed; left: 20%; top: 10%;">
 		<img src="css/loading/loading.gif"></img>
@@ -641,6 +640,39 @@
 							<ul class="list-group" id="testMetricListRecommendation" style="overflow-y: auto; height: 300px;"></ul>
 						</div>
 					</div>
+					
+					<div class="modal fade" id="modalTest">
+						  	<div class="modal-dialog">
+								<div class="modal-content"> 
+									<div class="modal-body" id="MainMenu6" style="overflow-y: auto;">
+										<div class="panel-heading">	
+											<ul class="nav nav-tabs" id="testRecommendationTab">
+												<li class="active"><a href="#testMetricPane" data-toggle="tab">Metrics</a></li>
+											</ul>
+										</div>											
+										<div class="panel-body">
+											<div class="tab-content">
+												<div class="tab-pane active panel-body" id="testMetricPane" style="height: auto; border-bottom: 1px solid #ddd;">
+												<!--contenido de un panel-->
+												<div class="col-md-3 list-group panel panel-default" style="overflow-y: auto; height: 400px;">
+													<input class="col-md-3 form-control" placeholder="Filter metric" type="text" id="testMetricFilterRecommendation" /> <br> <br>
+													<ul class="nav nav-stacked" id="testMetricsRecommendation">
+														<!--li><a> Metric 1 </a></li-->
+													</ul>
+												</div>
+												<div id="testMetricChart1" class="panel panel-default" style="height: 200px;"></div>
+												<div id="testMetricChart2" class="panel panel-default" style="height: 200px;"></div>
+												</div>
+												<!--/contenido de un panel-->
+											</div>
+										</div>									
+										<div class="modal-footer">
+											<a href="#" class="btn" data-dismiss="modal">Close</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 				</div>
 				<div class="controls">
 					<button type="button" class="btn btn-primary" id="putRealMetrics">Set Results</button>

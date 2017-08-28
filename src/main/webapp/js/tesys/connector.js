@@ -234,6 +234,7 @@ define(["jquery"], function($) {
           skillQuery+='&s='+skill;
         }
       });
+    
     $.ajax({
       type: 'PUT',
       url: location.origin+apiPath+'getDevRecommendationbyIssue/'+valueSkills+'/'+valueMetrics+'/'+metricsValuesRecomendation+'/'+sprint +'/' + issue + skillQuery,
@@ -251,10 +252,10 @@ define(["jquery"], function($) {
       }
 
     });
-    	alert("LLego a la recomendacion");
+    	//alert("LLego a la recomendacion");
   }
  
-    function putRealMetricsToNewIssues(metrics, issuesSelected) {
+    function putRealMetricsToNewIssues(metrics, issuesSelected, callback) {
         $.ajax({
           type: 'POST',
           url: location.origin+apiPath+'updateRealMetrics/'+issuesSelected +'/'+ metrics,
@@ -267,6 +268,7 @@ define(["jquery"], function($) {
           success: function(data) {
         	  alert("success "+data);
         	  callback(data);
+        	  $("#modalTest").modal('show');
           }
         });
     }
@@ -282,12 +284,11 @@ define(["jquery"], function($) {
           },
           success: function(data) {
         	  alert("success "+data);
-        	  callback(data);
-              $("#ajax_loader").hide();
+        	  //callback(data);
+        	  $("#ajax_loader").hide();
           }
 
         });
-        	alert("LLego a la asignación");
     }
 
   return {    
@@ -306,6 +307,6 @@ define(["jquery"], function($) {
     allocateDeveloperIssue:allocateDeveloperIssue,
     //Test
     getCbrIssues: getCbrIssues,
-    putRealMetricsToNewIssues:putRealMetricsToNewIssues
+    putRealMetricsToNewIssues: putRealMetricsToNewIssues
   };
 });
