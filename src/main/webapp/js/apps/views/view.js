@@ -644,7 +644,6 @@ define(
 		     */
 		    var issuesViewsToPlotTest = { array: [] } ;
 		    
-		    
 			var MetricLoadTestView = Backbone.View.extend({
 				//constants definition
 				UNSELECTED_COLOR: "white", 
@@ -672,21 +671,56 @@ define(
 					if(this.isSelected) {
 						this.el.style.backgroundColor = this.SELECTED_COLOR ;
 						this.options.metricsToPlot.array.push(this.model.get('key'));
+						issuesViewsToPlotTest.array.push(this);
 					} else {
 						this.el.style.backgroundColor = this.UNSELECTED_COLOR ;
 						this.options.metricsToPlot.array = _.without(
 								this.options.metricsToPlot.array, 
 								this.model.get('key')
 						);
+						issuesViewsToPlotTest.array = _.without(issuesViewsToPlot.array, this);
+						this.options.plotterEstimated.removeGraph(this.tagEstimated());
 					}
 
 					if (issuesViewsToPlotTest.array.length>=0){
-						this.options.plotter.build(this.options.metricsToPlot.array);
-						var self = this;
-						_(issuesViewsToPlotTest.array).each(function(issueView){
-							issueView.plotSingle(self.options.plotter, self.options.type);
-						});
+						this.options.plotterEstimated.build(this.options.metricsToPlot.array);
+						this.plotSingleEstimated(this.options.plotterEstimated, this.options.type);
 					} 
+
+				},
+
+				tagEstimated: function(){
+					return "Estimated: "+this.model.get('key') ;
+				},
+				
+				tagReal: function(){
+					return "Real: "+this.model.get('key');
+				},
+		
+				adaptEstimated: function(attributeToAdapt){
+					if (attributeToAdapt == 'metrics'){
+						return this.options.estimatedMetrics.array.metrics;
+					}
+				},
+				
+				adaptReal: function(attributeToAdapt){
+					if (attributeToAdapt == 'metrics'){
+						return this.options.realMetrics.array.metrics;
+					}
+				},
+
+				plotSingleEstimated: function(plotter, attr) {
+					if (plotter) {
+						var toPlot = this.adaptEstimated(attr) ;
+						if (!_.isEmpty(toPlot)){
+							plotter.addGraph(this.tagEstimated(), toPlot);
+						}
+						//Agregado
+						var toPlot2 = this.adaptReal(attr);
+						if (!_.isEmpty(toPlot2)){
+							plotter.addGraph(this.tagReal(), toPlot2);
+						}
+					}
 				}
 			});
 
@@ -709,10 +743,13 @@ define(
 				},
 				appendItem: function(item){
 					var metricView = new MetricLoadTestView(
-							{ model: item, 
+							{ 	model: item, 
 								metricsToPlot: this.options.metricsToPlot,
-								plotter: this.options.plotter,
-								type: this.options.type
+								estimatedMetrics: this.options.estimatedMetrics,
+								realMetrics: this.options.realMetrics,
+								plotterEstimated: this.options.plotterEstimated,
+								type: this.options.type,
+								attrToPlot: this.options.attrToPlot
 							}
 					);
 					this.$el.append(metricView.render().el);
@@ -794,6 +831,7 @@ define(
 					}
 				} 
 		    });
+			
 			
 			return {
 				IssueView: IssueView,

@@ -29,8 +29,7 @@ define(
     var metricsPlotter = new bar("metricChart");
     var skillPlotter = new radar("skillChart");
     var metricsRecommendationPlotter = new bar("recommendationMetricChart");
-    var metricsTestPlotter1 = new bar("testMetricChart1");
-    var metricsTestPlotter2 = new bar("testMetricChart2");
+    var metricsTestPlotterEstimated = new bar("testMetricChartEstimated");
 
     // Definicion de Modelos.
     var developers = new model.DeveloperCollection();
@@ -490,13 +489,9 @@ define(
     
     var realMetrics = {array: []};;
     var estimatedMetrics = {array: []};;
-    var testIssues = new model.IssueCollection();
-    var realMetricsSelected =  {array: []};
-    var metricsTestModel1 = new model.MetricCollection();
-    
-    var metricsToPlotTest1 = { array:[] };
-    var metricsToPlotTest2 = { array:[] };
-    
+   
+    var metricsTestModel = new model.MetricCollection();
+    var metricsToPlotTest = { array:[] };
     
     function estimatedAndRealMetricsCallback (data) {
     	estimatedMetrics.array = data[0];
@@ -504,36 +499,17 @@ define(
     }
     
     //Metricas para la pantalla de Test
-    var testMetricsView1 = new view.metricsTestView({ 
-	        estimatedMetrics : estimatedMetrics,
-	        plotter: metricsTestPlotter1,
-	        attrToPlot: ['metrics']
-	      });
-    
     var metricsTestView1 = new view.MetricCollectionTestView(
-            { collection: metricsTestModel1, 
+            { collection: metricsTestModel, 
               el: $('#testMetricsRecommendation'), 
-              metricsToPlot: metricsToPlotTest1,
-              plotter: metricsTestPlotter1,
-              type: 'metrics'
+              metricsToPlot: metricsToPlotTest,
+              estimatedMetrics: estimatedMetrics,
+              realMetrics: realMetrics,
+              plotterEstimated : metricsTestPlotterEstimated,
+              type: 'metrics',
+              attrToPlot: ['metrics']
             }
       );
-    
-    var testMetricsView2 = new view.metricsTestView({ 
-	        estimatedMetrics : realMetrics,
-	        plotter: metricsTestPlotter2,
-	        attrToPlot: ['metrics']
-	      });
-
-    var metricsTestView2 = new view.MetricCollectionTestView(
-            { collection: metricsTestModel1, 
-              el: $('#testMetricsRecommendation'), 
-              metricsToPlot: metricsToPlotTest2,
-              plotter: metricsTestPlotter2,
-              type: 'metrics'
-            }
-      );
-
     /**
      * Fin Tab Resultados
      */
@@ -548,7 +524,7 @@ define(
       metrics.reset(data);
       //Metricas de la recomendacion 
       metricsRecommendation.reset(data);
-      metricsTestModel1.reset(data);
+      metricsTestModel.reset(data);
     });
 
 
@@ -647,9 +623,8 @@ define(
     });
   
   $('#myTab a[href="#testMetricPane"]').on('shown.bs.tab', function (e) {
-      console.log(metricsToPlot.array);
-      metricsTestPlotter1.build(metricsToPlotTest1.array);
-      metricsTestPlotter2.build(metricsToPlotTest2.array);
+      metricsTestPlotterEstimated.build(metricsToPlotTest.array);
+      metricsTestPlotterReal.build(metricsToPlotTest.array);
       predPlotter.build();
     });
   
