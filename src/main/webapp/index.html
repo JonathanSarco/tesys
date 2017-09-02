@@ -11,17 +11,13 @@
 	<[if lt IE 9]>
       <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <[endif]-->
-	
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
  
 </head>
 <body id="body"> 
     <!-- Cambio nuevas versiones -->
-    <script src="https://cdn.rangetouch.com/1.0.5/rangetouch.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script type="text/javascript" src="js/libs/jquery-2.0.3.min.js"></script>
 	<script data-main="js/boot-index.js" src="js/libs/require.js"></script>
 	<script type="text/javascript" src="js/libs/tablesorter/jquery.tablesorter.js"></script>
 	<script>
@@ -80,6 +76,26 @@
 		    });
 		});
     </script>
+    <script>
+    $(document).ready(function() {
+		var sliderMetrics = document.getElementById("rangeMetrics");
+		var sliderSkills = document.getElementById("rangeSkills");
+		
+		var outputMetrics = document.getElementById("demoMetrics");
+		var outputSkills = document.getElementById("demoSkills");
+		
+		outputMetrics.innerHTML = sliderMetrics.value/10;
+		outputSkills.innerHTML = sliderSkills.value/10;
+		
+		sliderMetrics.oninput = function() {
+		  outputMetrics.innerHTML = this.value/10;
+		}
+		sliderSkills.oninput = function() {
+			  outputSkills.innerHTML = this.value/10;
+			}
+		
+    });
+	</script>
     
 	<!-- Loading -->
 	<div id="loading-overlay" style="display: none;">	<div id='ajax_loader' style="position: fixed; left: 20%; top: 10%;">
@@ -560,13 +576,15 @@
 							<input class="col-md-4 form-control" placeholder="Filter metric" type="text" id="metricfilter"/> <br> <br>
 							<ul class="nav nav-stacked" id="recomendationsSkillSelector"></ul>
 						</div>
-						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
+						<div id="slidecontainer" class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
 							<label>Metrics' Factor</label>
-							<input type="range" id="rangeMetrics" min="0" max="10">
+							<input type="range" id="rangeMetrics" min="0" max="10" value="5" class="slider">
+							<p>Value: <span id="demoMetrics"></span></p>
 						</div>
 						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
 							<label>Skills' Factor</label>
-							<input type="range" id="rangeSkills" min="0" max="10">
+							<input type="range" id="rangeSkills" min="0" max="10" value="5" class="slider">
+							<p>Value: <span id="demoSkills"></span></p>
 						</div>
 					</div>
 						<!-- Modal -->
