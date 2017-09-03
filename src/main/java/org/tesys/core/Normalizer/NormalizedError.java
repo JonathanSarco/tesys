@@ -7,16 +7,8 @@ import java.util.Set;
 
 import com.sun.xml.bind.v2.schemagen.xmlschema.List;
 
-public class Normalize {
+public class NormalizedError{
 
-	public Double calculate(Map<String, Double> metrics) {
-		Double sum=0.0;
-		Set<String> keys = metrics.keySet();
-		for(String k:keys){
-			sum+= Math.pow(metrics.get(k),2);
-		}
-		return Math.sqrt(sum);
-	}
 	
 	public Map<String,Double> calculateNorm(Map<String, Double> metrics) {
 

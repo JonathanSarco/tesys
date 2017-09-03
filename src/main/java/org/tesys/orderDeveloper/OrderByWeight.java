@@ -9,8 +9,6 @@ import java.util.List;
 import org.tesys.OrderWeight.MatrixWeight;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.MetricWeight;
-import org.tesys.orderCriteria.CriteriaBestValues;
-import org.tesys.orderCriteria.CriteriaSelector;
 
 import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 

@@ -888,9 +888,10 @@ public class Controller {
 		 */
 		Developer devEstimatedMetrics = new Developer();
 		for(Developer d : similarIssueCase.getIssuesWithDevelopersRecommended()){
-			if(d.getName().equals(similarIssueCase.getPerformIssue().getName())){
-				devEstimatedMetrics = d;
-			}
+			if(similarIssueCase.getPerformIssue()!=null)
+				if(d.getName().equals(similarIssueCase.getPerformIssue().getName())){
+					devEstimatedMetrics = d;
+				}
 		}
 		Issue realMetrics = similarIssueCase.getPerformIssue().getIssues().get(0);
 		Issue estimatedMetrics = devEstimatedMetrics.getIssues().get(0);

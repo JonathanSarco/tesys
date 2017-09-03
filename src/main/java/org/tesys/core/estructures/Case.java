@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.tesys.core.Normalizer.Normalize;
+import org.tesys.core.Normalizer.NormalizedError;
 import org.tesys.orderDeveloper.OrderByWeight;
 import org.tesys.orderDeveloper.OrderDevbyName;
 
@@ -251,7 +251,7 @@ public class Case  {
 	public double calculateMSEError() {
 		double error= 0;
 		double cantidad = 0;
-		double promedio = 0;
+//		double promedio = 0;
 		/*
 		 * Busco el developer que llevo a cabo la issue para el cual cargo las metricas
 		 */
@@ -264,7 +264,7 @@ public class Case  {
 		
 		Map<String, Double> realMetrics = this.performIssue.getIssues().get(0).getMetrics();
 		Map<String, Double> estimatedMetrics = devEstimatedMetrics.getIssues().get(0).getMetrics();
-		Normalize normalizeMetrics = new Normalize();
+		NormalizedError normalizeMetrics = new NormalizedError();
 		realMetrics = normalizeMetrics.calculateNorm(realMetrics);
 		estimatedMetrics = normalizeMetrics.calculateNorm(estimatedMetrics);
 				
@@ -273,13 +273,15 @@ public class Case  {
 		
 		for(String m: keysReal){
 			if(keysEstimated != null && keysEstimated.contains(m)){
-				promedio += realMetrics.get(m);
+//				promedio += realMetrics.get(m);
 				error +=  Math.pow((realMetrics.get(m) - estimatedMetrics.get(m)), 2);
 				cantidad++;
-			}		}
+			}		
+		}
 		if(cantidad>1){
-			promedio = promedio / cantidad;
-			error = Math.sqrt(error/cantidad);
+//			promedio = promedio / cantidad;
+//			error = Math.sqrt(error/cantidad);
+			error = error/cantidad;
 			return (error);
 		}
 		else 
