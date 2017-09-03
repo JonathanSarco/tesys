@@ -245,14 +245,16 @@ define(["jquery"], function($) {
         console.log(jqXHR, textStatus, errorThrown);
       },
       success: function(data) {
-    	  alert("success "+data);
-     	  callback(data);
-          $("#loading-overlay").hide();
-          $("#modalDevelopers").modal('show');
+    	  if (data.length == 0) 
+    		  alert("No existen desarrolladores recomendados para la tarea seleccionada");
+    	  else {
+    		  callback(data);
+    		  $("#loading-overlay").hide();
+    		  $("#modalDevelopers").modal('show');
+    	  }
       }
 
     });
-    	//alert("LLego a la recomendacion");
   }
  
     function putRealMetricsToNewIssues(metrics, issuesSelected, callback) {
@@ -266,7 +268,7 @@ define(["jquery"], function($) {
             console.log(jqXHR, textStatus, errorThrown);
           },
           success: function(data) {
-        	  alert("success "+data);
+        	  alert("Se han asignado de manera correcta las metricas reales");
         	  callback(data);
         	  $("#modalTest").modal('show');
           }
@@ -283,9 +285,9 @@ define(["jquery"], function($) {
             console.log(jqXHR, textStatus, errorThrown);
           },
           success: function(data) {
-        	  alert("success "+data);
-        	  //callback(data);
-        	  $("#ajax_loader").hide();
+        	  alert("Se ha asignado correctamente el desarrollador seleccionado");
+        	  $("#modalDevelopers").modal('hide');
+        	  location.reload();
           }
 
         });

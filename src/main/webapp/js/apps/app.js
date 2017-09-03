@@ -334,6 +334,7 @@ define(
 
     //Metricas de recomendacion
     var metricsValuesRecommendation = {};
+    
     //Hacer lo mismo que el insert de estimacion pero para la pestaña de recomendacion
     $('#recomendationInsertBtn').click(function(){
       var metricValue = parseFloat($('#recomendationMetricInput').val());
@@ -363,7 +364,6 @@ define(
     var predictionsRecommendation = []; //Developers a partir de las metricas seleccionadas.
 
     function addPredictionsRecommendations (data) {
-      //console.log("dentro de la funcion, dta "+data);
     	predictionsRecommendation = []
       if (predictionsRecommendation === undefined || predictionsRecommendation.length === 0) {
         predictionsRecommendation = data ;
@@ -388,27 +388,48 @@ define(
       }
       console.log("Recomendacion "+predictionsRecommendation);
       devRecom.reset(predictionsRecommendation);
-   /*   
-      metricsRecommendationPredicted.reset(
-          selectMetricsFromModel(
-          metricsRecommendation, 
-          metricSetFromPredictions(predictionsRecommendation)
-        ).models
-      );*/
     }
     
+    //Boton de recomendar
+    $('#RecommendDeveloperbyIssue').click(function(){
+    	if ( issuesSelected.array.length != 0 ) {
+			var metrics = "";
+			for (var m in metricsValuesRecommendation)
+				metrics = metrics + m + ":" + metricsValuesRecommendation[m] + ", ";
+			metrics = metrics.substring(0,metrics.length-1);
+			var minCorrelation = parseFloat($('#recommendationCorrelation').val());
+			var factorMetric = parseFloat($('#rangeMetrics').val()/10);
+			var factorSkill = parseFloat($('#rangeSkills').val()/10);
+			if (minCorrelation <= 1.0) {  
+				tesys.getDevRecommendationbyIssue(factorMetric,factorSkill,metrics,issuesSelected.array[0].model.get('issueId'), recommendationSelectedSkills.array,  addPredictionsRecommendations);
+			}
+    	} else alert("Debe seleccionar una tarea para poder recomendar");
+    		
+    }); 
+    
+    //Botón de Asignar un developer a la nueva Issue
+    $('#assingDeveloperBtn').click(function(){
+  	  if (selectedDeveloper.array.length != 0)
+    	if (selectedDeveloper.array.length == 1) {
+    		tesys.allocateDeveloperIssue(selectedDeveloper.array[0].model.get("name"), selectedDeveloper.array[0].model.attributes.issues.models[0].get('issueId'));
+  	  } else {
+  		  alert("Debe seleccionar solo un desarrollador para asignar");
+  	  }
+  		  
+    });
+
     /**
-     * Testing
-     * 
-     */
+     * Tab de Carga de Resultados 
+     **/
+  
     //Vistas de la recomendacion. Seleccion de las metricas.
     var recommendationMetricsView = new view.MetricSelectView({
       collection: metricsRecommendation,
       el: $('#testMetricSelect2')
     })
     
-    //Metricas de recomendacion
     var testMetricsValues = {};
+    
     $('#testInserMetrictBtn').click(function(){
       var metricValue = parseFloat($('#testMetricInput').val());
        if (!isNaN(metricValue) && isFinite(metricValue)) {
@@ -432,46 +453,8 @@ define(
         alert("Inserte una metrica valida");
       }
     });
-
-    //Boton de recomendar
-    $('#RecommendDeveloperbyIssue').click(function(){
-//    	$("#ajax_loader").show();
-	      var metrics = "";
-	      for (var m in metricsValuesRecommendation)
-	        metrics = metrics + m + ":" + metricsValuesRecommendation[m] + ", ";
-	      metrics = metrics.substring(0,metrics.length-1);
-	      var minCorrelation = parseFloat($('#recommendationCorrelation').val());
-	      var factorMetric = parseFloat($('#rangeMetrics').val()/10);
-	      var factorSkill = parseFloat($('#rangeSkills').val()/10);
-	      if (minCorrelation <= 1.0) {  
-	          tesys.getDevRecommendationbyIssue(factorMetric,factorSkill,metrics,issuesSelected.array[0].model.get('issueId'), recommendationSelectedSkills.array,  addPredictionsRecommendations);
-	        }
-	 });  
-    
-    /*
-     * Botón de Asignar un developer a la nueva Issue
-     */
-    
-    $('#assingDeveloperBtn').click(function(){
-  	 // $("#ajax_loader").show();
-  	  if (selectedDeveloper.array.length != 0)
-    	if (selectedDeveloper.array.length == 1) {
-    		tesys.allocateDeveloperIssue(selectedDeveloper.array[0].model.get("name"), selectedDeveloper.array[0].model.attributes.issues.models[0].get('issueId'));
-  	  } else {
-  		  alert("Debe seleccionar solo un desarrollador para asignar");
-  	  }
-  		  
-    });
-
-      /**
-      * Fin de pestaña de RECOMENDACIONES
-      **/
-
-    /**
-     * Tab de Carga de Resultados 
-     **/
    
-    //Boton de recomendar
+    //Boton de Insertar metricas reales
     $('#putRealMetrics').click(function(){	
     	var metrics = "";
     	for (var m in testMetricsValues)
@@ -499,7 +482,7 @@ define(
     }
     
     //Metricas para la pantalla de Test
-    var metricsTestView1 = new view.MetricCollectionTestView(
+    var metricsTestView = new view.MetricCollectionTestView(
             { collection: metricsTestModel, 
               el: $('#testMetricsRecommendation'), 
               metricsToPlot: metricsToPlotTest,
@@ -510,14 +493,10 @@ define(
               attrToPlot: ['metrics']
             }
       );
-    /**
-     * Fin Tab Resultados
-     */
     
     // Extraccion de los datos desde Tesys al modelo de la UI
     tesys.getAnalysis(function(data){
       developers.reset(data);
-      //developerRecommendation.reset(data);
     });
 
     tesys.getMetrics(function(data){
@@ -615,13 +594,15 @@ define(
       ); 
     });
   };
-  //Boton graficar
+  
+  //Graficas metricas de Recomendacion
   $('#myTab a[href="#recommendationMetricPane"]').on('shown.bs.tab', function (e) {
       console.log(metricsToPlot.array);
       metricsRecommendationPlotter.build(metricsToPlot.array);
       predPlotter.build();
     });
   
+  //Graficas metricas de Test
   $('#myTab a[href="#testMetricPane"]').on('shown.bs.tab', function (e) {
       metricsTestPlotterEstimated.build(metricsToPlotTest.array);
       metricsTestPlotterReal.build(metricsToPlotTest.array);
