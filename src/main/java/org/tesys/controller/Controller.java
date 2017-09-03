@@ -882,6 +882,13 @@ public class Controller {
 		SearchCasesByIssueQuery dnq = new SearchCasesByIssueQuery(issue);
 		Case similarIssueCase = dnq.execute();
 
+		
+		/*
+		 * Se le asignan las metricas reales al desarrollador asignado
+		 */
+		Map<String,Double> metricsRecommendation = this.convertToMap(metrics);
+		similarIssueCase.getPerformIssue().getIssues().get(0).setMetrics(metricsRecommendation);
+		
 		/**
 		 * Obtengo la Issue con las metricas estimadas del caso.
 		 * Tambien obtengo la Issue con metricas reales. 
@@ -896,11 +903,7 @@ public class Controller {
 		Issue realMetrics = similarIssueCase.getPerformIssue().getIssues().get(0);
 		Issue estimatedMetrics = devEstimatedMetrics.getIssues().get(0);
 		
-		/*
-		 * Se le asignan las metricas reales al desarrollador asignado
-		 */
-		Map<String,Double> metricsRecommendation = this.convertToMap(metrics);
-		similarIssueCase.getPerformIssue().getIssues().get(0).setMetrics(metricsRecommendation);
+
 	
 		/*
 		 * Metodo para hacer el update del caso
