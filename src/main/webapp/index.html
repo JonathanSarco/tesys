@@ -548,20 +548,14 @@
 					<div id="MainMenu3" class="col-md-4" style="width: auto; height: auto">
 						<div class="list-group panel panel-default">
 							<div class="panel-heading">
-								<h4><i class="glyphicon glyphicon-user"></i> Issues</h4>
+								<h4><i class="glyphicon glyphicon-user"></i> Unassigned Issues</h4>
 							</div>
 							<div class="panel-body" style=" width: 300px; overflow-y: auto; height: 420px;" id="issues-reco"></div>
-						</div>
-						<div class="control-group">
-							<div class="controls">
-								<a data-toggle="modal" class="btn btn-primary" role="button" id="RecommendDeveloperbyIssue">Recommend Developer</a>
-								<input type="hidden" placeholder="Minimal Correlation"  id="recommendationCorrelation" value="0.95">
-							</div>
 						</div>
 					</div>
 				<div class="row">
 					<div class="row">
-						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
+						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 250px; padding-right:2px;">
 						    <div class="input-group">
 						     <input type="text" class="form-control" placeholder="Metric Value"  id="recomendationMetricInput">
 						      <span class="input-group-btn">
@@ -570,21 +564,26 @@
 						    </div>
 							<div> <select class="form-control" id="recomendationMetricSelect2"></select> </div>
 							<ul class="list-group" id="metricListRecommendation" style="overflow-y: auto; height: 300px;"></ul>
-							
 						</div>
-						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
+						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 250px; padding-right:2px;">
 							<input class="col-md-4 form-control" placeholder="Filter metric" type="text" id="metricfilter"/> <br> <br>
 							<ul class="nav nav-stacked" id="recomendationsSkillSelector"></ul>
 						</div>
-						<div id="slidecontainer" class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
+						<div id="slidecontainer" class="col-md-4 list-group " style="overflow-y: auto; height: 150px; padding:20px">
 							<label>Metrics' Factor</label>
 							<input type="range" id="rangeMetrics" min="0" max="10" value="5" class="slider">
 							<p>Value: <span id="demoMetrics"></span></p>
 						</div>
-						<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
+						<div class="col-md-4 list-group " style="overflow-y: auto; height: 150px; padding-left:10px;padding:20px;">
 							<label>Skills' Factor</label>
 							<input type="range" id="rangeSkills" min="0" max="10" value="5" class="slider">
 							<p>Value: <span id="demoSkills"></span></p>
+						</div>
+						<div class="col-md-8 list-group">
+							<div class="controls" style="float:right;">
+								<a data-toggle="modal" class="btn btn-primary" role="button" id="RecommendDeveloperbyIssue">Recommend Developer</a>
+								<input type="hidden" placeholder="Minimal Correlation"  id="recommendationCorrelation" value="0.95">
+							</div>
 						</div>
 					</div>
 						<!-- Modal -->
@@ -598,7 +597,7 @@
 											</div>
 											<div class="panel-body" style="overflow-y: auto; height: 400px;" id="developers-predictions-recommendation"></div>
 										</div>
-										<div class="col-md-8">
+										<div class="col-md-9">
 											<div class="panel" style="border: 0px solid transparent; border-radius: 0px; -webkit-box-shadow: 0 0px 0px rgba(0, 0, 0, .05);box-shadow: 0 0px 0px rgba(0, 0, 0, .05)">
 												<div class="panel-heading">	
 													<ul class="nav nav-tabs" id="recommendationTab">
@@ -609,10 +608,9 @@
 													<div class="tab-content">
 														<div class="tab-pane active panel-body" id="recommendationMetricPane" style="height: auto; border-bottom: 1px solid #ddd;">
 														<!--contenido de un panel-->
-														<div class="col-md-3 list-group panel panel-default" style="overflow-y: auto; height: 400px;">
-															<input class="col-md-3 form-control" placeholder="Filter metric" type="text" id="metricFilterRecommendation" /> <br> <br>
+														<div class="col-md-4 list-group panel panel-default" style="overflow-y: auto; height: 400px;">
+															<input class="col-md-4 form-control" placeholder="Filter metric" type="text" id="metricFilterRecommendation" /> <br> <br>
 															<ul class="nav nav-stacked" id="metricsRecommendation">
-																<!--li><a> Metric 1 </a></li-->
 															</ul>
 														</div>
 														<div id="recommendationMetricChart" class="panel panel-default" style="height: 400px;"></div>
@@ -642,12 +640,12 @@
 							<div class="panel-heading">
 								<h4><i class="glyphicon glyphicon-user"></i> Issues</h4>
 							</div>
-							<div id="issues-test" class="panel-body" style=" width: 300px; overflow-y: auto; height: 420px;"></div>
+							<div id="issues-test" class="panel-body" style=" width: 300px; overflow-y: auto; height: 305px;"></div>
 						</div>
 					</div>
 				<div class="row">
 					<div class="row">
-						<div class="col-md-6 list-group panel panel-default" style="overflow-y: auto; height: 200px;">
+						<div class="col-md-6 list-group panel panel-default" style="overflow-y: auto; height: 370px; padding-right:2px;">
 						    <div class="input-group">
 						     <input type="text" class="form-control" placeholder="Metric Value"  id="testMetricInput">
 						      <span class="input-group-btn">
@@ -658,6 +656,12 @@
 							<ul class="list-group" id="testMetricListRecommendation" style="overflow-y: auto; height: 300px;"></ul>
 						</div>
 					</div>
+				
+				<div class="col-md-10 list-group" >
+					<div class="controls" style="float:right;">
+						<button type="button" class="btn btn-primary" id="putRealMetrics">Set Results</button>
+					</div>
+				</div>
 					
 					<div class="modal fade" id="modalTest">
 						  	<div class="modal-dialog">
@@ -691,9 +695,7 @@
 							</div>
 						</div>
 				</div>
-				<div class="controls">
-					<button type="button" class="btn btn-primary" id="putRealMetrics">Set Results</button>
-				</div>
+
 			</div>
 		</div>
 	</div>
