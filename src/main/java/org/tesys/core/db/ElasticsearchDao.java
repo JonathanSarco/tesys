@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.tesys.util.RESTClient;
@@ -38,6 +39,7 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
     protected static final String SOURCE = "/_source";
     protected static final String QUERY = "/_search";
     protected static final String SCROLL = "/scroll";
+    protected static final String QUERY_COUNT = "/_search?search_type=count";
 
     // Default resources
     public static final String DEFAULT_RESOURCE_MAPPING = "/scm/user";
@@ -60,6 +62,7 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
     public static final String DEFAULT_RESOURCE_CASEQUERY = "/cbr";
     public static final String DEFAULT_RESOURCE_UNASSIGNED_ISSUES = "/unassigned_issues/issues";
     public static final String DEFAULT_RESOURCE_ESTIMATION_ISSUE = "/estimation/issues";
+    public static final String DEFAULT_RESOURCE_ESTIMATION = "/estimation";
 
 
     public static final String ES_URL = "http://localhost:9200/";
@@ -189,6 +192,18 @@ public class ElasticsearchDao<T extends Object> implements GenericDao<T> {
 	} catch (Exception e) {
 	    LOG.log(Level.SEVERE, e.toString());
 	    return new ArrayList<T>();
+	}
+    }
+    
+    public Object searchCount(String query, String valueName) {
+	try {
+	    Object arrayNode =(Object) client
+			    .POST(UriBuilder.fromPath(resource).path(QUERY).toString(),
+					    query).readEntity(JsonNode.class).get("aggregations").get(valueName).get("value");
+	    return arrayNode;
+	} catch (Exception e) {
+	    LOG.log(Level.SEVERE, e.toString());
+	    return new Object();
 	}
     }
     

@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.tesys.core.Normalizer.Normalize;
 import org.tesys.orderDeveloper.OrderByWeight;
 import org.tesys.orderDeveloper.OrderDevbyName;
 
@@ -263,6 +264,9 @@ public class Case  {
 		
 		Map<String, Double> realMetrics = this.performIssue.getIssues().get(0).getMetrics();
 		Map<String, Double> estimatedMetrics = devEstimatedMetrics.getIssues().get(0).getMetrics();
+		Normalize normalizeMetrics = new Normalize();
+		realMetrics = normalizeMetrics.calculateNorm(realMetrics);
+		estimatedMetrics = normalizeMetrics.calculateNorm(estimatedMetrics);
 				
 		Set<String> keysReal = realMetrics.keySet();
 		Set<String> keysEstimated = estimatedMetrics.keySet();

@@ -11,7 +11,7 @@ import org.tesys.core.db.SearchCaseByIssueAndSkillsQuery;
 import org.tesys.core.estructures.Case;
 import org.tesys.core.estructures.Developer;
 import org.tesys.core.estructures.Issue;
-import org.tesys.orderCriteria.Normalize;
+import org.tesys.core.Normalizer.Normalize;
 import org.tesys.recomendations.SimilarCaseByIssueSkill;
 
 public class MatrixWeight {
@@ -142,7 +142,7 @@ public class MatrixWeight {
 				}
 				
 				Map<String,Map<String,Double>> metricsWithValuesByDev=new HashMap<String, Map<String,Double>>();
-				Map<String,Map<String,Double>> metricsWithValuesByDevNormalized=new HashMap<String, Map<String,Double>>();
+			//	Map<String,Map<String,Double>> metricsWithValuesByDevNormalized=new HashMap<String, Map<String,Double>>();
 				Normalize normalize=new Normalize();
 
 				//Se arma un map metricsWithValuesByDev que va a tener por cada metrica, un conjunto de valores estimados para cada desarrollador asignado en los casos similares
@@ -151,9 +151,11 @@ public class MatrixWeight {
 					for(Developer developer:matrix.keySet()){
 						for( Issue issue :developer.getIssues()){
 								if(issue.getMetrics()!=null){
-									if(issue.getMetrics().containsKey(k)){
+									Map<String, Double> normalizeMetric = issue.getMetrics();
+									normalizeMetric = normalize.calculateNorm(normalizeMetric);
+									if(normalizeMetric.containsKey(k)){
 										Map<String,Double> metrics=issue.getMetrics();
-										Double value=metrics.get(k);
+										Double value=normalizeMetric.get(k);
 										ValuesByDev.put(developer.getName(),value);
 										metricsWithValuesByDev.put(k,ValuesByDev);
 									}
@@ -167,13 +169,13 @@ public class MatrixWeight {
 						}
 					}
 					//Normalizacion de los valores de la matriz
-					Map<String,Double> ValuesByDevNormalized = normalize.calculateNorm(ValuesByDev);
-					metricsWithValuesByDevNormalized.put(k,ValuesByDevNormalized);
+				//	Map<String,Double> ValuesByDevNormalized = normalize.calculateNorm(ValuesByDev);
+				//	metricsWithValuesByDevNormalized.put(k,ValuesByDevNormalized);
 				}
 								
 					
 				CalculateWeight m=new CalculateWeight();
-				return m.calculate(metricsWithValuesByDevNormalized);
+				return m.calculate(metricsWithValuesByDev);
 					
 	}
 	
