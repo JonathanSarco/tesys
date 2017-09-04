@@ -609,6 +609,10 @@ define(
       predPlotter.build();
     });
   
+  $('#closeRealMetrics').click(function() {
+      location.reload(); 
+    });
+  
   return { 
     'start': start 
   };
