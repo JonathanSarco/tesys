@@ -652,8 +652,6 @@ public class Controller {
 	@Path("/issues")
 	public Response getAllIssues()	{
 
-		AnalysisVersionsQuery avq = new AnalysisVersionsQuery();
-		List<Long> versiones = avq.execute();
 		ElasticsearchDao<UnassignedDeveloper> dao;
 		ResponseBuilder response = Response.ok("{\"status\":\"404\"}");
 

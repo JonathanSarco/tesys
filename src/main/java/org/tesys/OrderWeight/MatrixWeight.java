@@ -141,13 +141,13 @@ public class MatrixWeight {
 					}
 				}
 				
-				Map<String,Map<String,Double>> metricsWithValuesByDev=new HashMap<String, Map<String,Double>>();
-				Map<String,Map<String,Double>> metricsWithValuesByDevNormalized=new HashMap<String, Map<String,Double>>();
+				Map<String,Map<Developer,Double>> metricsWithValuesByDev=new HashMap<String, Map<Developer,Double>>();
+				Map<String,Map<Developer,Double>> metricsWithValuesByDevNormalized=new HashMap<String, Map<Developer,Double>>();
 				NormalizeWeight normalize=new NormalizeWeight();
 
 				//Se arma un map metricsWithValuesByDev que va a tener por cada metrica, un conjunto de valores estimados para cada desarrollador asignado en los casos similares
 				for(String k:allKeys){
-					Map<String,Double>ValuesByDev=new HashMap<String,Double>(); 
+					Map<Developer,Double>ValuesByDev=new HashMap<Developer,Double>(); 
 					for(Developer developer:matrix.keySet()){
 						for( Issue issue :developer.getIssues()){
 								if(issue.getMetrics()!=null){
@@ -156,20 +156,20 @@ public class MatrixWeight {
 									if(issue.getMetrics().containsKey(k)){
 										Map<String,Double> metrics=issue.getMetrics();
 										Double value=metrics.get(k);
-										ValuesByDev.put(developer.getName(),value);
+										ValuesByDev.put(developer,value);
 										metricsWithValuesByDev.put(k,ValuesByDev);
 									}
 									//Si no tienen valor para esa métrica, se les coloca cero como valor para la metrica
 									//Solo se considera los valores 0 para la matriz de la entropia
 									else{
-										ValuesByDev.put(developer.getName(),0.0);
+										ValuesByDev.put(developer,0.0);
 										metricsWithValuesByDev.put(k,ValuesByDev);
 									}
 							}
 						}
 					}
 					//Normalizacion de los valores de la matriz por columna
-					Map<String,Double> ValuesByDevNormalized = normalize.calculateNorm(ValuesByDev);
+					Map<Developer,Double> ValuesByDevNormalized = normalize.calculateNorm(ValuesByDev);
 					metricsWithValuesByDevNormalized.put(k,ValuesByDevNormalized);
 				
 				}

@@ -118,11 +118,12 @@ public class CaseBasedReasoning {
 		double correlationVariation=0.1;
 		List<DeveloperPrediction> developerPredictions = new LinkedList<DeveloperPrediction>();
 		Iterator<String> metricsKeys = desiredmetrics.keySet().iterator();
+
 		while( metricsKeys.hasNext() ) {
 			String key = metricsKeys.next();
 		    Double valueKey = desiredmetrics.get(key);
 			//*** Issue se completa con las metricas estimadas y luego se agrega al developer ***
-		    developerPredictions = predictions.getPredictions(key, valueKey, correlationVariation, -1, skills);
+		    developerPredictions.addAll( predictions.getPredictions(key, valueKey, correlationVariation, -1, skills) );
 		}
 		List<Developer> developerWithNewIssue = new LinkedList<Developer>();
 		similarDevelopersPredictions=new LinkedList<DeveloperPrediction>();
@@ -245,12 +246,21 @@ public class CaseBasedReasoning {
 
 	private static List<Developer> getAllSimilarDevelopers(List<SimilarIssue> similarIssues) {
 		List<Developer> developers = new LinkedList<Developer>();
+		
 		for(SimilarIssue si : similarIssues){
-			if(!developers.contains(si.getDeveloper())){
+			if(!conteinsDev(developers, si.getDeveloper())){
 				developers.add(si.getDeveloper());
 			}
 		}
 		return developers;
+	}
+
+	private static boolean conteinsDev(List<Developer> developers, Developer developer) {
+		for(Developer dev: developers){
+			if(dev.getName().equals(developer.getName()))
+				return true;
+		}
+		return false;
 	}
 
 	//Para setear el criterio de orden a los nuevos casos, ver donde lo llamo
