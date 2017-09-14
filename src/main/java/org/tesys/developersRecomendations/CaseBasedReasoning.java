@@ -194,16 +194,19 @@ public class CaseBasedReasoning {
 								List<Issue> newIssues = d.getIssues();
 								newIssues.addAll(devAddIssue.getIssues());
 								devAddIssue.setIssues(newIssues);
-								aux.add(devAddIssue);				
+								if(!containsDeveloper(aux, devAddIssue))
+									aux.add(devAddIssue);
 						}
 					}
 				}
 				else{
 					if(c.getPerformIssue() != null && c.getPerformIssue().getName().equals(d.getName())){
-						aux.add(c.getPerformIssue());
+						if(!containsDeveloper(aux, d))
+							aux.add(c.getPerformIssue());
 					}
 					else{
-						aux.add(d);
+						if(!containsDeveloper(aux, d))
+							aux.add(d);
 					}
 				}
 			}
