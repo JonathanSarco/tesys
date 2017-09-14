@@ -188,26 +188,22 @@ public class CaseBasedReasoning {
 		for(Case c: similarCases){
 			for(Developer d: c.getIssuesWithDevelopersRecommended()){
 				if(containsDeveloper(similarDevWithCases, d)){
-					if(containsDeveloper(similarDevWithCases, d)){
 					for(Developer dev: similarDevelopers){
 						if(dev.getName().equals(d.getName())){
 								Developer devAddIssue = getDeveloper(similarDevelopers, d, c);
 								List<Issue> newIssues = d.getIssues();
 								newIssues.addAll(devAddIssue.getIssues());
 								devAddIssue.setIssues(newIssues);
-								if(!containsDeveloper(aux, devAddIssue))
-									aux.add(devAddIssue);				
+								aux.add(devAddIssue);				
 						}
-					}}
+					}
 				}
 				else{
 					if(c.getPerformIssue() != null && c.getPerformIssue().getName().equals(d.getName())){
-						if(!containsDeveloper(aux, d))
-							aux.add(c.getPerformIssue());
+						aux.add(c.getPerformIssue());
 					}
 					else{
-						if(!containsDeveloper(aux, d))
-							aux.add(d);
+						aux.add(d);
 					}
 				}
 			}
