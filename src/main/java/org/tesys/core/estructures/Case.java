@@ -206,9 +206,12 @@ public class Case  {
 		similarDev = Arrays.asList(this.issuesWithDevelopersRecommended);
 		for(Case c: similarCases){
 			if(c.getGoodRecommendation() == 0){
-				similarDev.addAll(Arrays.asList(c.issuesWithDevelopersRecommended));
-				similarDev.remove(c.getPerformIssue());
-				devBadRecommendation.add(c.getPerformIssue());
+				for(Developer d: c.issuesWithDevelopersRecommended){
+					if(!conteinsDev(similarDev, d))
+						similarDev.add(d);
+					similarDev.remove(c.getPerformIssue());
+					devBadRecommendation.add(c.getPerformIssue());
+				}
 			}
 		}
 		/*
@@ -231,6 +234,15 @@ public class Case  {
 		this.issuesWithDevelopersRecommended = developerComplete; 
 		
 	}
+	
+	private static boolean conteinsDev(List<Developer> developers, Developer developer) {
+		for(Developer dev: developers){
+			if(dev.getName().equals(developer.getName()))
+				return true;
+		}
+		return false;
+	}
+	
 	private Case getLastCase(List<Case> similarCases) {
 		Case c = similarCases.get(0);
 		Date timeStamp = similarCases.get(0).gettimestamp();
