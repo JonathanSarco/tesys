@@ -26,7 +26,7 @@ public class SearchCaseByIssueAndSkillsQuery implements GenericQuery<List<Case>>
 
 	@Override
 	public List<Case> execute() {
-		String query = "{ \"query\": { \"bool\": { \"must\":  [";
+		String query = "{ \"query\": { \"bool\": { \"should\":  [";
 		for (String s : labels){
 			query += "{\"match\": {\"labels\": \"" + s + "\"  }},";
 		}

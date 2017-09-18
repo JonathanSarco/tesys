@@ -2,6 +2,7 @@ package org.tesys.core.estructures;
 
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -203,15 +204,18 @@ public class Case  {
 	public void orderDeveloperByWeight(List<Case> similarCases) {
 		List<Developer>devBadRecommendation = new LinkedList<Developer>();
 		List<Developer> similarDev = new LinkedList<Developer>();
-		similarDev = Arrays.asList(this.issuesWithDevelopersRecommended);
+		for (int i=0; i<this.issuesWithDevelopersRecommended.length;i++) {
+			similarDev.add(issuesWithDevelopersRecommended[i]);
+		}
+		
 		for(Case c: similarCases){
 			if(c.getGoodRecommendation() == 0){
 				for(Developer d: c.issuesWithDevelopersRecommended){
 					if(!conteinsDev(similarDev, d))
-						similarDev.add(d);
-					similarDev.remove(c.getPerformIssue());
-					devBadRecommendation.add(c.getPerformIssue());
+						similarDev.add(d);				
 				}
+				similarDev.remove(c.getPerformIssue());
+				devBadRecommendation.add(c.getPerformIssue());
 			}
 		}
 		/*
@@ -224,13 +228,20 @@ public class Case  {
 		  
 		if(latestCase.getMetricWeight() != null){
 			Collections.sort(similarDev, new OrderByWeight(latestCase.getMetricWeight()));
-			similarDev.addAll(devBadRecommendation);
+			
+			for(Developer d: devBadRecommendation){
+				similarDev.add(d);
+			}
 		}
 		else{
 			 Collections.sort(similarDev);
 		}
 		Developer developerComplete[] = new Developer[similarDev.size()];
-		developerComplete = (Developer[]) similarDev.toArray();
+		
+		for (int i=0; i<similarDev.size();i++) {
+			developerComplete[i] = similarDev.get(i);
+		}
+		
 		this.issuesWithDevelopersRecommended = developerComplete; 
 		
 	}
