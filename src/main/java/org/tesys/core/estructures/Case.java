@@ -229,14 +229,23 @@ public class Case  {
 		}
 		 
 		//Saco de similarDev, aquellos desarrolladores que no tengan metricas estimadas y los almaceno en similarDevNoMetrics
+		
+		List<Developer>aux = new LinkedList<Developer>();
+		for(Developer d: similarDev){
+			aux.add(d);
+		}
 		for (int i=0; i<similarDev.size();i++) {
 			if(similarDev.get(i).getIssues().get(0).getMetrics()==null || similarDev.get(i).getIssues().get(0).getMetrics().isEmpty()) {
 				similarDevNoMetrics.add(similarDev.get(i));
-				similarDev.remove(similarDev.get(i));
+				aux.remove(similarDev.get(i));
+			}
+			if(similarDev.get(i).getIssues().get(0).getMetrics()!=null && containsBestMetric(latestCase.getMetricWeight(), similarDev.get(i).getIssues().get(0).getMetrics())){
+				similarDevNoMetrics.add(similarDev.get(i));
+				aux.remove(similarDev.get(i));
 			}
 		}
-		
-		if(latestCase.getMetricWeight() != null || latestCase.getMetricWeight().length>0){
+		similarDev = aux;
+		if(latestCase.getMetricWeight() != null && latestCase.getMetricWeight().length>0){
 			Collections.sort(similarDev, new OrderByWeight(latestCase.getMetricWeight()));
 			
 			for(Developer d: similarDevNoMetrics){
@@ -260,6 +269,12 @@ public class Case  {
 		
 	}
 	
+	private boolean containsBestMetric(MetricWeight[] metricWeight2, Map<String, Double> metrics) {
+		
+		return (metricWeight2[0] != null && metrics.get(metricWeight2[0].getMetricName()) == null && metricWeight2[1] != null && 
+				metrics.get(metricWeight2[1].getMetricName()) == null && metricWeight2[2] != null && metrics.get(metricWeight2[2].getMetricName()) == null && 
+				metricWeight2[3] != null && metrics.get(metricWeight2[3].getMetricName()) == null);
+	}
 	private static boolean conteinsDev(List<Developer> developers, Developer developer) {
 		for(Developer dev: developers){
 			if(dev.getName().equals(developer.getName()))
@@ -272,9 +287,10 @@ public class Case  {
 		Case c = similarCases.get(0);
 		Date timeStamp = similarCases.get(0).gettimestamp();
 		for(Case ca : similarCases){
-			if(timeStamp.before(ca.getTimestamp())){
-				timeStamp = ca.getTimestamp();
-				c = ca;
+			if (ca.metricWeight != null)
+				if(!timeStamp.before(ca.getTimestamp())){
+					timeStamp = ca.getTimestamp();
+					c = ca;
 			}
 		}
 		return c;

@@ -33,32 +33,49 @@ public class OrderByWeight implements Comparator<Developer> {
 
 				//De menor a mayor
 				if(this.bestMetrics.getBestMetrics().get(m0) ==-1) {
-					int resultado = Double.compare( o1.getIssues().get(0).getMetrics().get(m0),o2.getIssues().get(0).getMetrics().get(m0));
+					if (o1.getIssues().get(0).getMetrics().get(m0) !=null && o2.getIssues().get(0).getMetrics().get(m0) != null) {
+						int resultado = Double.compare( o1.getIssues().get(0).getMetrics().get(m0),o2.getIssues().get(0).getMetrics().get(m0));
 			        	if ( resultado != 0 ) { return resultado; }}
+				}
 				if(this.bestMetrics.getBestMetrics().get(m1) ==-1) {
-					int resultado = Double.compare( o1.getIssues().get(0).getMetrics().get(m1),o2.getIssues().get(0).getMetrics().get(m1));
+					if (o1.getIssues().get(0).getMetrics().get(m1) !=null && o2.getIssues().get(0).getMetrics().get(m1) != null) {
+						int resultado = Double.compare( o1.getIssues().get(0).getMetrics().get(m1),o2.getIssues().get(0).getMetrics().get(m1));
 						if ( resultado != 0 ) { return resultado; }}
+				}
 				if(this.bestMetrics.getBestMetrics().get(m2) ==-1) {
-					int resultado = Double.compare( o1.getIssues().get(0).getMetrics().get(m2),o2.getIssues().get(0).getMetrics().get(m2)); 
+					if (o1.getIssues().get(0).getMetrics().get(m2) !=null && o2.getIssues().get(0).getMetrics().get(m2) != null) {
+						int resultado = Double.compare( o1.getIssues().get(0).getMetrics().get(m2),o2.getIssues().get(0).getMetrics().get(m2)); 
 			        	if ( resultado != 0 ) { return resultado; }}
-				if(this.bestMetrics.getBestMetrics().get(m3) ==-1) {   
+				}
+				if(this.bestMetrics.getBestMetrics().get(m3) ==-1) {
+					if (o1.getIssues().get(0).getMetrics().get(m3) !=null && o2.getIssues().get(0).getMetrics().get(m3) != null) {
 					int resultado = Double.compare( o1.getIssues().get(0).getMetrics().get(m3),o2.getIssues().get(0).getMetrics().get(m3));
 		        		if ( resultado != 0 ) { return resultado; }}
-				
+				}
 				//De mayor a menor
 				if(this.bestMetrics.getBestMetrics().get(m0) ==1) {
-					int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m0),o1.getIssues().get(0).getMetrics().get(m0));
-			        if ( resultado != 0 ) { return resultado; }}
+					if (o1.getIssues().get(0).getMetrics().get(m0) !=null && o2.getIssues().get(0).getMetrics().get(m0) != null) {
+						int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m0),o1.getIssues().get(0).getMetrics().get(m0));
+						if ( resultado != 0 ) { return resultado; }}
+				}
 				if(this.bestMetrics.getBestMetrics().get(m1) ==1) {
-					int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m1),o1.getIssues().get(0).getMetrics().get(m1));
-			        if ( resultado != 0 ) { return resultado; }}
+					if (o1.getIssues().get(0).getMetrics().get(m1) !=null && o2.getIssues().get(0).getMetrics().get(m1) != null) {
+						int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m1),o1.getIssues().get(0).getMetrics().get(m1));
+				        if ( resultado != 0 ) { return resultado; }}
+				}
 				if(this.bestMetrics.getBestMetrics().get(m2) ==1) {
-					int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m2),o1.getIssues().get(0).getMetrics().get(m2)); 
-			        if ( resultado != 0 ) { return resultado; }}
-				if(this.bestMetrics.getBestMetrics().get(m3) ==1) {   
-					int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m3),o1.getIssues().get(0).getMetrics().get(m3));
+					if (o1.getIssues().get(0).getMetrics().get(m2) !=null && o2.getIssues().get(0).getMetrics().get(m2) != null) {
+						int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m2),o1.getIssues().get(0).getMetrics().get(m2)); 
+						if ( resultado != 0 ) { return resultado; }}
+				}
+				if(this.bestMetrics.getBestMetrics().get(m3) ==1) {
+					if (o1.getIssues().get(0).getMetrics().get(m3) !=null && o2.getIssues().get(0).getMetrics().get(m3) != null) {
+						int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m3),o1.getIssues().get(0).getMetrics().get(m3));
 		        		if ( resultado != 0 ) { return resultado; }}
-				return 0;
+				}
+				//if (this.bestMetrics.getBestMetrics().get(m0) == 1)
+				//	return -1;
+				return 1;
 	}	
 	
 }
