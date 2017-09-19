@@ -22,18 +22,43 @@ public class OrderByWeight implements Comparator<Developer> {
 		this.bestMetrics = new MatrixWeight();
 	}
 
+	
 	public int compare(Developer o1, Developer o2) {
 		List<MetricWeight> metrics = Arrays.asList(weightMetrics);
-		double result;
-		for(MetricWeight m: metrics){
-			if(o1.getIssues().get(0).getMetrics() != null && o2.getIssues().get(0).getMetrics() != null && o1.getIssues().get(0).getMetrics().get(m.getMetricName()) != null && o2.getIssues().get(0).getMetrics().get(m.getMetricName()) != null){
-				result = (((o2.getIssues().get(0).getMetrics() == null ? 0 : o2.getIssues().get(0).getMetrics().get(m.getMetricName())) * this.bestMetrics.getBestMetrics().get(m.getMetricName())) - (o1.getIssues().get(0).getMetrics() == null ? 0 : o1.getIssues().get(0).getMetrics().get(m.getMetricName())) * this.bestMetrics.getBestMetrics().get(m.getMetricName()));
-				if(result != 0)
-					return (int)result;
-			}
-		}
-		return 0;
-	}
+				
+				String m0=metrics.get(0).getMetricName();
+				String m1=metrics.get(1).getMetricName();
+				String m2=metrics.get(2).getMetricName();
+				String m3=metrics.get(3).getMetricName();
 
+				//De menor a mayor
+				if(this.bestMetrics.getBestMetrics().get(m0) ==-1) {
+					int resultado = Double.compare( o1.getIssues().get(0).getMetrics().get(m0),o2.getIssues().get(0).getMetrics().get(m0));
+			        	if ( resultado != 0 ) { return resultado; }}
+				if(this.bestMetrics.getBestMetrics().get(m1) ==-1) {
+					int resultado = Double.compare( o1.getIssues().get(0).getMetrics().get(m1),o2.getIssues().get(0).getMetrics().get(m1));
+						if ( resultado != 0 ) { return resultado; }}
+				if(this.bestMetrics.getBestMetrics().get(m2) ==-1) {
+					int resultado = Double.compare( o1.getIssues().get(0).getMetrics().get(m2),o2.getIssues().get(0).getMetrics().get(m2)); 
+			        	if ( resultado != 0 ) { return resultado; }}
+				if(this.bestMetrics.getBestMetrics().get(m3) ==-1) {   
+					int resultado = Double.compare( o1.getIssues().get(0).getMetrics().get(m3),o2.getIssues().get(0).getMetrics().get(m3));
+		        		if ( resultado != 0 ) { return resultado; }}
+				
+				//De mayor a menor
+				if(this.bestMetrics.getBestMetrics().get(m0) ==1) {
+					int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m0),o1.getIssues().get(0).getMetrics().get(m0));
+			        if ( resultado != 0 ) { return resultado; }}
+				if(this.bestMetrics.getBestMetrics().get(m1) ==1) {
+					int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m1),o1.getIssues().get(0).getMetrics().get(m1));
+			        if ( resultado != 0 ) { return resultado; }}
+				if(this.bestMetrics.getBestMetrics().get(m2) ==1) {
+					int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m2),o1.getIssues().get(0).getMetrics().get(m2)); 
+			        if ( resultado != 0 ) { return resultado; }}
+				if(this.bestMetrics.getBestMetrics().get(m3) ==1) {   
+					int resultado = Double.compare( o2.getIssues().get(0).getMetrics().get(m3),o1.getIssues().get(0).getMetrics().get(m3));
+		        		if ( resultado != 0 ) { return resultado; }}
+				return 0;
+	}	
 	
 }

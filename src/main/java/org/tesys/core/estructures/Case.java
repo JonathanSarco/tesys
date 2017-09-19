@@ -204,6 +204,8 @@ public class Case  {
 	public void orderDeveloperByWeight(List<Case> similarCases) {
 		List<Developer>devBadRecommendation = new LinkedList<Developer>();
 		List<Developer> similarDev = new LinkedList<Developer>();
+		List<Developer> similarDevNoMetrics = new LinkedList<Developer>();
+
 		for (int i=0; i<this.issuesWithDevelopersRecommended.length;i++) {
 			similarDev.add(issuesWithDevelopersRecommended[i]);
 		}
@@ -225,13 +227,25 @@ public class Case  {
 		if(similarCases != null && !similarCases.isEmpty()){
 			latestCase = getLastCase(similarCases);
 		}
-		  
-		if(latestCase.getMetricWeight() != null){
+		 
+		//Saco de similarDev, aquellos desarrolladores que no tengan metricas estimadas y los almaceno en similarDevNoMetrics
+		for (int i=0; i<similarDev.size();i++) {
+			if(similarDev.get(i).getIssues().get(0).getMetrics()==null || similarDev.get(i).getIssues().get(0).getMetrics().isEmpty()) {
+				similarDevNoMetrics.add(similarDev.get(i));
+				similarDev.remove(similarDev.get(i));
+			}
+		}
+		
+		if(latestCase.getMetricWeight() != null || latestCase.getMetricWeight().length>0){
 			Collections.sort(similarDev, new OrderByWeight(latestCase.getMetricWeight()));
+			
+			for(Developer d: similarDevNoMetrics){
+				similarDev.add(d);
+			}
 			
 			for(Developer d: devBadRecommendation){
 				similarDev.add(d);
-			}
+			}		
 		}
 		else{
 			 Collections.sort(similarDev);
