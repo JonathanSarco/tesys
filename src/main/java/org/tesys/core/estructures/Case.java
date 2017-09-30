@@ -239,7 +239,7 @@ public class Case  {
 				similarDevNoMetrics.add(similarDev.get(i));
 				aux.remove(similarDev.get(i));
 			}
-			if(similarDev.get(i).getIssues().get(0).getMetrics()!=null && containsBestMetric(latestCase.getMetricWeight(), similarDev.get(i).getIssues().get(0).getMetrics())){
+			if(latestCase.getMetricWeight() != null && similarDev.get(i).getIssues().get(0).getMetrics()!=null && containsBestMetric(latestCase.getMetricWeight(), similarDev.get(i).getIssues().get(0).getMetrics())){
 				similarDevNoMetrics.add(similarDev.get(i));
 				aux.remove(similarDev.get(i));
 			}
