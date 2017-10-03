@@ -14,6 +14,8 @@ import org.tesys.core.estructures.Issue;
 import org.tesys.core.Normalizer.NormalizeWeight;
 import org.tesys.recomendations.SimilarCaseByIssueSkill;
 
+import orderCriteria.CriteriaBestValue;
+
 public class MatrixWeight {
 	
 	Hashtable<String,Integer> bestMetrics= new Hashtable<String, Integer>();
@@ -175,7 +177,12 @@ public class MatrixWeight {
 				}
 									
 				CalculateWeight m=new CalculateWeight();
-				return m.calculate(metricsWithValuesByDevNormalized);
+				Map<String,Double> weights= m.calculate(metricsWithValuesByDevNormalized);
+				
+				CriteriaBestValue criterion=new CriteriaBestValue();
+				String criterios=criterion.obtenerValor(chosenDeveloper, metricsWithValuesByDev,bestMetrics);
+				weights.put(criterios,weights.get(criterios)*2);
+				return weights;
 					
 	}
 	
