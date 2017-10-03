@@ -178,6 +178,7 @@ public class Case  {
 	public MetricWeight[] getMetricWeight() {
 		return this.metricWeight;
 	}
+	
 	public String getIdCase() {
 		return idCase;
 	}
@@ -205,7 +206,7 @@ public class Case  {
 		List<Developer>devBadRecommendation = new LinkedList<Developer>();
 		List<Developer> similarDev = new LinkedList<Developer>();
 		List<Developer> similarDevNoMetrics = new LinkedList<Developer>();
-
+		
 		for (int i=0; i<this.issuesWithDevelopersRecommended.length;i++) {
 			similarDev.add(issuesWithDevelopersRecommended[i]);
 		}
@@ -227,9 +228,13 @@ public class Case  {
 		if(similarCases != null && !similarCases.isEmpty()){
 			latestCase = getLastCase(similarCases);
 		}
-		 
+		/* 
+		List<MetricWeight> metricOrdered = Arrays.asList(latestCase.getMetricWeight());
+		Collections.sort(metricOrdered);
+		MetricWeight metricOrderedArray[] = new MetricWeight[metricOrdered.size()];
+		latestCase.setCriteria((MetricWeight[]) metricOrdered.toArray());
 		//Saco de similarDev, aquellos desarrolladores que no tengan metricas estimadas y los almaceno en similarDevNoMetrics
-		
+		*/
 		List<Developer>aux = new LinkedList<Developer>();
 		for(Developer d: similarDev){
 			aux.add(d);
@@ -246,7 +251,8 @@ public class Case  {
 		}
 		similarDev = aux;
 		if(latestCase.getMetricWeight() != null && latestCase.getMetricWeight().length>0){
-			Collections.sort(similarDev, new OrderByWeight(latestCase.getMetricWeight()));
+			OrderByWeight order = new OrderByWeight(latestCase.getMetricWeight());
+			similarDev = order.compare(similarDev);
 			
 			for(Developer d: similarDevNoMetrics){
 				similarDev.add(d);
@@ -283,18 +289,30 @@ public class Case  {
 		return false;
 	}
 	
-	private Case getLastCase(List<Case> similarCases) {
-		Case c = similarCases.get(0);
-		Date timeStamp = similarCases.get(0).gettimestamp();
+	private Case getLastCase(List<Case> similarCases){
+		Case c = new Case();
+		Date timeStamp = new Date("01/01/1991");
+		for(Case caso : similarCases){
+			if(caso.getMetricWeight() != null){
+				c = caso;
+				timeStamp = caso.gettimestamp();
+				break;
+			}
+			
+		}
+		
 		for(Case ca : similarCases){
-			if (ca.metricWeight != null)
-				if(!timeStamp.before(ca.getTimestamp())){
-					timeStamp = ca.getTimestamp();
+			if (ca.metricWeight != null){
+				Date date2 = new Date(ca.getTimestamp().getYear(), ca.getTimestamp().getMonth(), ca.getTimestamp().getDate(), ca.getTimestamp().getHours(), ca.getTimestamp().getMinutes(), ca.getTimestamp().getSeconds());
+				if(timeStamp.before(date2)){
+					timeStamp = date2;
 					c = ca;
+				}
 			}
 		}
 		return c;
 	}
+	
 	public double getErrorCuadraticoMedio() {
 		return errorCuadraticoMedio;
 	}
