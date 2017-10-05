@@ -147,9 +147,11 @@ public class MatrixWeight {
 				Map<String,Map<Developer,Double>> metricsWithValuesByDevNormalized=new HashMap<String, Map<Developer,Double>>();
 				NormalizeWeight normalize=new NormalizeWeight();
 
+				List<String> metricsWithout = new LinkedList<String>();
 				//Se arma un map metricsWithValuesByDev que va a tener por cada metrica, un conjunto de valores estimados para cada desarrollador asignado en los casos similares
 				for(String k:allKeys){
 					Map<Developer,Double>ValuesByDev=new HashMap<Developer,Double>(); 
+					
 					for(Developer developer:matrix.keySet()){
 						for( Issue issue :developer.getIssues()){
 								if(issue.getMetrics()!=null){
@@ -178,10 +180,13 @@ public class MatrixWeight {
 									
 				CalculateWeight m=new CalculateWeight();
 				Map<String,Double> weights= m.calculate(metricsWithValuesByDevNormalized);
-				
+				/*
 				CriteriaBestValue criterion=new CriteriaBestValue();
 				String criterios=criterion.obtenerValor(chosenDeveloper, metricsWithValuesByDev,bestMetrics);
-				weights.put(criterios,weights.get(criterios)*2);
+				if(!criterios.isEmpty()){
+					weights.put(criterios,weights.get(criterios)*2);
+				}
+				*/
 				return weights;
 					
 	}
