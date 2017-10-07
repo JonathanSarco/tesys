@@ -125,6 +125,9 @@ public class MatrixWeight {
 				
 				//Se agrega a la matriz el desarrollador asignado con sus métricas estimadas
 				matrix.put(chosenDeveloper, chosenDeveloper.getIssues().get(0).getMetrics());
+				
+				for(Developer developer:newCase.getIssuesWithDevelopersRecommended())
+					matrix.put(developer, developer.getIssues().get(0).getMetrics());
 						
 				/*Construcción de Matriz de Pesos*/
 				
