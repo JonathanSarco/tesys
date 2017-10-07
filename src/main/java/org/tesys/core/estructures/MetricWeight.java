@@ -27,7 +27,7 @@ public class MetricWeight implements Comparable {
 	@Override
 	public int compareTo(Object o) {
 		MetricWeight metric = (MetricWeight)o; 
-		return metric.getWeight().compareTo(this.weight);
+		return this.weight.compareTo(metric.getWeight());
 	}
 	
 }
