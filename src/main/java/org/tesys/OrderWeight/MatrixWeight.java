@@ -125,10 +125,10 @@ public class MatrixWeight {
 				
 				//Se agrega a la matriz el desarrollador asignado con sus métricas estimadas
 				matrix.put(chosenDeveloper, chosenDeveloper.getIssues().get(0).getMetrics());
-						
+										
 				/*Construcción de Matriz de Pesos*/
 				
-				//Se obtiene en allKeys todas los nombres(keys) de las metricas estimadas por todos los desarrolladores asignados de los casos similares
+				//Se obtiene en allKeys todas los nombres(keys) de las metricas estimadas en comun por todos los desarrolladores asignados de los casos similares
 				List<String>allKeys=new LinkedList<>();
 				for(Developer d:matrix.keySet()){
 					for(Issue issue:d.getIssues()){
@@ -136,7 +136,7 @@ public class MatrixWeight {
 								Map<String,Double> metrics=issue.getMetrics();
 								Set<String> keys = metrics.keySet();
 								for(String k:keys){
-									if(!allKeys.contains(k))
+									if(allConstainsMetric(k,matrix))
 										allKeys.add(k);
 								}
 							}
@@ -153,8 +153,6 @@ public class MatrixWeight {
 					for(Developer developer:matrix.keySet()){
 						for( Issue issue :developer.getIssues()){
 								if(issue.getMetrics()!=null){
-//									Map<String, Double> normalizeMetric = issue.getMetrics();
-//									normalizeMetric = normalize.calculateNorm(normalizeMetric);
 									if(issue.getMetrics().containsKey(k)){
 										Map<String,Double> metrics=issue.getMetrics();
 										Double value=metrics.get(k);
@@ -164,6 +162,7 @@ public class MatrixWeight {
 									//Si no tienen valor para esa métrica, se les coloca cero como valor para la metrica
 									//Solo se considera los valores 0 para la matriz de la entropia
 									else{
+										//ACA NO DE DEBERIA ENTRAR NUNCA
 										ValuesByDev.put(developer,0.0);
 										metricsWithValuesByDev.put(k,ValuesByDev);
 									}
@@ -178,14 +177,26 @@ public class MatrixWeight {
 									
 				CalculateWeight m=new CalculateWeight();
 				Map<String,Double> weights= m.calculate(metricsWithValuesByDevNormalized);
-				
-				CriteriaBestValue criterion=new CriteriaBestValue();
-				String criterios=criterion.obtenerValor(chosenDeveloper, metricsWithValuesByDev,bestMetrics);
-				weights.put(criterios,weights.get(criterios)*2);
+							
 				return weights;
 					
 	}
 	
+	private boolean allConstainsMetric(String k, Map<Developer, Map<String, Double>> matrix) {
+		for(Developer d:matrix.keySet()){
+			for(Issue issue:d.getIssues()){
+					if(issue.getMetrics()!=null){
+						Map<String,Double> metrics=issue.getMetrics();
+						Set<String> keys = metrics.keySet();
+						if(!keys.contains(k))
+							return false;
+
+					}
+			}
+		}
+		return true;
+	}
+
 	public Hashtable<String, Integer> getBestMetrics(){
 		return this.bestMetrics;
 	}

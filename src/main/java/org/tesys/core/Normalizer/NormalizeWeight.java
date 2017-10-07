@@ -51,7 +51,8 @@ public class NormalizeWeight {
 						valuesByDev.put(k,valueNormalized);
 						}
 					else{
-						valuesByDev.put(k,1.0);
+						//VER ESTO
+						valuesByDev.put(k,0.0);
 						}
 				 }				
 			return valuesByDev;

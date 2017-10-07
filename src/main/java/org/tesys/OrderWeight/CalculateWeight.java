@@ -51,12 +51,14 @@ public class CalculateWeight {
 								entropy+=-((values.get(dev))*(Math.log((values.get(dev)))));
 								}
 							else{
+								//VER
 								entropy+=values.get(dev);
 								}
 				}
 			if(values.size()>1)
 				entropyCol=entropy/Math.log(values.size());
 			else
+				//ACA NO DEBERIA ENTRAR NUNCA!
 				entropyCol=0.0;
 			divEntropiaCol=1-entropyCol;
 			
