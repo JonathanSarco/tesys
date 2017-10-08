@@ -136,7 +136,7 @@ public class MatrixWeight {
 								Map<String,Double> metrics=issue.getMetrics();
 								Set<String> keys = metrics.keySet();
 								for(String k:keys){
-									if(allConstainsMetric(k,matrix))
+									if(allConstainsMetric(k,matrix) && !allKeys.contains(k))
 										allKeys.add(k);
 								}
 							}
@@ -171,7 +171,7 @@ public class MatrixWeight {
 							}
 						}
 					}
-					//Normalizacion de los valores de la matriz por columna
+					//Normalizacion de los valores de la matriz por columna entre 0 y1 
 					Map<Developer,Double> ValuesByDevNormalized = normalize.calculateNorm(ValuesByDev);
 					metricsWithValuesByDevNormalized.put(k,ValuesByDevNormalized);
 				
