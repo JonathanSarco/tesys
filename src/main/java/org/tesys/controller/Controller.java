@@ -921,7 +921,7 @@ public class Controller {
 		 */
 		
 		similarIssueCase.setErrorCuadraticoMedio(similarIssueCase.calculateMSEError());
-		if(similarIssueCase.getErrorCuadraticoMedio() != -1 && similarIssueCase.getErrorCuadraticoMedio() < 0.1)
+		if(similarIssueCase.getErrorCuadraticoMedio() != -1 && similarIssueCase.getErrorCuadraticoMedio() < 0.0005)
 			similarIssueCase.setGoodRecommendation(1);
 		else{
 			if(similarIssueCase.getErrorCuadraticoMedio() != -1)

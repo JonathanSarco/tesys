@@ -214,11 +214,10 @@ public class Case  {
 		for(Case c: similarCases){
 			if(c.getGoodRecommendation() == 0){
 				for(Developer d: c.issuesWithDevelopersRecommended){
-					if(!conteinsDev(similarDev, d))
+					if(!conteinsDev(similarDev, d) && !conteinsDev(devBadRecommendation, d))
 						similarDev.add(d);				
 				}
-				similarDev.remove(c.getPerformIssue());
-				devBadRecommendation.add(c.getPerformIssue());
+				similarDev = deletePerformIssue(c.getPerformIssue(), similarDev, devBadRecommendation);
 			}
 		}
 		/*
@@ -275,6 +274,17 @@ public class Case  {
 		
 	}
 	
+	private List<Developer> deletePerformIssue(Developer performIssue, List<Developer> similarDev,
+			List<Developer> devBadRecommendation) {
+		List<Developer> aux = similarDev;
+		for(int i=0; i<aux.size(); i++){
+			if(aux.get(i).getName().equals(performIssue.getName())){
+				similarDev.remove(i);
+				devBadRecommendation.add(performIssue);
+			}
+		}
+		return aux;
+	}
 	private boolean containsBestMetric(MetricWeight[] metricWeight2, Map<String, Double> metrics) {
 		
 		return (metricWeight2[0] != null && metrics.get(metricWeight2[0].getMetricName()) == null && metricWeight2[1] != null && 
